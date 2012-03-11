@@ -41,6 +41,7 @@ typedef  struct
 typedef struct 
 {
 	int ID;
+	league_t* league;
     team_t* from;
     team_t* to;
     sportist_t* offer;
