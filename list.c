@@ -1,228 +1,191 @@
-#include "listasGen.h"
-#include <stdlib.h>
-#include <string.h>
+/*
+ * genlistADT.c
+ *
+ */
+
+/* Version Iterativa de listas con header */
+
 #include <stdio.h>
+#include <stdlib.h>
+#include "genlistADT.h"
 
-/*Each Node, only can be seen by programmer*/
-typedef struct node *nodeType; 
 
-static nodeType insertNode( nodeType actualNode, listADT header,void *newElem);
-static nodeType deleteNode( nodeType actualNode, listADT header,void* delElem);
-static void listNode(nodeType actualNode, int pos,void (*printType)(void*));
-static void freeNodes ( nodeType actualNode);
-static void nodeIntersection(nodeType actualNode1, nodeType actualNode2,listADT headerResult);
-static void nodeUnion(nodeType actualNode1, nodeType actualNode2,listADT headerResult);
-		
-struct listCDT /*Header*/
+
+struct listCDT
 {
-	int (*criteria)(void *,void*);
-	int bytes;
-	nodeType first;
-	nodeType current;
+	int (*fComp) (void *, void *);	/* funcion de comparacion */
+	struct listNode * first;	/* puntero al primer nodo de la lista */
+	struct listNode * current;	/* puntero al actual, para iterar */
+	int size;			/* cantidad de nodos */
 };
 
-struct node
+typedef struct listNode
 {
-	nodeType next;
-	void *elem;
-};
+	listElementT data;
+	struct listNode * next;
+}listNode;
+
+
+static void
+error(const char* s)
+{
+	fprintf(stderr, s);
+	exit(EXIT_FAILURE);
+}
 
 
 listADT
-newList (int bytes, int (*function)(void*, void*))
+newList( int (*fComp) (void *, void *) )
 {
-	listADT newList;
-	if( (newList=malloc(sizeof( struct listCDT ))) == 	NULL)
+	listADT l = malloc(sizeof( struct listCDT));
+	if ( l == NULL)
 		return NULL;
-	newList->bytes=bytes;
-	newList->criteria=function;
-	newList->first=NULL;
-	newList->current=NULL;
-	return newList;
+	l->fComp = fComp;
+	l->first = NULL;
+	l->current = NULL;
+	l->size = 0;
 }
 
-void* getNext(listADT list)
+
+int
+listIsEmpty( listADT list)
 {
-    if(list->current!=null)
-    {
-        void* ans= list->current->elem;
-        list->current=list->current->next;
-        return ans;
-    }
-    return NULL;
+	return list->size == 0;
+	/* 
+	return list->first == NULL
+	*/
 }
 
-void reset(listADT list)
-{
-    list->current=list->first;
-}
 
 void
-insertElem( listADT header, void *newElem)
+reset( listADT list )
 {
-	header->first=insertNode(header->first,header,newElem);
+	list->current = list->first;
 }
 
-static nodeType
-insertNode( nodeType actualNode, listADT header, void *newElem)
-{ 
-	if ( actualNode == NULL || (*header->criteria)(newElem,actualNode->elem)  <0)
-	{
-		nodeType auxNode;
-		if ( (auxNode=malloc(sizeof(struct node)) ) == NULL )
-			return NULL;
-		auxNode->elem=malloc(header->bytes);
-		memcpy(auxNode->elem,newElem,header->bytes);/*agarra direccion de elem y auxNode->elem lo apunta a la direccion de elem*/
-		auxNode->next=actualNode;
-		return auxNode;
-	}
-	if( (*header->criteria)(newElem,actualNode->elem) !=  0 )
-		actualNode->next=insertNode(actualNode->next,header,newElem);
-	return actualNode;
-}
-
-void
-deleteElem(listADT header, void*delElem)
+listElementT
+getNext( listADT list)
 {
-	header->first=deleteNode(header->first,header,delElem);
-}
-
-static nodeType
-deleteNode( nodeType actualNode, listADT header, void* delElem)
-{
-	if ( (*header->criteria)(delElem,actualNode->elem) == 0 )
-	{
-		nodeType auxNode;
-		if ( (auxNode=malloc(sizeof(struct node))) == NULL)
-			return NULL;
-		auxNode=actualNode->next;
-		free(actualNode);
-		return auxNode;
-	}
-	if ( (*header->criteria)(delElem,actualNode->elem) >0)
-		actualNode->next=deleteNode(actualNode->next,header,delElem);
-	return actualNode;
-}
-
-void
-getElem(listADT header, int pos,void (*printType)(void*))
-{
+	listNode * current;
 	
-	listNode(header->first, pos,printType);
+	if ( list->current == NULL )
+		return NULL;
+	
+	current= list->current;
+	list->current = current->next;
+	
+	return current->data;
 }
 
-static void
-listNode(nodeType actualNode, int pos,void (*printType)(void*))
+
+
+
+int
+elementBelongs( listADT list, listElementT element)
 {
-	if(pos == 0 && actualNode!=NULL )
+	listNode * node;
+	int cmp;
+	node = list->first;
+
+	/* Como no sabemos la complejidad de la funcion de comparacion, conservamos 
+	** el resultado en una variable.
+	*/
+	while( node != NULL &&   (cmp = (*list->fComp) (node->data, element)) == -1)
+		node = node->next;
+
+	return node != NULL && cmp == 0;
+}
+
+
+/* Funcion auxiliar para insertar en la lista de nodos, en forma analoga
+** a insertar en una lista lineal sin header
+*/
+static int
+insertNode( listNode ** list, listElementT element, int (*f)(void *, void*))
+{
+
+	/* Inserto al final o delante del actual porque es mayor */
+	if( *list == NULL || (*f)((*list)->data, element) == 1 )
 	{
-		(*printType)(actualNode->elem);
-		return ;
+		listNode * auxi = malloc(sizeof( listNode ));
+		if (auxi == NULL)
+			Error("No hay lugar para otro nodo\n");
+		auxi->next = *list;
+		auxi->data = element;
+		*list = auxi;
+		return 1;
 	}
-	if ( actualNode->next!=NULL)
-		listNode(actualNode->next,--pos,printType);
-	return ;
+
+
+	/* Si no es vacia ni mayor verificar si es igual (no se insertan repetidos) */
+	if( (*f)((*list)->data, element) == 0 )
+		return 0;
+
+	/* El elemento actual es menor */
+	return insertNode( &((*list)->next), element, f);
+
+
+}
+
+
+void
+insert( listADT list, listElementT element)
+{
+	if (element == NULL)
+		return;
+
+	list->size += insertNode(&(list->first), element, list->fComp);
+
+}
+
+
+static int
+deleteNode( listNode **list, listElementT element, int (*f)(void *, void*))
+{
+	if( *list == NULL || (*f)((*list)->data, element) == 1 )
+		return 0;
+
+	if( (*f)((*list)->data, element) == 0 )
+	{
+		listNode * aux = *list;
+		*list = (*list)->next;
+		free(aux);
+		return 1;
+	}
+
+	/* El elemento actual es menor */
+	return deleteNode( &((*list)->next), element, f);
+
+}
+
+int
+delete( listADT list, listElementT element)
+{
+	int res;
+	res = deleteNode(&(list->first), element, list->fComp);
+	list->size -= res;
+	return res;
+}
+
+
+int
+size( listADT list )
+{
+	return list->size;
 }
 
 void
-freeList( listADT header)
+freeList( listADT list)
 {
-	freeNodes(header->first);
-	free(header);
-}
+	listNode * auxi, * node = list->first;
 
-static void
-freeNodes ( nodeType actualNode)
-{
-	if ( actualNode == NULL)
-		return;
-		freeNodes(actualNode->next);
-		free(actualNode->elem);
-		free(actualNode);
-	return;
-}
-
-void *
-listHead ( listADT header)
-{
-	void *aux;
-	if ( header->first == NULL)
-		return NULL;
-	aux=malloc(header->bytes);
-	memcpy(aux,header->first->elem,header->bytes);
-	return aux;
-}
-
-listADT
-intersection (listADT header1, listADT header2)
-{
-	listADT headerResult;
-	headerResult=newList(header1->bytes,header1->criteria);
-	nodeIntersection(header1->first,header2->first,headerResult);
-	return headerResult;
-}
-
-static void
-nodeIntersection(nodeType actualNode1, nodeType actualNode2,listADT headerResult)
-{
-	if ( actualNode1 != NULL && actualNode2 != NULL )
+	while ( node != NULL )
 	{
-		if ( (*headerResult->criteria)(actualNode1->elem,actualNode2->elem) == 0 )
-		{
-			headerResult->first=insertNode(headerResult->first,headerResult,actualNode1->elem);
-			nodeIntersection(actualNode1->next,actualNode2->next,headerResult);
-		}
-		else if( (*headerResult->criteria)(actualNode1->elem,actualNode2->elem) <0 )
-			nodeIntersection(actualNode1->next,actualNode2,headerResult);
-		else
-			nodeIntersection(actualNode1,actualNode2->next,headerResult);
+		auxi = node->next;
+		free(node);
+		node = auxi;
 	}
-}
 
-listADT
-unionList ( listADT header1, listADT header2)
-{
-	listADT headerResult;
-	headerResult=newList(header1->bytes,header1->criteria);
-	nodeUnion(header1->first,header2->first,headerResult);
-	return headerResult;
-}
-
-static void
-nodeUnion(nodeType actualNode1, nodeType actualNode2,listADT headerResult)
-{
-	if ( actualNode1!= NULL && actualNode2!=NULL)
-	{
-		if ( (*headerResult->criteria)(actualNode1->elem, actualNode2->elem) <0 )
-		{
-			headerResult->first=insertNode(headerResult->first,headerResult,actualNode1->elem);
-			nodeUnion(actualNode1->next,actualNode2,headerResult);
-		}
-		else if ( (*headerResult->criteria)(actualNode1->elem, actualNode2->elem) > 0)
-		{
-			headerResult->first=insertNode(headerResult->first,headerResult,actualNode2->elem);
-			nodeUnion(actualNode1,actualNode2->next,headerResult);
-		}
-		else
-		{
-			headerResult->first=insertNode(headerResult->first,headerResult,actualNode1->elem);
-			nodeUnion(actualNode1->next,actualNode2->next,headerResult);
-		}
-	}
-	if ( actualNode1!=NULL)
-	{
-		while ( actualNode1!=NULL)
-		{
-			headerResult->first=insertNode(headerResult->first,headerResult,actualNode1->elem);
-			actualNode1=actualNode1->next;
-		}
-	}
-	if ( actualNode2!=NULL)
-	{
-		while ( actualNode2!=NULL)
-		{
-			headerResult->first=insertNode(headerResult->first,headerResult,actualNode2->elem);
-			actualNode2=actualNode2->next;
-		}
-	}
+	/* Liberamos el header */
+	free(list);
 }

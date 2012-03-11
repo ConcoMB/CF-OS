@@ -1,4 +1,4 @@
-#include "lista.h"
+#include "list.h"
 
 typedef struct
 {

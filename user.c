@@ -6,10 +6,11 @@ void list_leagues(user_t* user)
 {
     if(user->teams!=NULL)
     {
+        team_t* team;
         reset(user->teams);
-        while(user->teams->current!=NULL)
+        while((team=(team_t*)getNext(user->teams))!=NULL)
         {
-            printf("Participating in: %s\n", ((team_t*)getNext(user->teams))->league->leagueName);
+            printf("Participating in: %s\n", team->league->leagueName);
         }
     }
 }
@@ -57,10 +58,11 @@ void list_team(user_t* user)
 {
     if(user->teams!=NULL)
     {
+        team_t* team;
         reset(user->teams);
-        while(user->teams->current!=NULL)
+        while((team=(team_t*)getNext(user->teams))!=NULL)
         {
-            printf("Leader of the team %s\n", ((team_t*)getNext(user->teams))->teamName);
+            printf("Leader of the team %s\n", team->teamName);
         }
     }
 }
