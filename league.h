@@ -11,6 +11,7 @@ typedef struct
 
 typedef struct
 {
+	int ID;
     char name[15];
     listADT sportists;
     listADT teams;
@@ -20,7 +21,9 @@ typedef struct
 
 typedef struct
 {
+	int ID;
     char name[20];
+    user_t* user; 
     league_t* league;
     int points;
     listADT sportists;
@@ -31,6 +34,7 @@ typedef char sportist_t[30];
     
 typedef struct 
 {
+	int ID;
     team_t* from;
     team_t* to;
     sportist_t* offer;

@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include "league.h"
 
-void save_users();
-static void save_user(user_t user);
+void save_user(FILE* file,user_t* user);
+void save_league(league_t* league);
+void save_team(team_t* team);
+void save_trade(trade_t* trade);
