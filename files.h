@@ -18,5 +18,6 @@ void loadSportists(ListADT sportists);
 void loadTeam(team_t* team);
 void loadTrades();
 static trade_t* loadTrade(FILE* tradeFile);
+void loadScores(league_t league);
 
 #endif

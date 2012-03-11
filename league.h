@@ -36,6 +36,7 @@ typedef  struct
 	int ID;
 	char name[30];
 	int score;
+	team_t* team;
 }sportist_t;
     
 typedef struct 
