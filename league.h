@@ -1,3 +1,5 @@
+#ifndef __LEAGUE__
+#define __LEAGUE__
 #include "list.h"
 
 typedef struct
@@ -45,5 +47,4 @@ typedef struct
     sportist_t* change;
 }trade_t;
 
-
-
+#endif

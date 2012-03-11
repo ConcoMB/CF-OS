@@ -7,7 +7,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "genlistADT.h"
+#include "list.h"
 
 
 
@@ -25,13 +25,13 @@ typedef struct listNode
 	struct listNode * next;
 }listNode;
 
-
+/*
 static void
 error(const char* s)
 {
 	fprintf(stderr, s);
 	exit(EXIT_FAILURE);
-}
+}*/
 
 
 listADT
@@ -104,22 +104,21 @@ static int
 insertNode( listNode ** list, listElementT element, int (*f)(void *, void*))
 {
 
-	/* Inserto al final o delante del actual porque es mayor */
-	if( *list == NULL || (*f)((*list)->data, element) == 1 )
+	/* Inserto al final o delante del actual porque es mayor o igual*/
+	if( *list == NULL || (*f)((*list)->data, element) <=0)
 	{
 		listNode * auxi = malloc(sizeof( listNode ));
 		if (auxi == NULL)
-			Error("No hay lugar para otro nodo\n");
+		{
+			//error("No hay lugar para otro nodo\n");
+		    return 1;	
+		}
 		auxi->next = *list;
 		auxi->data = element;
 		*list = auxi;
 		return 1;
 	}
 
-
-	/* Si no es vacia ni mayor verificar si es igual (no se insertan repetidos) */
-	if( (*f)((*list)->data, element) == 0 )
-		return 0;
 
 	/* El elemento actual es menor */
 	return insertNode( &((*list)->next), element, f);
