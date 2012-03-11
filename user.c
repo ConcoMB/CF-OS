@@ -1,19 +1,20 @@
 #include "league.h"
+//#include "lista.h"
 #include <stdio.h>
 
 void list_leagues(user_t* user)
 {
-    if(user->leagues!=NULL)
+    if(user->teams!=NULL)
     {
-        reset(user->leagues);
-        while(user->leagues->current!=NULL)
+        reset(user->teams);
+        while(user->teams->current!=NULL)
         {
-            printf("Participating in: %s\n", (char*)getNext(user->leagues));
+            printf("Participating in: %s\n", ((team_t*)getNext(user->teams))->league->leagueName);
         }
     }
 }
 
-void list_trades(user_t* user)
+/*void list_trades(user_t* user)
 {
     if(user->leagues!=NULL)
     {
@@ -44,7 +45,7 @@ int involved(trade_t* trade, user_t* user)
         return 1;
     }
     return 0;
-}
+}*/
 
 void printTrade(trade_t* trade)
 {
@@ -59,12 +60,10 @@ void list_team(user_t* user)
         reset(user->teams);
         while(user->teams->current!=NULL)
         {
-            printTeam(getNext(user->teams));
+            printf("Leader of the team %s\n", ((team_t*)getNext(user->teams))->teamName);
         }
     }
 }
-
-void print
-            
+       
             
         

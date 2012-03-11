@@ -1,33 +1,38 @@
+#include "lista.h"
 
-typedef struct user_t
+typedef struct
 {
     int ID;
     listADT teams;
-    char[10] userName;
-    char[10] password;
-};
+    char userName[10];
+    char password[10];
+}user_t;
     
-typedef struct team_t
+
+typedef struct
 {
-    char[20] teamName;
-    league_t * league;
-    int points;
-    listADT sportists;
-};
-    
-typedef struct league_t
-{
+    char leagueName[15];
     listADT sportists;
     listADT teams;
     listADT trades;
-};
-    
-typedef struct sportist_t char[30];
-    
-typedef struct trade_t
+}league_t;
+
+
+typedef struct
 {
-    leader_t from;
-    leader_t to;
-    sportist_t offer;
-    sportist_t change;
-}
+    char teamName[20];
+    league_t* league;
+    int points;
+    listADT sportists;
+}team_t;
+    
+    
+typedef char sportist_t[30];
+    
+typedef struct 
+{
+    team_t* from;
+    team_t* to;
+    sportist_t* offer;
+    sportist_t* change;
+}trade_t;
