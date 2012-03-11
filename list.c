@@ -105,7 +105,7 @@ insertNode( listNode ** list, listElementT element, int (*f)(void *, void*))
 {
 
 	/* Inserto al final o delante del actual porque es mayor o igual*/
-	if( *list == NULL || (*f)((*list)->data, element) == 1 || (*f)((*list)->data, element) == 0)
+	if( *list == NULL || (*f)((*list)->data, element) <=0)
 	{
 		listNode * auxi = malloc(sizeof( listNode ));
 		if (auxi == NULL)
