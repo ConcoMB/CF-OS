@@ -1,17 +1,17 @@
-#include "lista.h"
+#include "list.h"
 
 typedef struct
 {
     int ID;
     listADT teams;
-    char userName[10];
+    char name[10];
     char password[10];
 }user_t;
     
 
 typedef struct
 {
-    char leagueName[15];
+    char name[15];
     listADT sportists;
     listADT teams;
     listADT trades;
@@ -20,7 +20,7 @@ typedef struct
 
 typedef struct
 {
-    char teamName[20];
+    char name[20];
     league_t* league;
     int points;
     listADT sportists;
@@ -36,3 +36,4 @@ typedef struct
     sportist_t* offer;
     sportist_t* change;
 }trade_t;
+
