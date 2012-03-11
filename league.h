@@ -45,3 +45,5 @@ typedef struct
     sportist_t* change;
 }trade_t;
 
+
+
