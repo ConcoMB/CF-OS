@@ -1,7 +1,4 @@
-#include "league.h"
-#include "list.h"
-#include "cmp.h"
-#include <stdio.h>
+#include "server.h"
 
 void list_leagues(user_t* user)
 {
@@ -18,7 +15,8 @@ void list_leagues(user_t* user)
 
 void printTrade(trade_t* trade)
 {
-    printf("The team %s has offered the team %s to exchange his %s to %s\n", trade->from->name, trade->to->name, (char*)trade->offer, (char*)trade->change);
+    printf("The team %s has offered the team %s to exchange his %s to %s\n", 
+    trade->from->name, trade->to->name, (char*)trade->offer, (char*)trade->change);
 }
 void list_trades(user_t* user)
 {
@@ -82,20 +80,106 @@ void createOrderedList(listADT list, league_t* league)
     return;
 }
 
-void displayLeague(listADT teams)
+void displayTeam(team_t* team)
+{
+    printf("Team %s, from user %s  ->  %d points\n", team->name, team->user->name, team->points);
+}
+void displayTeams(listADT teams)
 {
     team_t* team;
     reset(teams);
     while((team=(team_t*)getNext(teams))!=NULL)
     {
-        printf("Team %s, from user %s  ->  %d points\n", team->name, team->user->name, team->points);
+        displayTeam(team);
     }
 }
 
 void leagueShow(league_t* league)
 {
+    team_t * team;
     listADT list = newList(cmpTeam);
     createOrderedList(list, league);
-    displayLeague(list);
+    displayTeams(list);
+    reset(league->teams);
+    while((team=(team_t*)getNext(league->teams))!=NULL)
+    {
+        displaySportists(team->sportists);
+    }
+    displaySportists(sportists);
+
 }
-        
+
+void displaySportist(listADT list)
+{
+    sportist_t* sp;
+    reset(sp);
+    while((sp=(sportist_t*)getNext(list))!=NULL)
+    {
+        printf("%s, %d points, %s\n", sp->name, sp-> score, sp->team->name);
+    }
+}
+
+void teamShow(team_t* team)
+{
+    displayTeam(team);
+    displaySportists(team->sportists, team->team->name);
+}
+
+void tradeShow(trade_t* trade)
+{
+    printf("The sportist %s from %s team has been offered in exchange of %s from %s team\n", 
+            trade->offer->name, trade->from->name, trade->change->name, trade->to->name);
+}
+
+void offerTrade(league_t* league, team_t* from, team_t* to, sportist_t* offer, sportist_t* change)
+{
+    if(elementBelongs(from->sportists, (void*)offer) && elementBelongs(to->sportists, (void*)change))
+    {
+        //GENERAR EL TRADE(mandar msjes y tal)
+        trade_t* trade = malloc(sizeof(trade_t*));
+        if(trade==NULL){
+            return 1;
+        }
+        trade->offer=offer;
+        trade->to=to;
+        trade->from=from;
+        trade->change=change;
+        insert(league->trades, trade);
+    }
+}
+
+void withdrawTrade(trade_t* trade, league_t* league)
+{
+    delete(league->trades, trade);
+    //mensajes
+}
+
+void spCopy(sporitst_t* target, sportist_t* source)
+{
+    target=malloc(sizeof(sportist_t*));
+    if(target==NULL){
+        //MUERE
+        return;
+    }
+    target->ID=source->ID;
+    strcpy(target->name, source->name);
+    target->score=source->score;
+}
+
+void acceptTrade(trade_t* trade, league_t* league)
+{
+    sportist_t* sp1, sp2;
+    spCopy(sp1, trade->offer);
+    spCopy(sp2,trade->change);
+    delete(trade->from->sportists, trade->offer);
+    delete(trade->to->sportists, trade->change);
+    insert(trade->from->sportists, sp2);
+    insert(trade->to->sportists, sp1);
+}
+
+void negociate(trade_t* oldTrade, sportist_t* newOffer, sportist_t* newChange, league_t* league)
+{
+    withdrawTrade(oldTrade, league);
+    offerTrade(league, oldTrade->to, oldTrade->from, newOffer, newChange);
+}
+
