@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include "league.h"
+#include "server.h"
 
 void saveUser(FILE* file,user_t* user);
 void saveLeague(league_t* league);
@@ -13,7 +14,9 @@ void loadUsers(ListADT users);
 static user_t* loadUser(FILE* userFile);
 void loadLeagues(league_t* league);
 static league_t* loadLeague(FILE* leagueFile);
-void loadSportists(ListADT sportists)
-void loadTeam(team_t* team){
+void loadSportists(ListADT sportists);
+void loadTeam(team_t* team);
+void loadTrades();
+static trade_t* loadTrade(FILE* tradeFile);
 
 #endif

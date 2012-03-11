@@ -16,8 +16,6 @@ void saveLeague(league_t* league){
 	fclose(leagueFile);
 }
 
-
-
 void saveTeam(team_t* team){
 	FILE* teamFile;
 	teamFile=fopen("./teams.txt","a");
@@ -34,7 +32,7 @@ void saveTeam(team_t* team){
 void saveTrade(trade_t* trade){
 	FILE* tradeFile;
 	tradeFile=fopen("./trades.txt","a");
-	fprintf(tradeFile, "%d %d %d %d\n", trade->from->ID, trade->to->ID, trade->offer->ID, trade->change->ID);
+	fprintf(tradeFile, "%d %d %d %d %d %d\n", trade->ID, trade->league->ID, trade->from->ID, trade->to->ID, trade->offer->ID, trade->change->ID);
 	fclose(tradeFile);
 }
 
@@ -108,15 +106,15 @@ void loadTeams(ListADT teams){
 static team_t* loadTeam(FILE* teamFile){
 
 	int userID, leagueID, sportistID;
-	user_t* user;
 	league_t* league;
+	user_t* user;
 	team=malloc(sizeof(team_t));
 	
 	/* Read data from file */
 	if(fscanf(teamFile, "%d %s %d %d %d", &team->ID, team->name, &userID, &leagueID, &team->points)){
 		/* Link user */
 		user=getUserByID(userID);
-		team->user=user;
+		trade->user=user;
 		insertElem(user->teams,team);
 		
 		/* Link league */
@@ -137,35 +135,33 @@ static team_t* loadTeam(FILE* teamFile){
 
 void loadTrades(){
 	FILE* tradeFile;
+	trade_t* trade;
 	teamFile=fopen("./teams.txt","r");
-	
+	while(trade=loadTrade(tradeFile));
 	fclose(teamFile);
 }
 
-static trade_t* loadTrade(team_t* team){
+static trade_t* loadTrade(FILE* tradeFile){
 	
-	int userID, leagueID, sportistID;
-	user_t* user;
+	int fromID, toID, offerID, changeID, leagueID;
 	league_t* league;
-	trade=malloc(sizeof(team_t));
+	trade=malloc(sizeof(trade_t));
 	
 	/* Read data from file */
 	
-	fscanf(teamFile, "%d %s %d %d %d", &team->ID, team->name, &userID, &leagueID, &team->points);
-	
-	/* Link user */
-	user=getUserByID(userID);
-	team->user=user;
-	insertElem(user->teams,team);
-	
-	/* Link league */
-	league=getLeagueByID(leagueID);
-	team->league=league;
-	insertElem(league->teams, team);
-	
-	/* Read sportists from file */
-	team->sportists=newList(sizeof(sportist_t),NULL);
-	while(fscanf(teamFile,"%d",&sportistID)){
-		insertElem(team->sportists, getSportistByID(sportistID));
+	if(fscanf(tradeFile, "%d %d %d %d %d %d", trade->ID, &leagueID, &fromID, &toID, &offerID, &changeID)){
+		/* Link Users */
+		trade->from=getUserByID(fromID);
+		trade->to=getUserByID(toID);
+		
+		/* Link Sportists */
+		trade->offer=loadSportistByID(offerID);
+		trade->change=loadSportistByID(changeID);
+		
+		/* Link League */
+		insertElem(getLeagueByID(leagueID)->trades,trade);
+		return trade;
 	}
+	free(trade);
+	return NULL;
 }
