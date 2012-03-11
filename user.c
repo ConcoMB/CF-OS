@@ -15,29 +15,31 @@ void list_leagues(user_t* user)
     }
 }
 
-/*void list_trades(user_t* user)
+void list_trades(user_t* user)
 {
-    if(user->leagues!=NULL)
-    {
-        reset(user->leagues);
-        while(user->leagues->current!=NULL)
+    if(user->teams!=NULL)
+    {   
+        team_t* team;
+        reset(user->teams);
+        while((team=(team_t*)getNext(user->teams))!=NULL)
         {
-            league_t league= getNext(user->leagues);
+            league_t* league=team->league;
             if(league->trades!=NULL)
-            {   
+            {
+                trade_t* trade;
                 reset(league->trades);
-                while(league->trades->current!=NULL){
-                
-                    trade_t trade = getNext(league->trades);
-                    if(involved(&trade, &user))
+                while((trade=(trade_t*)getNext(league->trades))!=NULL)
+                {
+                    if(involved(trade, user))
                     {
-                        printTrade(&trade);
+                        printTrade(trade);
                     }
                 }
             }
         }
     }
 }
+    
 
 int involved(trade_t* trade, user_t* user)
 {
