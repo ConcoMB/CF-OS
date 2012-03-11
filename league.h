@@ -29,8 +29,12 @@ typedef struct
     listADT sportists;
 }team_t;
     
-    
-typedef char sportist_t[30];
+typedef  struct
+{
+	int ID;
+	char name[30];
+	int score;
+}sportist_t;
     
 typedef struct 
 {
