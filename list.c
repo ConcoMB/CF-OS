@@ -7,7 +7,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "genlistADT.h"
+#include "list.h"
 
 
 
@@ -104,8 +104,8 @@ static int
 insertNode( listNode ** list, listElementT element, int (*f)(void *, void*))
 {
 
-	/* Inserto al final o delante del actual porque es mayor */
-	if( *list == NULL || (*f)((*list)->data, element) == 1 )
+	/* Inserto al final o delante del actual porque es mayor o igual*/
+	if( *list == NULL || (*f)((*list)->data, element) == 1 || (*f)((*list)->data, element) == 0)
 	{
 		listNode * auxi = malloc(sizeof( listNode ));
 		if (auxi == NULL)
@@ -116,10 +116,6 @@ insertNode( listNode ** list, listElementT element, int (*f)(void *, void*))
 		return 1;
 	}
 
-
-	/* Si no es vacia ni mayor verificar si es igual (no se insertan repetidos) */
-	if( (*f)((*list)->data, element) == 0 )
-		return 0;
 
 	/* El elemento actual es menor */
 	return insertNode( &((*list)->next), element, f);

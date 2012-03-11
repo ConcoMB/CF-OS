@@ -1,5 +1,6 @@
 #include "league.h"
-//#include "lista.h"
+#include "list.h"
+#include "cmp.h"
 #include <stdio.h>
 
 void list_leagues(user_t* user)
@@ -10,7 +11,7 @@ void list_leagues(user_t* user)
         reset(user->teams);
         while((team=(team_t*)getNext(user->teams))!=NULL)
         {
-            printf("Participating in: %s\n", team->league->leagueName);
+            printf("Participating in: %s\n", team->league->name);
         }
     }
 }
@@ -68,6 +69,33 @@ void list_team(user_t* user)
         }
     }
 }
-       
-            
+
+
+void createOrderedList(listADT list, league_t* league)
+{
+    team_t* team;
+    reset(league->teams);
+    while((team=(team_t*)getNext(league->teams))!=NULL)
+    {
+        insert(list, team);
+    }
+    return;
+}
+
+void displayLeague(listADT teams)
+{
+    team_t* team;
+    reset(teams);
+    while((team=(team_t*)getNext(teams))!=NULL)
+    {
+        printf("Team %s, from user %s  ->  %d points", team->name, team->user->name, team->points);
+    }
+}
+
+void leagueShow(league_t* league)
+{
+    listADT list = newList(cmpTeam);
+    createOrderedList(list, league);
+    displayLeague(list);
+}
         
