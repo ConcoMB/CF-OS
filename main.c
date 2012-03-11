@@ -1,6 +1,7 @@
 #include "list.h"
 #include "cmp.h"
 #include <stdio.h>
+#include <string.h>
 #include "league.h"
 
 int main()
@@ -22,6 +23,6 @@ int main()
     
     insert(list, &t3);
     
-    displayLeagues(list);
+    displayLeague(list);
     return 0;
 }

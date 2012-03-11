@@ -25,13 +25,13 @@ typedef struct listNode
 	struct listNode * next;
 }listNode;
 
-
+/*
 static void
 error(const char* s)
 {
 	fprintf(stderr, s);
 	exit(EXIT_FAILURE);
-}
+}*/
 
 
 listADT
@@ -109,7 +109,10 @@ insertNode( listNode ** list, listElementT element, int (*f)(void *, void*))
 	{
 		listNode * auxi = malloc(sizeof( listNode ));
 		if (auxi == NULL)
-			Error("No hay lugar para otro nodo\n");
+		{
+			//error("No hay lugar para otro nodo\n");
+		    return 1;	
+		}
 		auxi->next = *list;
 		auxi->data = element;
 		*list = auxi;

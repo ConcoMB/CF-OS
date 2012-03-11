@@ -16,6 +16,10 @@ void list_leagues(user_t* user)
     }
 }
 
+void printTrade(trade_t* trade)
+{
+    printf("The team %s has offered the team %s to exchange his %s to %s\n", trade->from->name, trade->to->name, (char*)trade->offer, (char*)trade->change);
+}
 void list_trades(user_t* user)
 {
     if(user->teams!=NULL)
@@ -49,12 +53,8 @@ int involved(trade_t* trade, user_t* user)
         return 1;
     }
     return 0;
-}*/
-
-void printTrade(trade_t* trade)
-{
-    printf("The team %s has offered the team %s to exchange his %s to %s\n", trade->from->teamName, trade->to->teamName, (char*)trade->offer, (char*)trade->change);
 }
+
                 
 
 void list_team(user_t* user)
@@ -65,7 +65,7 @@ void list_team(user_t* user)
         reset(user->teams);
         while((team=(team_t*)getNext(user->teams))!=NULL)
         {
-            printf("Leader of the team %s\n", team->teamName);
+            printf("Leader of the team %s\n", team->name);
         }
     }
 }
@@ -88,7 +88,7 @@ void displayLeague(listADT teams)
     reset(teams);
     while((team=(team_t*)getNext(teams))!=NULL)
     {
-        printf("Team %s, from user %s  ->  %d points", team->name, team->user->name, team->points);
+        printf("Team %s, from user %s  ->  %d points\n", team->name, team->user->name, team->points);
     }
 }
 
