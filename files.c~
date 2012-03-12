@@ -167,15 +167,12 @@ static trade_t* loadTrade(FILE* tradeFile){
 		trade->from=getUserByID(fromID);
 		trade->to=getUserByID(toID);
 		
-		/* Link League */
-		league=getLeagueByID(leagueID);
-		insertElem(league->trades,trade);
-		
 		/* Link Sportists */
-		trade->offer=loadSportistByID(league,offerID);
-		trade->change=loadSportistByID(league,changeID);
+		trade->offer=loadSportistByID(leagueID,offerID);
+		trade->change=loadSportistByID(leagueID,changeID);
 		
-		
+		/* Link League */
+		insertElem(getLeagueByID(leagueID)->trades,trade);
 		return trade;
 	}
 	free(trade);
@@ -190,9 +187,9 @@ void loadScores(league_t league){
 	scoreFile=fopen(filename,"r");
 	while(fscanf(scoreFile,"%d %d %d", &sportistID, &score, &teamID)){
 		sportist_t* sportist;
-		sportist=getSportistByID(league, sportistID);
+		sportist=getSportistByID(league->ID, sportistID);
 		sportist->score=score;
-		sportist->team=getTeamByID(league, teamID);
+		sportist->team=getTeamByID(league->ID, teamID);
 	}
 	fclose(scoreFile);
 }
