@@ -18,7 +18,6 @@ typedef struct
     listADT sportists;
     listADT teams;
     listADT trades;
-    char password[15];
 }league_t;
 
 

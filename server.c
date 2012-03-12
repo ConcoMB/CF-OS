@@ -183,6 +183,24 @@ void negociate(trade_t* oldTrade, sportist_t* newOffer, sportist_t* newChange, l
     offerTrade(league, oldTrade->to, oldTrade->from, newOffer, newChange);
 }
 
+int joinLeague(user_t* user, league_t* league, char* password, char* teamName)
+{
+    if(strcmp(password, league->password)!=0)
+    {
+	return 1;
+    }
+    team_t * newTeam = malloc(sizeof(team_t*));
+    newTeam->user=user;
+    newTeam->name=teamName;
+    newTeam->points=0;
+    newTeam->sportists=newList(cmpTeam);
+    
+    insert(league->teams, newTeam);
+
+void createLeague(char* password)
+{
+    
+}
 sportist_t getSportistByID(league_t league, int sportistID){
     sportist_t sportist;
     team_t team;
