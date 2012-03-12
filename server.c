@@ -1,6 +1,6 @@
 #include "server.h"
 
-void list_leagues(user_t* user)
+void listLeagues(user_t* user)
 {
     if(user->teams!=NULL)
     {
@@ -18,7 +18,17 @@ void printTrade(trade_t* trade)
     printf("The team %s has offered the team %s to exchange his %s to %s\n", 
     trade->from->name, trade->to->name, (char*)trade->offer, (char*)trade->change);
 }
-void list_trades(user_t* user)
+
+int involved(trade_t* trade, user_t* user)
+{
+    if(trade->from->user->ID==user->ID || trade->to->user->ID==user->ID)
+    {
+        return 1;
+    }
+    return 0;
+}
+
+void listTrades(user_t* user)
 {
     if(user->teams!=NULL)
     {   
@@ -44,18 +54,7 @@ void list_trades(user_t* user)
 }
     
 
-int involved(trade_t* trade, user_t* user)
-{
-    if(trade->from->user->ID==user->ID || trade->to->user->ID==user->ID)
-    {
-        return 1;
-    }
-    return 0;
-}
-
-                
-
-void list_team(user_t* user)
+void listTeam(user_t* user)
 {
     if(user->teams!=NULL)
     {
