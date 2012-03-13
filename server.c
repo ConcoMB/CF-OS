@@ -99,29 +99,27 @@ void leagueShow(league_t* league)
     listADT list = newList(cmpTeam);
     createOrderedList(list, league);
     displayTeams(list);
-    reset(league->teams);
-    while((team=(team_t*)getNext(league->teams))!=NULL)
-    {
-        displaySportists(team->sportists);
-    }
-    displaySportists(sportists);
+    displaySportists(sportists, NO_TEAM);
+    freeList(list);
 
 }
 
-void displaySportist(listADT list)
+void displaySportists(listADT list, int teamID)
 {
     sportist_t* sp;
-    reset(sp);
+    reset(list);
     while((sp=(sportist_t*)getNext(list))!=NULL)
     {
-        printf("%s, %d points, %s\n", sp->name, sp-> score, sp->team->name);
+        if(teamID==NO_TEAM || sp->team->ID==teamID){
+            printf("%s, %d points, %s\n", sp->name, sp-> score, sp->team->name);            
+        }
     }
 }
 
 void teamShow(team_t* team)
 {
     displayTeam(team);
-    displaySportists(team->sportists);
+    displaySportists(team->league->sportists, team->ID);
 }
 
 void tradeShow(trade_t* trade)
@@ -201,7 +199,7 @@ int joinLeague(user_t* user, league_t* league, char* teamName)
     {
 	   return 1;
     }
-    if(strlen(teamName)>=15)
+    if(strlen(teamName)>=NAME_LENGTH)
     {
         return 2;
     }
@@ -209,11 +207,29 @@ int joinLeague(user_t* user, league_t* league, char* teamName)
     newTeam->user=user;
     newTeam->name=teamName;
     newTeam->points=0;
-    newTeam->sportists=newList(cmpTeam);
     newTeam->ID=league->nextTeamID++;
     insert(league->teams, newTeam);
 }
 
+/* NO SE SI FUNCIONARIA  flataria definir leaguetype 1, usertype 2 ponele
+int nameOccupied(char* name, int type)
+{
+    listADT list;
+    if(type==LEAGUE_TYPE){
+        league_t* element;
+        list=leagues;
+    }else{
+        user_t* element;
+        list=users;
+    }
+    while((element=getNext(list))!=NULL)
+    {
+        if(strcmp(name, element->name)==0)
+            return 1;
+    }
+    return 0;
+}
+*/
 int leagueNameOccupied(char* name)
 {
     league_t* league;
@@ -232,7 +248,7 @@ int createLeague(char* name, char* password)
     {
         return 1;
     }
-    if(strlen(name)>=15 || strlen(password)>=15)
+    if(strlen(name)>=NAME_LENGTH || strlen(password)>=NAME_LENGTH)
     {
         return 2;
     }
@@ -265,7 +281,7 @@ int signUp(char* name, char* password)
     {
         return 1;
     }
-    if(strlen(name)>=15 || strlen(password)>=15)
+    if(strlen(name)>=NAME_LENGTH || strlen(password)>=NAME_LENGTH)
     {
         return 2;
     }
@@ -284,15 +300,6 @@ sportist_t getSportistByID(league_t league, int sportistID){
     while(sportist=getNext(league->sportists)){
       if(sportist->ID==sportistID){
 	       return sportist;
-      }
-    }
-    restart(league->teams);
-    while(team=getNext(league->teams)){
-      restart(team->sportists);
-      while(sportist=getNext(team->sportists)){
-	       if(sportist->ID==sportistID){
-	           return sportist;
-	       }
       }
     }
 }

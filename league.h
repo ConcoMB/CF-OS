@@ -2,12 +2,15 @@
 #define __LEAGUE__
 #include "list.h"
 
+#define NAME_LENGTH 15
+#define SPORT_NAME_L 30
+
 typedef struct
 {
     int ID;
     listADT teams;
-    char name[15];
-    char password[15];
+    char name[NAME_LENGTH];
+    char password[NAME_LENGTH];
 }user_t;
     
 
@@ -15,9 +18,9 @@ typedef struct
 {
 	int ID;
     int nextTeamID;
-    char name[15];
-    char password[15];
-    listADT sportists;
+    char name[NAME_LENGTH];
+    char password[NAME_LENGTH];
+    listADT sportists; 
     listADT teams;
     listADT trades;
 }league_t;
@@ -26,17 +29,16 @@ typedef struct
 typedef struct
 {
 	int ID;
-    char name[15];
+    char name[NAME_LENGTH];
     user_t* user; 
     league_t* league;
     int points;
-    listADT sportists;
 }team_t;
     
 typedef  struct
 {
 	int ID;
-	char name[30];
+	char name[SPORT_NAME_L];
 	int score;
 	team_t* team;
 }sportist_t;

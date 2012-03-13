@@ -7,7 +7,7 @@ int cmpTeam(void* team1, void* team2)
 
 int cmpSportist(void* sport1, void* sport2)
 {
-    return strcmp((sportist_t*)sport1->name, (sportist_t*)sport2->name);
+    return ((sportist_t*)sport1)->points - ((sportist_t*)sport2)->points;
 }
 
 int cmpTrades(vpid* trade1, void* trade2)

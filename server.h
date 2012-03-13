@@ -5,6 +5,8 @@
 #include "cmp.h"
 #include <stdio.h>
 
+#define NO_TEAM -1
+
 ListADT leagues;
 ListADT users;
 int nextUserID=0;
@@ -19,6 +21,9 @@ void offerTrade(league_t* league, team_t* from, team_t* to, sportist_t* offer, s
 void withdrawTrade(trade_t* trade, league_t* league);
 void acceptTrade(trade_t* trade, league_t* league);
 void negociate(trade_t* oldTrade, sportist_t* newOffer, sportist_t* newChange, league_t* league);
+int joinLeague(user_t* user, league_t* league, char* teamName);
+int createLeague(char* name, char* password);
+int signUp(char* name, char* password);
 
 
 
