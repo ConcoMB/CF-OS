@@ -14,6 +14,7 @@ typedef struct
 typedef struct
 {
 	int ID;
+    int nextTeamID;
     char name[15];
     listADT sportists;
     listADT teams;

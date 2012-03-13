@@ -7,6 +7,7 @@
 
 ListADT leagues;
 ListADT users;
+int nextUserID;
 
 void listLeagues(user_t* user);
 void listTrades(user_t* user);

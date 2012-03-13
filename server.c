@@ -182,40 +182,105 @@ void negociate(trade_t* oldTrade, sportist_t* newOffer, sportist_t* newChange, l
     offerTrade(league, oldTrade->to, oldTrade->from, newOffer, newChange);
 }
 
+int userAlreadyJoined(league_t* league, user_t* user)
+{
+    team_t* team;
+    reset(league->teams);
+    while((team=getNext(league->teams))!=NULL)
+    {
+        if(team->user->ID==user->ID)
+            return 1;
+    }
+    return 0;
+}
+
 int joinLeague(user_t* user, league_t* league, char* password, char* teamName)
 {
-    if(strcmp(password, league->password)!=0)
+    if(strcmp(password, league->password)!=0 || userAlreadyJoined(league, user))
     {
-	return 1;
+	   return 1;
     }
     team_t * newTeam = malloc(sizeof(team_t*));
     newTeam->user=user;
     newTeam->name=teamName;
     newTeam->points=0;
     newTeam->sportists=newList(cmpTeam);
-    
+    newTeam->ID=league->nextTeamID++;
     insert(league->teams, newTeam);
-
-void createLeague(char* password)
-{
-    
 }
+
+int leagueNameOccupied(char* name)
+{
+    league_t* league;
+    reset(leagues);
+    while((league=getNext(leagues))!=NULL)
+    {
+        if(strcmp(name, league->name)==0)
+            return 1;
+    }
+    return 0;
+}
+
+int createLeague(char* name, char* password)
+{
+    if(leagueNameOccupied(name))
+    {
+        return 1;
+    }
+    league_t newLeague=malloc(sizeof(league_t*));
+    newLeague->ID;
+    newLeague->nextTeamID=0;
+    strcpy(newLeague->name, name);
+    strcpy(newLeague->password,password);
+    newLeague->sportists=newList(cmpSportists);
+    newLeague->teams=newList(cmpTeam);
+    newList->trades=newList(cmpTrades);
+    return 0;
+}
+
+int userNameOccupied(char* name)
+{
+    user_t* user;
+    reset(users);
+    while((user=getNext(users))!=NULL)
+    {
+        if(strcmp(name, user->name)==0)
+            return 1;
+    }
+    return 0;
+}
+
+int signUp(char* name, char* password)
+{
+    if(userNameOccupied(name))
+    {
+        return 1;
+    }
+    user_t* newUser=malloc(sizeof(user_t*));
+    newUser->ID=nextUserID++;
+    newUser->teams=newList(cmpTeam);
+    strcpy(newUser->name, name)
+    strcpy(newUser->password, password)
+    //falta validar la longitud de los strringsss
+    return 0;
+}
+
 sportist_t getSportistByID(league_t league, int sportistID){
     sportist_t sportist;
     team_t team;
     restart(league->sportists);
     while(sportist=getNext(league->sportists)){
       if(sportist->ID==sportistID){
-	return sportist;
+	       return sportist;
       }
     }
     restart(league->teams);
     while(team=getNext(league->teams)){
       restart(team->sportists);
       while(sportist=getNext(team->sportists)){
-	if(sportist->ID==sportistID){
-	  return sportist;
-	}
+	       if(sportist->ID==sportistID){
+	           return sportist;
+	       }
       }
     }
 }
