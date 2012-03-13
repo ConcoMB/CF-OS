@@ -121,7 +121,7 @@ void displaySportist(listADT list)
 void teamShow(team_t* team)
 {
     displayTeam(team);
-    displaySportists(team->sportists, team->team->name);
+    displaySportists(team->sportists);
 }
 
 void tradeShow(trade_t* trade)
@@ -165,6 +165,7 @@ void spCopy(sporitst_t* target, sportist_t* source)
     target->score=source->score;
 }
 
+// POR AHI CONVIENE SACAR LA LISTA DE SPORTISTS Y PODER UNA SOLA REFERENCIA
 void acceptTrade(trade_t* trade, league_t* league)
 {
     sportist_t* sp1, sp2;
@@ -194,11 +195,15 @@ int userAlreadyJoined(league_t* league, user_t* user)
     return 0;
 }
 
-int joinLeague(user_t* user, league_t* league, char* password, char* teamName)
+int joinLeague(user_t* user, league_t* league, char* teamName)
 {
     if(strcmp(password, league->password)!=0 || userAlreadyJoined(league, user))
     {
 	   return 1;
+    }
+    if(strlen(teamName)>=15)
+    {
+        return 2;
     }
     team_t * newTeam = malloc(sizeof(team_t*));
     newTeam->user=user;
@@ -226,6 +231,10 @@ int createLeague(char* name, char* password)
     if(leagueNameOccupied(name))
     {
         return 1;
+    }
+    if(strlen(name)>=15 || strlen(password)>=15)
+    {
+        return 2;
     }
     league_t newLeague=malloc(sizeof(league_t*));
     newLeague->ID;
@@ -256,12 +265,15 @@ int signUp(char* name, char* password)
     {
         return 1;
     }
+    if(strlen(name)>=15 || strlen(password)>=15)
+    {
+        return 2;
+    }
     user_t* newUser=malloc(sizeof(user_t*));
     newUser->ID=nextUserID++;
     newUser->teams=newList(cmpTeam);
     strcpy(newUser->name, name)
     strcpy(newUser->password, password)
-    //falta validar la longitud de los strringsss
     return 0;
 }
 

@@ -6,8 +6,8 @@ typedef struct
 {
     int ID;
     listADT teams;
-    char name[10];
-    char password[10];
+    char name[15];
+    char password[15];
 }user_t;
     
 
@@ -16,17 +16,17 @@ typedef struct
 	int ID;
     int nextTeamID;
     char name[15];
+    char password[15];
     listADT sportists;
     listADT teams;
     listADT trades;
-    char password[15];
 }league_t;
 
 
 typedef struct
 {
 	int ID;
-    char name[20];
+    char name[15];
     user_t* user; 
     league_t* league;
     int points;
