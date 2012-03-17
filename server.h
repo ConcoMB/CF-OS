@@ -16,8 +16,8 @@
 listADT leagues;
 listADT users;
 listADT connected;
-int nextUserID=0;
-int nextClientID=1;
+extern int nextUserID;
+extern int nextClientID;
 
 void listLeagues(user_t* user);
 void listTrades(user_t* user);
@@ -33,10 +33,11 @@ int joinLeague(user_t* user, league_t* league, char* teamName);
 int createLeague(char* name, char* password);
 int signUp(char* name, char* password);
 int logIn(char* name, char* password);
+void displaySportists(listADT list, int teamID);
 
 typedef struct{
 	int ID;
-	uset_t* user;
+	user_t* user;
 }client_t;
 
 

@@ -99,9 +99,8 @@ void leagueShow(league_t* league)
     listADT list = newList(cmpTeam);
     createOrderedList(list, league);
     displayTeams(list);
-    displaySportists(sportists, NO_TEAM);
+    displaySportists(league->sportists, NO_TEAM);
     freeList(list);
-
 }
 
 void displaySportists(listADT list, int teamID)
@@ -128,7 +127,7 @@ void tradeShow(trade_t* trade)
             trade->offer->name, trade->from->name, trade->change->name, trade->to->name);
 }
 
-void offerTrade(league_t* league, team_t* from, team_t* to, sportist_t* offer, sportist_t* change)
+/*void offerTrade(league_t* league, team_t* from, team_t* to, sportist_t* offer, sportist_t* change)
 {
     if(elementBelongs(from->sportists, (void*)offer) && elementBelongs(to->sportists, (void*)change))
     {
@@ -143,7 +142,7 @@ void offerTrade(league_t* league, team_t* from, team_t* to, sportist_t* offer, s
         trade->change=change;
         insert(league->trades, trade);
     }
-}
+}*/
 
 void withdrawTrade(trade_t* trade, league_t* league)
 {
@@ -151,7 +150,7 @@ void withdrawTrade(trade_t* trade, league_t* league)
     //mensajes
 }
 
-void spCopy(sporitst_t* target, sportist_t* source)
+/*void spCopy(sporitst_t* target, sportist_t* source)
 {
     target=malloc(sizeof(sportist_t*));
     if(target==NULL){
@@ -161,9 +160,9 @@ void spCopy(sporitst_t* target, sportist_t* source)
     target->ID=source->ID;
     strcpy(target->name, source->name);
     target->score=source->score;
-}
+}*/
 
-// POR AHI CONVIENE SACAR LA LISTA DE SPORTISTS Y PODER UNA SOLA REFERENCIA
+/*// POR AHI CONVIENE SACAR LA LISTA DE SPORTISTS Y PODER UNA SOLA REFERENCIA
 void acceptTrade(trade_t* trade, league_t* league)
 {
     sportist_t* sp1, sp2;
@@ -173,13 +172,13 @@ void acceptTrade(trade_t* trade, league_t* league)
     delete(trade->to->sportists, trade->change);
     insert(trade->from->sportists, sp2);
     insert(trade->to->sportists, sp1);
-}
+}*/
 
-void negociate(trade_t* oldTrade, sportist_t* newOffer, sportist_t* newChange, league_t* league)
+/*void negociate(trade_t* oldTrade, sportist_t* newOffer, sportist_t* newChange, league_t* league)
 {
     withdrawTrade(oldTrade, league);
     offerTrade(league, oldTrade->to, oldTrade->from, newOffer, newChange);
-}
+}*/
 
 int userAlreadyJoined(league_t* league, user_t* user)
 {
@@ -193,7 +192,7 @@ int userAlreadyJoined(league_t* league, user_t* user)
     return 0;
 }
 
-int joinLeague(user_t* user, league_t* league, char* teamName)
+/*int joinLeague(user_t* user, league_t* league, char* teamName)
 {
     if(strcmp(password, league->password)!=0 || userAlreadyJoined(league, user))
     {
@@ -209,7 +208,7 @@ int joinLeague(user_t* user, league_t* league, char* teamName)
     newTeam->points=0;
     newTeam->ID=league->nextTeamID++;
     insert(league->teams, newTeam);
-}
+}*/
 
 /* NO SE SI FUNCIONARIA  flataria definir leaguetype 1, usertype 2 ponele
 int nameOccupied(char* name, int type)
@@ -242,7 +241,7 @@ int leagueNameOccupied(char* name)
     return 0;
 }
 
-int createLeague(char* name, char* password)
+/*int createLeague(char* name, char* password)
 {
     if(leagueNameOccupied(name))
     {
@@ -261,7 +260,7 @@ int createLeague(char* name, char* password)
     newLeague->teams=newList(cmpTeam);
     newList->trades=newList(cmpTrades);
     return 0;
-}
+}*/
 
 int userNameOccupied(char* name)
 {
@@ -275,7 +274,7 @@ int userNameOccupied(char* name)
     return 0;
 }
 
-int signUp(char* name, char* password)
+/*int signUp(char* name, char* password)
 {
     if(userNameOccupied(name))
     {
@@ -292,12 +291,12 @@ int signUp(char* name, char* password)
     strcpy(newUser->password, password);
     insert(users, newUser);
     return 0;
-}
+}*/
 
-int logIn(char* name, char* password)
+/*int logIn(char* name, char* password)
 {
     user_t user;
-    restart(users);
+    reset(users);
     while((user=getNext(useres))!=NULL)
     {
         if(strcmp(user->name, name)==0)
@@ -314,22 +313,22 @@ int logIn(char* name, char* password)
         }
     }
     return USER_NOT_FOUND;
-}
+}*/
 
-sportist_t* getSportistByID(league_t league, int sportistID){
-    sportist_t sportist;
+sportist_t* getSportistByID(league_t* league, int sportistID){
+    sportist_t* sportist;
     team_t team;
-    restart(league->sportists);
-    while(sportist=getNext(league->sportists)){
+    reset(league->sportists);
+    while(sportist=(sportist_t*)getNext(league->sportists)){
       if(sportist->ID==sportistID){
 	       return sportist;
       }
     }
 }
 
-team_t* getTeamByID(league_t league, int teamID){
-    team_t team;
-    restart(league->teams);
+team_t* getTeamByID(league_t* league, int teamID){
+    team_t* team;
+    reset(league->teams);
     while(team=getNext(league->teams)){
       if(team->ID==teamID){
 	return team;
@@ -338,8 +337,8 @@ team_t* getTeamByID(league_t league, int teamID){
 }
 
 user_t* getUserByID(int userID){
-    user_t user;
-    restart(users);
+    user_t* user;
+    reset(users);
     while(user=getNext(users)){
       if(user->ID==userID){
 	return user;
@@ -348,8 +347,8 @@ user_t* getUserByID(int userID){
 }
 
 league_t* getLeagueByID(int leagueID){
-    league_t league;
-    restart(leagues);
+    league_t* league;
+    reset(leagues);
     while(league=getNext(leagues)){
       if(league->ID==leagueID){
 	return league;
