@@ -7,8 +7,8 @@
 
 #define NO_TEAM -1
 
-ListADT leagues;
-ListADT users;
+listADT leagues;
+listADT users;
 int nextUserID=0;
 
 void listLeagues(user_t* user);

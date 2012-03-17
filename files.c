@@ -9,11 +9,11 @@ void saveAll(){
 
 void saveUsers(){
     FILE* userFile;
-    user_t user;
+    user_t* user;
     restart(users);
     userFile=fopen("./users.txt","w");
-    while(user=getNext(users)){
-	saveUser(user);
+    while(user=(user_t*)getNext(users)){
+		saveUser(userFile, user);
     }
     fclose(userFile);
 }
@@ -23,33 +23,33 @@ static void saveUser(FILE* userFile, user_t* user){
 }
 
 void saveLeagues(){
-    FILE* leagueFile, teamFile, sportistFile, tradeFile;
-    league_t league;
-    team_t team;
-    trade_t trade;
-    sportist_t sportist;
+    FILE* leagueFile, *teamFile, *sportistFile, *tradeFile;
+    league_t* league;
+    team_t* team;
+    trade_t* trade;
+    sportist_t* sportist;
     char filename[20];
-    sprintf(sportistFile,"%d_scores.txt",league->ID);
+    sprintf(filename,"%d_scores.txt",league->ID);
     restart(leagues);
     leagueFile=fopen("./leagues.txt","w");
     teamFile=fopen("./teams.txt","w");
     sportistFile=fopen("./sportist.txt","w");
     tradeFile=fopen("./trades.txt","w");
     sportistFile=fopen(filename,"w");
-    while(league=getNext(leagues)){
-	saveLeague(league);
-	restart(league->trades);
-	while(trade=getNext(league->trade)){
-	    saveTrade(tradeFile, trade);
-	}
-	restart(league->teams);
-	while(team=getNext(league->teams)){
-	    saveTeam(teamFile, sportistFile, team);
-	}
-	restart(league->sportist);
-	while(sportist=getNext(league->sportist)){
-	    saveSportist(sportistFile, league, sportist, NULL);
-	}
+    while(league=(league_t*)getNext(leagues)){
+		saveLeague(leagueFile,league);
+		restart(league->trades);
+		while(trade=(trade_t*)getNext(league->trades)){
+			saveTrade(tradeFile, trade);
+		}
+		restart(league->teams);
+		while(team=(team_t*)getNext(league->teams)){
+			saveTeam(teamFile, team);
+		}
+		restart(league->sportists);
+		while(sportist=(sportist_t*)getNext(league->sportists)){
+			saveSportist(sportistFile, sportist);
+		}
     }
     fclose(leagueFile);
     fclose(teamFile);
@@ -62,30 +62,29 @@ static void saveLeague(FILE* leagueFile, league_t* league){
 	fprintf(leagueFile, "%d %s\n", league->ID, league->name);
 }
 
-void saveTeam(FILE* teamFile, FILE* sportistFile, team_t* team){
-	fprintf(teamFile, "%d %s %d %d %d", team->ID, team->name, team->user->ID, team->league->ID ,team->points);
-	sportist_t* sportist;
-	reset(team->sportists);
-	while((sportist=(sportist_t*)getNext(team->sportists))!=NULL){
-		saveSportist(sportistFile, team->league, sportist, team);
-	}
-	fprintf(teamFile,"\n");
+void saveTeam(FILE* teamFile, team_t* team){
+	fprintf(teamFile, "%d %s %d %d %d\n", team->ID, team->name, team->user->ID, team->league->ID ,team->points);
 }
 
-void saveTrade(trade_t* trade){
+void saveTrade(FILE* tradeFile, trade_t* trade){
 	fprintf(tradeFile, "%d %d %d %d %d %d\n", trade->ID, trade->league->ID, trade->from->ID, trade->to->ID, trade->offer->ID, trade->change->ID);
 }
 
-void saveSportist(FILE* sportistFile, league_t league, sportist_t sportist, team_t team){
-	fprintf(scoreFile, "%d %d %d", sportist->ID, sportist->score, team->ID);
+void saveSportist(FILE* sportistFile, sportist_t* sportist){
+	fprintf(sportistFile, "%d %d %d", sportist->ID, sportist->score, sportist->team->ID);
 }
 
 /* LOAD */
 
-void loadUsers(ListADT users){
+void loadAll(){
+	loadUsers(users);
+	loadLeagues(leagues);
+}
+
+void loadUsers(listADT users){
 	FILE* userFile;
 	user_t* user;
-	users=newList(sizeof(user*),NULL);
+	users=newList(NULL);
 	userFile=fopen("./users.txt","r");
 	while(user=loadUser(userFile)){
 		insertElem(users,user);
@@ -103,11 +102,11 @@ static user_t* loadUser(FILE* userFile){
 	return NULL;
 }
 
-void loadLeagues(ListADT leagues){
+void loadLeagues(listADT leagues){
 	FILE* leagueFile;
-	league_t league;
+	league_t* league;
 	leagueFile=fopen("./leagues.txt","r");
-	leagues=newList(sizeof(leagues*),NULL);
+	leagues=newList(NULL);
 	while(league=loadLeague(leagueFile)){
 		insertElem(leagues,league);
 	}
@@ -118,16 +117,19 @@ static league_t* loadLeague(FILE* leagueFile){
 	league_t* league;
 	league=malloc(sizeof(league_t));
 	if(fscanf(leagueFile, "%d %s\n", &league->ID, league->name)){
-		league->sportists=newList(sizeof(sportist_t*), NULL);
-		league->teams=newList(sizeof(team_t*), NULL);
-		league->trades=newList(sizeof(trade_t*), NULL);
+		league->sportists=newList(NULL);
+		league->teams=newList(NULL);
+		league->trades=newList(NULL);
+		loadTeams(league);
+		loadTrades(league);
+		loadSportists(league);
 		return league;
 	}
 	free(league);
 	return NULL;
 }
 
-void loadNewSportists(ListADT sportists){
+/*void loadNewSportists(listADT sportists){
 	FILE* sportistFile;
 	sportist_t* sportist;
 	int sportistID;
@@ -140,75 +142,72 @@ void loadNewSportists(ListADT sportists){
 	}
 	
 	fclose(sportistFile);
-}
+}*/
 
-void loadTeams(ListADT teams){
+void loadTeams(league_t* league){
 	FILE* teamFile;
 	team_t* team;
-	teamFile=fopen("./teams.txt","r");
-	while(team=loadTeam(teamFile));
+	char filename[11];
+	sprintf(filename,"%d_teams.txt", league->ID);
+	teamFile=fopen(filename, "r");
+	while(team=loadTeam(teamFile, league)){
+		insertElem(league->teams, team);
+	}
 	fclose(teamFile);
 }
 
-static team_t* loadTeam(FILE* teamFile){
+static team_t* loadTeam(FILE* teamFile, league_t* league){
 
 	int userID, leagueID, sportistID;
-	league_t* league;
 	user_t* user;
+	team_t* team;
 	team=malloc(sizeof(team_t));
 	
 	/* Read data from file */
-	if(fscanf(teamFile, "%d %s %d %d %d", &team->ID, team->name, &userID, &leagueID, &team->points)){
+	if(fscanf(teamFile, "%d %s %d %d", &team->ID, team->name, &userID, &team->points)){
 		/* Link user */
 		user=getUserByID(userID);
 		trade->user=user;
 		insertElem(user->teams,team);
 		
 		/* Link league */
-		league=getLeagueByID(leagueID);
 		team->league=league;
-		insertElem(league->teams, team);
-		
-		/* Read sportists from file */
-		team->sportists=newList(sizeof(sportist_t*),NULL);
-		while(fscanf(teamFile,"%d",&sportistID)){
-			insertElem(team->sportists, getSportistByID(sportistID));
-		}
 		return team;
 	}
 	free(team);
 	return NULL;	
 }
 
-void loadTrades(){
+void loadTrades(league_t* league){
 	FILE* tradeFile;
 	trade_t* trade;
-	teamFile=fopen("./teams.txt","r");
-	while(trade=loadTrade(tradeFile));
+	char filename[11];
+	sprintf(filename,"%d_trades.txt", league->ID);
+	teamFile=fopen(filename, "r");
+	while(trade=loadTrade(tradeFile)){
+		insertElem(league->trades, trade);
+	}
 	fclose(teamFile);
 }
 
-static trade_t* loadTrade(FILE* tradeFile){
+static trade_t* loadTrade(FILE* tradeFile, league_t* league){
 	
 	int fromID, toID, offerID, changeID, leagueID;
-	league_t* league;
 	trade=malloc(sizeof(trade_t));
 	
 	/* Read data from file */
 	
-	if(fscanf(tradeFile, "%d %d %d %d %d %d", trade->ID, &leagueID, &fromID, &toID, &offerID, &changeID)){
+	if(fscanf(tradeFile, "%d %d %d %d %d", trade->ID, &fromID, &toID, &offerID, &changeID)){
 		/* Link Users */
 		trade->from=getUserByID(fromID);
 		trade->to=getUserByID(toID);
 		
 		/* Link League */
-		league=getLeagueByID(leagueID);
-		insertElem(league->trades,trade);
+		trade->league=league;
 		
 		/* Link Sportists */
 		trade->offer=loadSportistByID(league,offerID);
 		trade->change=loadSportistByID(league,changeID);
-		
 		
 		return trade;
 	}
@@ -216,17 +215,26 @@ static trade_t* loadTrade(FILE* tradeFile){
 	return NULL;
 }
 
-void loadScores(league_t league){
+void loadSportists(league_t* league){
 	FILE* scoreFile; 
-	char filename[20];
-	int sportistID, score, teamID;
+	char filename[11];
+	sportist_t* sportist;
 	sprintf(filename,"%d_scores.txt",league->ID);
-	scoreFile=fopen(filename,"r");
-	while(fscanf(scoreFile,"%d %d %d", &sportistID, &score, &teamID)){
-		sportist_t* sportist;
-		sportist=getSportistByID(league, sportistID);
-		sportist->score=score;
-		sportist->team=getTeamByID(league, teamID);
+	sportistFile=fopen(filename,"r");
+	while(sportist=loadSportist(sportistFile, league)){
+		insertElem(league->sportists, sportist);
 	}
 	fclose(scoreFile);
+}
+
+void loadSportist(FILE* sportistFile, league_t* league){
+	int sportistID, score, teamID;
+	char
+	sportist_t* sportist;
+	sportist=malloc(sizeof(sportist_t));
+	if(fscanf(sportistFile,"%d %d %d %s", &sportist->ID, &sportist->score, &sportist->teamID, sportist->name)){
+		return sportist;
+	}
+	free(sportist);
+	return NULL;
 }
