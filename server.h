@@ -11,11 +11,13 @@
 #define SIGNUP 2
 #define USER_NAME_OCCUPIED 3
 #define NAME_OR_PASSWORD_TOO_LARGE 4
+#define DEFAULTID 0
 
 ListADT leagues;
 ListADT users;
 listADT connected;
 int nextUserID=0;
+int nextClientID=1;
 
 void listLeagues(user_t* user);
 void listTrades(user_t* user);
@@ -32,7 +34,10 @@ int createLeague(char* name, char* password);
 int signUp(char* name, char* password);
 int logIn(char* name, char* password);
 
-
+typedef struct{
+	int ID;
+	uset_t* user;
+}client_t;
 
 
 #endif

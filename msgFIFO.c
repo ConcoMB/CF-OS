@@ -1,3 +1,9 @@
-sendMsg
+void sendMsg(int id, void* data, int size)
+{
 
-rcvMsg
+}
+
+void rcvMsg(int id, void* data, size)
+{
+	
+}
