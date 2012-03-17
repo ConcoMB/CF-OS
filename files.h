@@ -30,7 +30,7 @@ static team_t* loadTeam(FILE* teamFile, league_t* league);
 void loadTrades(league_t* league);
 static trade_t* loadTrade(FILE* tradeFile, league_t* league);
 void loadSportists(league_t* league);
-void loadSportist(FILE* sportistFile, league_t* league);
+sportist_t* loadSportist(FILE* sportistFile, league_t* league);
 
 #endif
 

@@ -9,6 +9,8 @@
 #include "server.h"
 #include "league.h"
 
+int nextClientID=1;
+int nextUserID=0;
 
 int main()
 {
@@ -33,7 +35,3 @@ void * listenClient()
 		}
 	}
 }
-
-		
-
-	
