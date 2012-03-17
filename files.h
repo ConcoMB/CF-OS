@@ -33,3 +33,5 @@ void loadSportists(league_t* league);
 void loadSportist(FILE* sportistFile, league_t* league);
 
 #endif
+
+//HACER UN LOADALL

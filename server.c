@@ -279,21 +279,44 @@ int signUp(char* name, char* password)
 {
     if(userNameOccupied(name))
     {
-        return 1;
+        return USER_NAME_OCCUPIED;
     }
     if(strlen(name)>=NAME_LENGTH || strlen(password)>=NAME_LENGTH)
     {
-        return 2;
+        return NAME_OR_PASSWORD_TOO_LARGE;
     }
     user_t* newUser=malloc(sizeof(user_t*));
     newUser->ID=nextUserID++;
     newUser->teams=newList(cmpTeam);
-    strcpy(newUser->name, name)
-    strcpy(newUser->password, password)
+    strcpy(newUser->name, name);
+    strcpy(newUser->password, password);
+    insert(users, newUser);
     return 0;
 }
 
-sportist_t getSportistByID(league_t league, int sportistID){
+int logIn(char* name, char* password)
+{
+    user_t user;
+    restart(users);
+    while((user=getNext(useres))!=NULL)
+    {
+        if(strcmp(user->name, name)==0)
+        {
+            if(strcmp(user->password, password)==0)
+            {
+                insert(connected, user);
+                return 0;
+            }
+            else
+            {
+                return INCORRECT_PASSWORD;
+            }
+        }
+    }
+    return USER_NOT_FOUND;
+}
+
+sportist_t* getSportistByID(league_t league, int sportistID){
     sportist_t sportist;
     team_t team;
     restart(league->sportists);
@@ -304,7 +327,7 @@ sportist_t getSportistByID(league_t league, int sportistID){
     }
 }
 
-team_t getTeamByID(league_t league, int teamID){
+team_t* getTeamByID(league_t league, int teamID){
     team_t team;
     restart(league->teams);
     while(team=getNext(league->teams)){
@@ -314,7 +337,7 @@ team_t getTeamByID(league_t league, int teamID){
     }
 }
 
-user_t getUserByID(int userID){
+user_t* getUserByID(int userID){
     user_t user;
     restart(users);
     while(user=getNext(users)){
@@ -324,7 +347,7 @@ user_t getUserByID(int userID){
     }
 }
 
-league_t getLeagueByID(int leagueID){
+league_t* getLeagueByID(int leagueID){
     league_t league;
     restart(leagues);
     while(league=getNext(leagues)){
