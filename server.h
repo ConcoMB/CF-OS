@@ -13,8 +13,8 @@
 #define NAME_OR_PASSWORD_TOO_LARGE 4
 #define DEFAULTID 0
 
-ListADT leagues;
-ListADT users;
+listADT leagues;
+listADT users;
 listADT connected;
 int nextUserID=0;
 int nextClientID=1;

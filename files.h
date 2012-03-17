@@ -2,27 +2,35 @@
 #define __FILES__
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "league.h"
 #include "server.h"
 
 void saveAll();
-void saveUsers();
-void saveLeagues();
-void saveUser(FILE* file,user_t* user);
-void saveLeague(File* leagueFile, league_t* league);
-void saveTeam(FILE* teamFile, FILE* sportistFile, team_t* team);
-void saveTrade(FILE* tradeFile, trade_t* trade);
-void saveSportist(FILE* sportistFile, league_t league, sportist_t sportist, team_t team);
 
-void loadUsers(ListADT users);
+void saveUsers();
+
+static void saveUser(FILE* userFile, user_t* user);
+void saveLeagues();
+static void saveLeague(FILE* leagueFile, league_t* league);
+void saveTeam(FILE* teamFile, team_t* team);
+void saveTrade(FILE* tradeFile, trade_t* trade);
+void saveSportist(FILE* sportistFile, sportist_t* sportist);
+
+/* LOAD */
+
+void loadAll();
+void loadUsers(listADT users);
 static user_t* loadUser(FILE* userFile);
-void loadLeagues(league_t* league);
+void loadLeagues(listADT leagues);
 static league_t* loadLeague(FILE* leagueFile);
-void loadNewSportists(ListADT sportists);
-void loadTeam(team_t* team);
-void loadTrades();
-static trade_t* loadTrade(FILE* tradeFile);
-void loadSportists(league_t league);
+/*void loadNewSportists(listADT sportists);*/
+void loadTeams(league_t* league);
+static team_t* loadTeam(FILE* teamFile, league_t* league);
+void loadTrades(league_t* league);
+static trade_t* loadTrade(FILE* tradeFile, league_t* league);
+void loadSportists(league_t* league);
+void loadSportist(FILE* sportistFile, league_t* league);
 
 #endif
 
