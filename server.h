@@ -12,6 +12,7 @@
 #define USER_NAME_OCCUPIED 3
 #define NAME_OR_PASSWORD_TOO_LARGE 4
 #define DEFAULTID 0
+#define NEWCLIENT 5
 
 listADT leagues;
 listADT users;
@@ -36,7 +37,7 @@ int logIn(char* name, char* password);
 
 typedef struct{
 	int ID;
-	uset_t* user;
+	user_t* user;
 }client_t;
 
 
