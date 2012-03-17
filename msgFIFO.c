@@ -1,4 +1,4 @@
-void sendMsg(int id, void* data, int size)
+void sndMsg(int id, void* data, int size)
 {
 	char fifo[10];
 	int fd;

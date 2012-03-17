@@ -16,7 +16,7 @@
 
 listADT leagues;
 listADT users;
-listADT connected;
+listADT clients;
 int nextUserID=0;
 int nextClientID=1;
 

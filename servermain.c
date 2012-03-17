@@ -12,8 +12,8 @@
 
 int main()
 {
-	pthread_t thread;
-
+	pthread_t clThread;
+	pthread_create(&clThread, NULL, listenClient, NULL);
 
 	return 0;
 }
@@ -26,7 +26,7 @@ void * listenClient()
 		rcvMsg(DEFAULTID, (void*)&msg, sizeof(int));
 		if(mgs==NEWCLIENT)
 		{
-			if(fork()==0)
+			if(fork())
 			{
 				exec("./clientAttendant");
 			}
