@@ -25,3 +25,5 @@ static trade_t* loadTrade(FILE* tradeFile);
 void loadSportists(league_t league);
 
 #endif
+
+//HACER UN LOADALL
