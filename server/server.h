@@ -3,21 +3,16 @@
 #include "league.h"
 #include "list.h"
 #include "cmp.h"
+#include "../msg.h"
 #include <stdio.h>
-#define INCORRECT_PASSWORD 1
-#define USER_NOT_FOUND 2
-#define NO_TEAM -1
-#define LOGIN 1
-#define SIGNUP 2
-#define USER_NAME_OCCUPIED 3
-#define NAME_OR_PASSWORD_TOO_LARGE 4
-#define DEFAULTID 0
-#define NEWCLIENT 5
 
-listADT leagues;
-listADT users;
-listADT clients;
-listADT connected;
+#define NO_TEAM -1
+
+
+extern listADT leagues;
+extern listADT users;
+extern listADT clients;
+extern listADT connected;
 extern int nextUserID;
 extern int nextClientID;
 
@@ -37,10 +32,7 @@ int signUp(char* name, char* password);
 int logIn(char* name, char* password);
 void displaySportists(listADT list, int teamID);
 
-typedef struct{
-	int ID;
-	user_t* user;
-}client_t;
+
 
 
 #endif

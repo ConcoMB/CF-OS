@@ -1,5 +1,12 @@
 #include "server.h"
 
+int nextClientID=1;
+int nextUserID=0;
+listADT leagues;
+listADT users;
+listADT clients;
+listADT connected;
+
 void listLeagues(user_t* user)
 {
     if(user->teams!=NULL)
@@ -274,7 +281,7 @@ int userNameOccupied(char* name)
     return 0;
 }
 
-/*int signUp(char* name, char* password)
+int signUp(char* name, char* password)
 {
     if(userNameOccupied(name))
     {
@@ -291,13 +298,13 @@ int userNameOccupied(char* name)
     strcpy(newUser->password, password);
     insert(users, newUser);
     return 0;
-}*/
+}
 
-/*int logIn(char* name, char* password)
+int logIn(char* name, char* password)
 {
-    user_t user;
+    user_t* user;
     reset(users);
-    while((user=getNext(useres))!=NULL)
+    while((user=getNext(users))!=NULL)
     {
         if(strcmp(user->name, name)==0)
         {
@@ -313,7 +320,7 @@ int userNameOccupied(char* name)
         }
     }
     return USER_NOT_FOUND;
-}*/
+}
 
 sportist_t* getSportistByID(league_t* league, int sportistID){
     sportist_t* sportist;

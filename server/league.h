@@ -1,8 +1,8 @@
 #ifndef __LEAGUE__
 #define __LEAGUE__
 #include "list.h"
+#include "../common.h"
 
-#define NAME_LENGTH 15
 #define SPORT_NAME_L 30
 
 typedef struct
@@ -25,6 +25,10 @@ typedef struct
     listADT trades;
 }league_t;
 
+typedef struct{
+    int ID;
+    user_t* user;
+}client_t;
 
 typedef struct
 {

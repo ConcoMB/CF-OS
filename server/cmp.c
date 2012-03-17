@@ -24,3 +24,8 @@ int cmpLeague(void* league1, void* league2)
 {
 	return ((league_t*)league1)->ID - ((league_t*)league2)->ID;
 }
+
+int cmpClient(void* client1, void* client2)
+{
+	return ((client_t*)client1)->ID - ((client_t*)client2)->ID;
+}

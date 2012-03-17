@@ -13,4 +13,6 @@ int cmpUser(void* user1, void* user2);
 
 int cmpLeague(void* league1, void* league2);
 
+int cmpClient(void* client1, void* client2);
+
 #endif
