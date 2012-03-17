@@ -12,6 +12,7 @@
 #define USER_NAME_OCCUPIED 3
 #define NAME_OR_PASSWORD_TOO_LARGE 4
 #define DEFAULTID 0
+#define NEWCLIENT 5
 
 listADT leagues;
 listADT users;

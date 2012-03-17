@@ -17,12 +17,12 @@ int main()
     {
         fd=open("./pruebafifo", O_WRONLY);
         aux=12;
-        write(fd, aux, sizeof(int));
+        write(fd, (void*)&aux, sizeof(int));
     }
     else
     {
         fd=open("./pruebafifo", O_RDONLY);
-        read(fd, otro, sizeof(int));
+        read(fd, (void*)&otro, sizeof(int));
         printf("%d\n", otro);
         exit(0);
     }

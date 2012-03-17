@@ -26,29 +26,12 @@ void * listenClient()
 	{
 		int msg;
 		rcvMsg(DEFAULTID, (void*)&msg, sizeof(int));
-		
-
-		int type;
-		char name[NAME_LENGTH], password[NAME_LENGTH];
-
-		rcvMsg(id,(void*)&type, sizeof(int));
-		rcvMsg(id, (void*)name, NAME_LENGTH);
-		rcvMsg(id, (void*)password, NAME_LENGTH);
-		if(type==LOGIN)
+		if(mgs==NEWCLIENT)
 		{
-			if(logIn(name,password)!=0)
+			if(fork()==0)
 			{
-				sendMsg(id, (void*)&aux, sizeof(int));
+				exec("./clientAttendant");
 			}
 		}
-		else if(type==SIGNUP)
-		{
-			if(signUp(name, password)!=0)
-			{
-				sendMsg(id, (void*)&aux, sizeof(int));
-			}
-			logIn(name, password);
-		}
-
 	}
 }
