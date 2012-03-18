@@ -83,7 +83,7 @@ void loadAll(){
 void loadUsers(listADT users){
 	FILE* userFile;
 	user_t* user;
-	users=newList(NULL);
+	users=newList(cmpUser);
 	userFile=fopen("./users.txt","r");
 	while(user=loadUser(userFile)){
 		insert(users,user);
@@ -105,7 +105,7 @@ void loadLeagues(listADT leagues){
 	FILE* leagueFile;
 	league_t* league;
 	leagueFile=fopen("./leagues.txt","r");
-	leagues=newList(NULL);
+	leagues=newList(cmpLeague);
 	while(league=loadLeague(leagueFile)){
 		insert(leagues,league);
 	}
@@ -116,9 +116,9 @@ static league_t* loadLeague(FILE* leagueFile){
 	league_t* league;
 	league=malloc(sizeof(league_t));
 	if(fscanf(leagueFile, "%d %s %s\n", &league->ID, league->password, league->name)){
-		league->sportists=newList(NULL);
-		league->teams=newList(NULL);
-		league->trades=newList(NULL);
+		league->sportists=newList(cmpSportist);
+		league->teams=newList(cmpTeam);
+		league->trades=newList(cmpTrade);
 		loadTeams(league);
 		loadTrades(league);
 		loadSportists(league);
