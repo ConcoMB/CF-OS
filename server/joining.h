@@ -1,0 +1,19 @@
+#ifndef __JOIN__
+#define __JOIN__
+
+#include "league.h"
+#include "../msg.h"
+#include <string.h>
+#include "list.h"
+
+int signUp(char* name, char* password);
+int logIn(char* name, char* password);
+int joinLeague(user_t* user, league_t* league, char* teamName);
+int createLeague(char* name, char* password);
+
+static int userAlreadyJoined(league_t* league, user_t* user);
+static int userNameOccupied(char* name);
+static int leagueNameOccupied(char* name);
+
+
+#endif

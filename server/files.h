@@ -4,7 +4,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "league.h"
-#include "server.h"
+#include "list.h"
+#include "getbyid.h"
+#include "cmp.h"
 
 void saveAll();
 

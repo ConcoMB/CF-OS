@@ -12,10 +12,11 @@
 #define USER_NOT_FOUND 2
 #define LOGIN 1
 #define SIGNUP 2
-#define USER_NAME_OCCUPIED 3
+#define NAME_OCCUPIED 3
 #define NAME_OR_PASSWORD_TOO_LARGE 4
 #define DEFAULTID 0
 #define NEWCLIENT 5
+#define USER_ALREADY_JOINED 12
 
 void sndMsg(int id, void* data, int size);
 void rcvMsg(int id, void* data, int size);

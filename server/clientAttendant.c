@@ -6,7 +6,7 @@
 #include <fcntl.h>
 #include "list.h"
 #include <pthread.h>
-#include "server.h"
+#include "joining.h"
 #include "league.h"
 
 int main(int argc, char** argv)

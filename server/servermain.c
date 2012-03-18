@@ -6,7 +6,7 @@
 #include <fcntl.h>
 #include "list.h"
 #include <pthread.h>
-#include "server.h"
+#include "../msg.h"
 #include "league.h"
 #include <unistd.h>
 
