@@ -9,10 +9,18 @@
 #include "../msg.h"
 #include "league.h"
 #include <unistd.h>
+#include "externvars.h"
+#include "cmp.h"
 
 void * listenClient();
-
-
+listADT leagues;
+listADT users;
+listADT clients;
+listADT connected;
+int nextUserID;
+int nextLeagueID;
+int nextClientID;
+//dsd
 int main()
 {
 	clients=newList(cmpClient);

@@ -8,14 +8,7 @@
 
 #define NO_TEAM -1
 
-//NO SE DONDE PONER ESTAS VARIABLES
-extern listADT leagues;
-extern listADT users;
-extern listADT clients;
-extern listADT connected;
-extern int nextUserID;
-extern int nextLeagueID;
-extern int nextClientID;
+
 
 void listLeagues(user_t* user);
 void listTrades(user_t* user);

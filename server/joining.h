@@ -4,11 +4,13 @@
 #include "league.h"
 #include "../msg.h"
 #include <string.h>
+#include "externvars.h"
+#include "cmp.h"
 #include "list.h"
 
 int signUp(char* name, char* password);
 int logIn(char* name, char* password);
-int joinLeague(user_t* user, league_t* league, char* teamName);
+int joinLeague(user_t* user, league_t* league, char* teamName, char* password);
 int createLeague(char* name, char* password);
 
 static int userAlreadyJoined(league_t* league, user_t* user);

@@ -1,5 +1,6 @@
 #include "joining.h"
 
+
 static int userNameOccupied(char* name)
 {
     user_t* user;
@@ -66,7 +67,7 @@ static int userAlreadyJoined(league_t* league, user_t* user)
     return 0;
 }
 
-int joinLeague(user_t* user, league_t* league, char* teamName)
+int joinLeague(user_t* user, league_t* league, char* teamName, char* password)
 {
     if(strcmp(password, league->password)!=0)
     {
@@ -82,7 +83,7 @@ int joinLeague(user_t* user, league_t* league, char* teamName)
     }
     team_t * newTeam = malloc(sizeof(team_t));
     newTeam->user=user;
-    newTeam->name=teamName;
+    strcpy(newTeam->name,teamName);
     newTeam->points=0;
     newTeam->ID=league->nextTeamID++;
     insert(league->teams, newTeam);
@@ -117,8 +118,8 @@ int createLeague(char* name, char* password)
     newLeague->nextTeamID=0;
     strcpy(newLeague->name, name);
     strcpy(newLeague->password,password);
-    newLeague->sportists=newList(cmpSportists);
+    newLeague->sportists=newList(cmpSportist);
     newLeague->teams=newList(cmpTeam);
-    newList->trades=newList(cmpTrades);
+    newLeague->trades=newList(cmpTrade);
     return 0;
 }

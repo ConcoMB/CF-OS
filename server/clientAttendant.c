@@ -9,6 +9,14 @@
 #include "joining.h"
 #include "league.h"
 
+listADT leagues;
+listADT users;
+listADT clients;
+listADT connected;
+int nextUserID;
+int nextLeagueID;
+int nextClientID;
+
 int main(int argc, char** argv)
 {
 	printf("me forkie\n");
