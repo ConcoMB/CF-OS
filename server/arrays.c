@@ -74,5 +74,4 @@ void newSportist(league_t * league, sportist_t * sportist)
 		resizeSportists(league);
 	}
 	league->sportists[league->sCant++] = sportist;
-}
-*/
+}*/

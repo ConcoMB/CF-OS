@@ -17,4 +17,4 @@ void newLeague(league_t* league);
 
 void newTeam(league_t * league, team_t * team);
 
-void newSportist(sportist_t * sportist);
+void newSportist(league_t * league, sportist_t * sportist);
