@@ -5,25 +5,29 @@
 #include <stdlib.h>
 #include <fcntl.h>
 #include "list.h"
+#include "files.h"
 #include <pthread.h>
 #include "../msg.h"
 #include "league.h"
 #include <unistd.h>
+#include <sys/shm.h>
 #include "externvars.h"
+#include "clientAttendant.c"
 #include "cmp.h"
 
 void * listenClient();
 listADT leagues;
 listADT users;
 listADT clients;
-listADT connected;
-int nextUserID;
-int nextLeagueID;
-int nextClientID;
-//dsd
+int nextUserID=0;
+int nextLeagueID=0;
+int nextClientID=1;
+
 int main()
 {
 	clients=newList(cmpClient);
+	loadAll();
+	printf("%s\n", ((user_t*)getNext(users))->name);
 	connect(DEFAULTID);
 	pthread_t clThread;
 	pthread_create(&clThread, NULL, listenClient, NULL);
@@ -41,16 +45,13 @@ void * listenClient()
 		printf("recibi %d\n", msg);
 		if(msg==NEWCLIENT)
 		{
-			if(fork())
-			{
 				int id= nextClientID++;
 				sndMsg(DEFAULTID, (void*)&id, sizeof(int));
 				client_t* newClient = malloc(sizeof(client_t));
 				newClient->ID=id;
 				insert(clients, newClient);
-				printf("me forkeo, msgid %d\n", id);
-				execl("./clientAttendant", "clientAttendant",(char*)&id, (char*)0);
-			}
+				pthread_t caThread;
+				pthread_create(&caThread, NULL, clientAtt, (void*)&id);
 		}
 	}
 }

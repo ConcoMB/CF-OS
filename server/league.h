@@ -4,6 +4,7 @@
 #include "../common.h"
 
 #define SPORT_NAME_L 30
+#define USERS_SHM 120
 
 typedef struct
 {

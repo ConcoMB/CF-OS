@@ -3,6 +3,7 @@
 
 #include "list.h"
 #include "league.h"
+#include "externvars.h"
 
 
 sportist_t* getSportistByID(league_t* league, int sportistID);

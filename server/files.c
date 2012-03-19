@@ -76,6 +76,7 @@ void saveSportist(FILE* sportistFile, sportist_t* sportist){
 /* LOAD */
 
 void loadAll(){
+
 	loadUsers(users);
 	loadLeagues(leagues);
 }
@@ -94,7 +95,7 @@ void loadUsers(listADT users){
 static user_t* loadUser(FILE* userFile){
 	user_t* user;
 	user=malloc(sizeof(user_t));
-	if(fscanf(userFile, "%d %s %s\n", &user->ID, user->name, user->password)){
+	if(fscanf(userFile, "%d %s %s\n", &user->ID, user->name, user->password)!=EOF){
 		return user;
 	}
 	free(user);
@@ -115,7 +116,7 @@ void loadLeagues(listADT leagues){
 static league_t* loadLeague(FILE* leagueFile){
 	league_t* league;
 	league=malloc(sizeof(league_t));
-	if(fscanf(leagueFile, "%d %s %s\n", &league->ID, league->password, league->name)){
+	if(fscanf(leagueFile, "%d %s %s\n", &league->ID, league->password, league->name)!=EOF){
 		league->sportists=newList(cmpSportist);
 		league->teams=newList(cmpTeam);
 		league->trades=newList(cmpTrade);
@@ -199,8 +200,8 @@ static trade_t* loadTrade(FILE* tradeFile, league_t* league){
 	
 	if(fscanf(tradeFile, "%d %d %d %d %d", &trade->ID, &fromID, &toID, &offerID, &changeID)){
 		/* Link Users */
-		trade->from=getTeamByID(fromID);
-		trade->to=getTeamByID(toID);
+		trade->from=getTeamByID(league, fromID);
+		trade->to=getTeamByID(league, toID);
 		
 		/* Link League */
 		trade->league=league;

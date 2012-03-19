@@ -6,6 +6,7 @@
 #include "league.h"
 #include "list.h"
 #include "getbyid.h"
+#include "externvars.h"
 #include "cmp.h"
 
 void saveAll();
