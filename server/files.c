@@ -11,7 +11,8 @@ void saveUsers(){
     FILE* userFile;
     user_t* user;
     userFile=fopen("./users.txt","w");
-    for(int uid=0; uid<uCant;uid++)
+    int uid;
+    for(uid=0; uid<uCant;uid++)
     {
 		user=users[uid];
 		saveUser(userFile, user);
@@ -29,13 +30,12 @@ void saveLeagues(){
     team_t* team;
     trade_t* trade;
     sportist_t* sportist;
-    reset(leagues);
     leagueFile=fopen("./leagues.txt","w");
     teamFile=fopen("./teams.txt","w");
     sportistFile=fopen("./sportist.txt","w");
     tradeFile=fopen("./trades.txt","w");
     int lid;
-    for(lid=0;lid<lCant;l++)
+    for(lid=0;lid<lCant;lid++)
     {
 		league=leagues[lid];
 		saveLeague(leagueFile,league);
@@ -53,7 +53,7 @@ void saveLeagues(){
 			saveTrade(tradeFile, trade);
 		}
 		int sid;
-		for(sid=0;sid<league->sCant;sid++)
+		for(sid=0;sid<CANT_SPORTIST;sid++)
 		{
 			sportist=league->sportists[sid];
 			saveSportist(sportistFile, sportist);
@@ -85,11 +85,11 @@ void saveSportist(FILE* sportistFile, sportist_t* sportist){
 
 void loadAll(){
 
-	loadUsers(users);
-	loadLeagues(leagues);
+	loadUsers();
+	loadLeagues();
 }
 
-void loadUsers(listADT users){
+void loadUsers(){
 	FILE* userFile;
 	user_t* user;
 	userFile=fopen("./users.txt","r");
@@ -109,7 +109,7 @@ static user_t* loadUser(FILE* userFile){
 	return NULL;
 }
 
-void loadLeagues(listADT leagues){
+void loadLeagues(){
 	FILE* leagueFile;
 	league_t* league;
 	leagueFile=fopen("./leagues.txt","r");
@@ -168,8 +168,8 @@ static team_t* loadTeam(FILE* teamFile, league_t* league){
 	/* Read data from file */
 	if(fscanf(teamFile, "%d %s %d %d", &team->ID, team->name, &userID, &team->points)!=EOF){
 		/* Link user */
-		team->user=users[usersID];
-		insert(user->teams,team);
+		team->user=users[userID];
+		insert(team->user->teams,team);
 		
 		/* Link league */
 		team->league=league;
