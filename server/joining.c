@@ -22,12 +22,12 @@ int signUp(char* name, char* password)
     {
         return NAME_OR_PASSWORD_TOO_LARGE;
     }
-    user_t* newUser=malloc(sizeof(user_t*));
-    newUser->ID=nextUserID++;
-    newUser->teams=newList(cmpTeam);
-    strcpy(newUser->name, name);
-    strcpy(newUser->password, password);
-    newUser(newUser);
+    user_t* user=malloc(sizeof(user_t*));
+    user->ID=nextUserID++;
+    user->teams=newList(cmpTeam);
+    strcpy(user->name, name);
+    strcpy(user->password, password);
+    newUser(user);
     return 0;
 }
 
@@ -80,12 +80,12 @@ int joinLeague(user_t* user, league_t* league, char* teamName, char* password)
     {
         return NAME_OR_PASSWORD_TOO_LARGE;
     }
-    team_t * newTeam = malloc(sizeof(team_t));
-    newTeam->user=user;
-    strcpy(newTeam->name,teamName);
-    newTeam->points=0;
-    newTeam->ID=league->nextTeamID++;
-    newTeam(league, newTeam);
+    team_t * team = malloc(sizeof(team_t));
+    team->user=user;
+    strcpy(team->name,teamName);
+    team->points=0;
+    team->ID=league->nextTeamID++;
+    newTeam(league, team);
 }
 
 
