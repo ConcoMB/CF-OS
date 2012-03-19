@@ -8,6 +8,7 @@
 #include "getbyid.h"
 #include "externvars.h"
 #include "cmp.h"
+#include "arrays.h"
 
 void saveAll();
 

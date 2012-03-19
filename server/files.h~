@@ -23,9 +23,9 @@ void saveSportist(FILE* sportistFile, sportist_t* sportist);
 /* LOAD */
 
 void loadAll();
-void loadUsers(listADT users);
+void loadUsers();
 static user_t* loadUser(FILE* userFile);
-void loadLeagues(listADT leagues);
+void loadLeagues();
 static league_t* loadLeague(FILE* leagueFile);
 /*void loadNewSportists(listADT sportists);*/
 void loadTeams(league_t* league);
