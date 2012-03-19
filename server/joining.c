@@ -42,7 +42,7 @@ int logIn(char* name, char* password)
         {
             if(strcmp(user->password, password)==0)
             {
-                insert(connected, user);
+                insert(clients, user);
                 return 0;
             }
             else

@@ -8,23 +8,14 @@
 #include <pthread.h>
 #include "joining.h"
 #include "league.h"
+#include <sys/shm.h>
 
-listADT leagues;
-listADT users;
-listADT clients;
-listADT connected;
-int nextUserID;
-int nextLeagueID;
-int nextClientID;
-
-int main(int argc, char** argv)
+void* clientAtt(void* arg)
 {
-	printf("me forkie\n");
 	int type, aux;
-	int id= (int)argv[1][0];
+	int id= *(int*)arg;
 	printf("id %d\n",id );
 	char name[NAME_LENGTH], password[NAME_LENGTH];
-	
 	connect(id);
 	rcvMsg(id,(void*)&type, sizeof(int));
 	printf("%d\n", type);
@@ -47,6 +38,7 @@ int main(int argc, char** argv)
 			//error
 			sndMsg(id, (void*)&aux, sizeof(int));
 		}
+		printf("voy al login\n");
 		logIn(name, password);
 	}
 }
