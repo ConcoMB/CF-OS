@@ -2,10 +2,10 @@
 #define __EXT__
 
 //NO SE DONDE PONER ESTAS VARIABLES
-extern listADT leagues;
-extern listADT users;
+extern league_t** leagues;
+extern user_t** users;
+extern int lCant, uCant;
 extern listADT clients;
-extern listADT connected;
 extern int nextUserID;
 extern int nextLeagueID;
 extern int nextClientID;

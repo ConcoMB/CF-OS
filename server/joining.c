@@ -3,11 +3,10 @@
 
 static int userNameOccupied(char* name)
 {
-    user_t* user;
-    reset(users);
-    while((user=getNext(users))!=NULL)
+    int i;
+    for( i=0; i<uCant; i++)
     {
-        if(strcmp(name, user->name)==0)
+        if(strcmp(name, users[i]->name)==0)
             return 1;
     }
     return 0;
@@ -28,21 +27,20 @@ int signUp(char* name, char* password)
     newUser->teams=newList(cmpTeam);
     strcpy(newUser->name, name);
     strcpy(newUser->password, password);
-    insert(users, newUser);
+    newUser(newUser);
     return 0;
 }
 
 int logIn(char* name, char* password)
 {
-    user_t* user;
-    reset(users);
-    while((user=getNext(users))!=NULL)
+    int i;
+    for( i =0; i<uCant; i++)
     {
-        if(strcmp(user->name, name)==0)
+        if(strcmp(users[i]->name, name)==0)
         {
-            if(strcmp(user->password, password)==0)
+            if(strcmp(users[i]->password, password)==0)
             {
-                insert(clients, user);
+                insert(clients, users[i]);
                 return 0;
             }
             else
@@ -57,12 +55,13 @@ int logIn(char* name, char* password)
 
 static int userAlreadyJoined(league_t* league, user_t* user)
 {
-    team_t* team;
-    reset(league->teams);
-    while((team=getNext(league->teams))!=NULL)
+    int i;
+    for(i=0; i<league->tCant; i++) 
     {
-        if(team->user->ID==user->ID)
+        if(league->teams[i]->user->ID==user->ID)
+        {
             return 1;
+        }
     }
     return 0;
 }
@@ -86,17 +85,16 @@ int joinLeague(user_t* user, league_t* league, char* teamName, char* password)
     strcpy(newTeam->name,teamName);
     newTeam->points=0;
     newTeam->ID=league->nextTeamID++;
-    insert(league->teams, newTeam);
+    newTeam(league, newTeam);
 }
 
 
 static int leagueNameOccupied(char* name)
 {
-    league_t* league;
-    reset(leagues);
-    while((league=getNext(leagues))!=NULL)
+    int i;
+    for(i =0; i<lCant; i++)
     {
-        if(strcmp(name, league->name)==0)
+        if(strcmp(name, leagues[i]->name)==0)
             return 1;
     }
     return 0;
@@ -118,8 +116,8 @@ int createLeague(char* name, char* password)
     newLeague->nextTeamID=0;
     strcpy(newLeague->name, name);
     strcpy(newLeague->password,password);
-    newLeague->sportists=newList(cmpSportist);
-    newLeague->teams=newList(cmpTeam);
+    //cargar deportistas
+    newLeague->tCant=0;
     newLeague->trades=newList(cmpTrade);
     return 0;
 }

@@ -2,6 +2,7 @@
 #define __SERVER__
 #include "league.h"
 #include "list.h"
+#include "arrays.h"
 #include "cmp.h"
 #include "../msg.h"
 #include <stdio.h>

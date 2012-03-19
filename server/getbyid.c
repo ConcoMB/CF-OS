@@ -1,6 +1,6 @@
 #include "getbyid.h"
 
-
+/*
 sportist_t* getSportistByID(league_t* league, int sportistID)
 {
     sportist_t* sportist;
@@ -12,8 +12,8 @@ sportist_t* getSportistByID(league_t* league, int sportistID)
 	       return sportist;
       }
     }
-}
-
+}*/
+/*
 team_t* getTeamByID(league_t* league, int teamID)
 {
     team_t* team;
@@ -23,8 +23,8 @@ team_t* getTeamByID(league_t* league, int teamID)
 	       return team;
       } 
     }
-}
-
+}*/
+/*
 user_t* getUserByID(int userID)
 {
     user_t* user;
@@ -49,4 +49,4 @@ league_t* getLeagueByID(int leagueID)
 	       return league;
       }
     }
-}
+}*/

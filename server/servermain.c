@@ -16,8 +16,9 @@
 #include "cmp.h"
 
 void * listenClient();
-listADT leagues;
-listADT users;
+league_t** leagues;
+int lCant, uCant;
+user_t** users;
 listADT clients;
 int nextUserID=0;
 int nextLeagueID=0;
@@ -28,7 +29,9 @@ int main()
 	clients=newList(cmpClient);
 	loadAll();
 	printf("%s\n", ((user_t*)getNext(users))->name);
-	connect(DEFAULTID);
+	char st[3];
+	sprintf(st, "%c%d", 's', DEFAULTID);
+	connect(st);
 	pthread_t clThread;
 	pthread_create(&clThread, NULL, listenClient, NULL);
 	pthread_join(clThread, NULL);
@@ -50,8 +53,7 @@ void * listenClient()
 				client_t* newClient = malloc(sizeof(client_t));
 				newClient->ID=id;
 				insert(clients, newClient);
-				pthread_t caThread;
-				pthread_create(&caThread, NULL, clientAtt, (void*)&id);
+				pthread_create(&newClient->att, NULL, clientAtt, (void*)&id);
 		}
 	}
 }

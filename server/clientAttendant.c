@@ -12,33 +12,51 @@
 
 void* clientAtt(void* arg)
 {
-	int type, aux;
+	int msg, aux, loged=0;
 	int id= *(int*)arg;
 	printf("id %d\n",id );
 	char name[NAME_LENGTH], password[NAME_LENGTH];
-	connect(id);
-	rcvMsg(id,(void*)&type, sizeof(int));
-	printf("%d\n", type);
-	rcvString(id, name);
-	printf("%s\n", name);
-	rcvString(id, password);
-	printf("%s\n", password);
-	if(type==LOGIN)
+	char channelS[4];
+	sprintf(channelS, "%c%d", 's', id);
+	connect(channelS);
+	char channelC[4];
+	sprintf(channelC, "%c%d", 'c', id);
+	connect(channelC);
+	
+	while(!loged)
 	{
-		if((aux=logIn(name,password))!=0)
+		rcvMsg(channelC,(void*)&msg, sizeof(int));
+		printf("%d\n", msg);
+		rcvString(channelC, name);
+		printf("%s\n", name);
+		rcvString(channelC, password);
+		printf("%s\n", password);
+		if(msg==LOGIN)
 		{
-			
-			sndMsg(id, (void*)&aux, sizeof(int));
+			if((aux=logIn(name,password))!=0)
+			{
+				sndMsg(channelS, (void*)&aux, sizeof(int));
+			}
+			else
+			{
+				loged=1;
+			}
+		}
+		else if(msg==SIGNUP)
+		{
+			if((aux=signUp(name, password))!=0)
+			{
+			//error
+				sndMsg(channelS, (void*)&aux, sizeof(int));
+			}
+			loged=1;
+			printf("voy al login\n");
+			logIn(name, password);
 		}
 	}
-	else if(type==SIGNUP)
+	while(1)
 	{
-		if((aux=signUp(name, password))!=0)
-		{
-			//error
-			sndMsg(id, (void*)&aux, sizeof(int));
-		}
-		printf("voy al login\n");
-		logIn(name, password);
+		rcvMsg(channelC,(void*)&msg, sizeof(int));
+		//ifelse
 	}
 }

@@ -4,6 +4,7 @@
 #include "league.h"
 #include "../msg.h"
 #include <string.h>
+#include "arrays.h"
 #include "externvars.h"
 #include "cmp.h"
 #include "list.h"
