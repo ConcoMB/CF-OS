@@ -34,7 +34,6 @@ void saveLeagues(){
     teamFile=fopen("./teams.txt","w");
     sportistFile=fopen("./sportist.txt","w");
     tradeFile=fopen("./trades.txt","w");
-    int lid;
     for(lid=0;lid<lCant;l++)
     {
 		league=leagues[lid];
@@ -46,14 +45,12 @@ void saveLeagues(){
 		while(trade=(trade_t*)getNext(league->trades)){
 			saveTrade(tradeFile, trade);
 		}
-		int tid;
-		for(tid=0;tid<league->tCant;tid++)
+		for(int tid=0;tid<league->tCant;tid++)
 		{
 			team=league->teams[tid];
 			saveTrade(tradeFile, trade);
 		}
-		int sid;
-		for(sid=0;sid<league->sCant;sid++)
+		for(int sid=0;sid<league->sCant;sid++)
 		{
 			sportist=league->sportists[sid];
 			saveSportist(sportistFile, sportist);
