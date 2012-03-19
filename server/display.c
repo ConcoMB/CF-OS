@@ -77,11 +77,10 @@ void listTeam(user_t* user)
 
 static void createOrderedList(listADT list, league_t* league)
 {
-    team_t* team;
-    reset(league->teams);
-    while((team=(team_t*)getNext(league->teams))!=NULL)
+    int i;
+    for( i =0; i<tCant; i++)
     {
-        insert(list, team);
+        insert(list, league->teams[i]);
     }
     return;
 }
@@ -110,14 +109,14 @@ void leagueShow(league_t* league)
     freeList(list);
 }
 
-static void displaySportists(listADT list, int teamID)
+//NO HAY CANT SPOSRTISTS
+static void displaySportists(sportist_t** sportists, int teamID)
 {
-    sportist_t* sp;
-    reset(list);
-    while((sp=(sportist_t*)getNext(list))!=NULL)
+    int i;
+    for( i=0; i<spCant; i++)
     {
-        if(teamID==NO_TEAM || sp->team->ID==teamID){
-            printf("%s, %d points, %s\n", sp->name, sp-> score, sp->team->name);            
+        if(teamID==NO_TEAM || sportists[i]->team->ID==teamID){
+            printf("%s, %d points, %s\n", sportists[i]->name, sportists[i]-> score, sportists[i]->team->name);            
         }
     }
 }

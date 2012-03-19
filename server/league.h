@@ -2,9 +2,12 @@
 #define __LEAGUE__
 #include "list.h"
 #include "../common.h"
-
+#include <pthread.h>
 #define SPORT_NAME_L 30
 #define USERS_SHM 120
+
+struct sportist_t;
+struct team_t;
 
 typedef struct
 {
@@ -18,17 +21,20 @@ typedef struct
 typedef struct
 {
 	int ID;
+    char drafted;
     int nextTeamID;
     char name[NAME_LENGTH];
     char password[NAME_LENGTH];
-    listADT sportists; 
-    listADT teams;
+    struct sportist_t** sportists; 
+    struct team_t** teams;
+    int tCant;
     listADT trades;
 }league_t;
 
 typedef struct{
     int ID;
     user_t* user;
+    pthread_t att;
 }client_t;
 
 typedef struct
