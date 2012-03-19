@@ -18,9 +18,9 @@
 #define NEWCLIENT 5
 #define USER_ALREADY_JOINED 12
 
-void sndMsg(char* id, void* data, int size);
-void rcvMsg(char* id, void* data, int size);
-void connect(char* id);
-void rcvString(char* id, char* data);
-void sndString(char* id, char* string);
+void sndMsg(int id, void* data, int size);
+void rcvMsg(int id, void* data, int size);
+void connect(int id);
+void rcvString(int id, char* data);
+void sndString(int id, char* string);
 #endif
