@@ -1,4 +1,7 @@
 #include "externvars.h"
+#include "league.h"
+#include <stdlib.h>
+#define ARRAY_SIZE 20
 
 void resizeUser();
 

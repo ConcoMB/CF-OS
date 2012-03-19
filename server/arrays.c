@@ -1,6 +1,7 @@
-#define ARRAY_SIZE 20
+#include "arrays.h"
 
-void resizeUser() {
+void resizeUser() 
+{
 	user_t ** auxUsers;
 	auxUsers = realloc(users, sizeof(user_t*)*( uCant + ARRAY_SIZE)));
 	if (auxUsers) {
@@ -8,7 +9,8 @@ void resizeUser() {
 	}
 }
 
-void resizeLeagues() {
+void resizeLeagues() 
+{
 	leagues_t ** auxLeagues;
 	auxLeagues = realloc(leagues, sizeof(user_t*)*( lCant + ARRAY_SIZE)));
 	if (auxLeagues) {
@@ -16,7 +18,8 @@ void resizeLeagues() {
 	}
 }
 
-void resizeTeams(league_t * league) {
+void resizeTeams(league_t * league)
+ {
 	teams_t ** auxTeams;
 	auxTeams = realloc(league->teams, sizeof(user_t*)*( leagues->tCant + ARRAY_SIZE)));
 	if (auxTeams) {
@@ -24,7 +27,8 @@ void resizeTeams(league_t * league) {
 	}
 }
 
-void resizeSportist(league_t * league) {
+void resizeSportist(league_t * league) 
+{
 	sportist_t ** auxSportist;
 	auxSportists = realloc(league->sportists, sizeof(user_t*)*( uCant + ARRAY_SIZE)));
 	if (auxUsers) {
@@ -32,7 +36,8 @@ void resizeSportist(league_t * league) {
 	}
 }
 
-void newUser(user_t* user) {
+void newUser(user_t* user) 
+{
 	if(users%ARRAY_SIZE==0){
 		resizeUsers();
 	}
@@ -40,20 +45,23 @@ void newUser(user_t* user) {
 }
 
 void newLeague(league_t* league) {
+
 	if(lCant%ARRAY_SIZE ==0){
 		resizeLeagues();
 	}
 	leagues[lCant++] = league;
 }
 
-void newTeam(league_t * league, team_t * team) {
+void newTeam(league_t * league, team_t * team) 
+{
 	if(league->tCant%ARRAY_SIZE==0){
 		resizeTeams(league);
 	}
 	league->teams[league->tCant++] = team;
 }
 
-void newSportist(league_t * league, sportist_t * sportist) {
+void newSportist(league_t * league, sportist_t * sportist) 
+{
 	if(league->sCant%ARRAY_SIZE==0){
 		resizeSportists(league);
 	}
