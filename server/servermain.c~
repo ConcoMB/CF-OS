@@ -28,6 +28,7 @@ int main()
 {
 	clients=newList(cmpClient);
 	loadAll();
+	printf("%s\n", ((user_t*)getNext(users))->name);
 	char st[3];
 	sprintf(st, "%c%d", 's', DEFAULTID);
 	connect(st);
