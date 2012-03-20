@@ -1,4 +1,4 @@
-#include "joining.h"
+#include "join.h"
 
 
 static int userNameOccupied(char* name)
@@ -40,7 +40,6 @@ int logIn(char* name, char* password)
         {
             if(strcmp(users[i]->password, password)==0)
             {
-                insert(clients, users[i]);
                 return 0;
             }
             else

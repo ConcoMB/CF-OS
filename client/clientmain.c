@@ -6,12 +6,25 @@
 #include <fcntl.h>
 #include "../msg.h"
 #include "../common.h"
+#define QUIT 12345
 
-void startUp(int MsgID);
+
+void userLog(int msgID);
+void makeDefConnection(int * msgID);
+char writeChannel[4], readChannel[4];
 
 int main()
 {
-	int aux= NEWCLIENT, MsgID;
+	int msgID;
+	makeDefConnection(&msgID);
+	while(1){
+		userLog(msgID);
+	}
+}
+
+void makeDefConnection(int * msgID)
+{
+	int aux= NEWCLIENT;
 	char defWChannel[3], defRChannel[3];
 	sprintf(defWChannel, "%c%d", 'c', DEFAULTID);
 	sprintf(defRChannel, "%c%d", 's', DEFAULTID);
@@ -20,25 +33,22 @@ int main()
 
 	sndMsg(defWChannel, (void*)&aux, sizeof(int));
 	printf("mande\n");
-	rcvMsg(defRChannel, (void*)&MsgID, sizeof(int));
-	printf("recibi msgid %d\n", MsgID);
-
-		
-
-	startUp(MsgID);
+	rcvMsg(defRChannel, (void*)msgID, sizeof(int));
+	printf("recibi msgid %d\n", *msgID);
 }
 
-void startUp(int MsgID)
+void userLog(int msgID)
 {
-	char writeChannel[4], readChannel[4];
-	sprintf(readChannel, "%c%d", 's', MsgID);
-	sprintf(writeChannel, "%c%d", 'c', MsgID);
+	sprintf(readChannel, "%c%d", 's', msgID);
+	sprintf(writeChannel, "%c%d", 'c', msgID);
 	connect(readChannel);
 	connect(writeChannel);
-	while(1)
+	int loged=0;
+	while(!loged)
 	{
 		int handshake;
 		char command[10], name[NAME_LENGTH], password[NAME_LENGTH];
+		printf("Type login or signup\n");
 		scanf("%s", command);
 		if(strcmp(command, "login")==0)
 		{
@@ -59,7 +69,8 @@ void startUp(int MsgID)
 				case USER_NOT_FOUND:
 					printf("user unknown\n");
 					break;
-					//empieza
+				default:
+					loged=1;
 			}
 		}
 		else if(strcmp(command, "signup")==0)
@@ -83,6 +94,7 @@ void startUp(int MsgID)
 					break;
 				default:
 					printf("te incribiste piibeee\n");
+					loged=1;
 			}
 		}
 		else
@@ -90,4 +102,66 @@ void startUp(int MsgID)
 			printf("invalid command\n");
 		}
 	}
+	start();
+}
+
+void start()
+{
+	int command;
+	char string[20];
+	do
+	{
+		printf("type your command \n");
+		scanf("%s", string);
+		if(strcmp(string, "quit")==0)
+		{
+			command==QUIT;
+		}
+		else if(strcmp(string, "listleagues")==0)
+		{
+
+		}
+		else if(strcmp(string, "listteams")==0)
+		{
+
+		}
+		else if(strcmp(string, "listtrades")==0)
+		{
+
+		}
+		else if(strcmp(string, "leagueshow")==0)
+		{
+
+		}
+		else if(strcmp(string, "teamshow")==0)
+		{
+
+		}
+		else if(strcmp(string, "tradeshow")==0)
+		{
+
+		}
+		else if(strcmp(string, "trade")==0)
+		{
+
+		}
+		else if(strcmp(string, "tradewithdraw")==0)
+		{
+			
+		}
+		else if(strcmp(string, "tradeaccept")==0)
+		{
+			
+		}
+		else if(strcmp(string, "tradenegociate")==0)
+		{
+			
+		}
+		else 
+		{
+			printf("invalid command, type 'help' for help\n");
+		}
+	}
+	while(command!=QUIT)
+
 }

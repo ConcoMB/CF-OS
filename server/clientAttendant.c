@@ -6,7 +6,7 @@
 #include <fcntl.h>
 #include "list.h"
 #include <pthread.h>
-#include "joining.h"
+#include "join.h"
 #include "league.h"
 #include <sys/shm.h>
 
@@ -40,6 +40,8 @@ void* clientAtt(void* arg)
 			else
 			{
 				loged=1;
+				sndMsg(channelS, (void*)&aux, sizeof(int));
+
 			}
 		}
 		else if(msg==SIGNUP)
@@ -49,6 +51,8 @@ void* clientAtt(void* arg)
 			//error
 				sndMsg(channelS, (void*)&aux, sizeof(int));
 			}
+			sndMsg(channelS, (void*)&aux, sizeof(int));
+
 			loged=1;
 			printf("voy al login\n");
 			logIn(name, password);
