@@ -3,13 +3,13 @@
 #include <stdlib.h>
 #define ARRAY_SIZE 20
 
-void resizeUser();
+void resizeUsers();
 
 void resizeLeagues();
 
 void resizeTeams();
 
-void resizeSportist();
+void resizeSportists();
 
 void newUser(user_t* user);
 

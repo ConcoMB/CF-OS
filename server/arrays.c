@@ -1,6 +1,6 @@
 #include "arrays.h"
 
-void resizeUser() 
+void resizeUsers() 
 {
 	user_t ** auxUsers;
 	auxUsers = realloc(users, sizeof(user_t*)*( uCant + ARRAY_SIZE));
@@ -30,7 +30,7 @@ void resizeTeams(league_t * league)
 	}
 }
 
-void resizeSportist(league_t * league) 
+void resizeSportists(league_t * league) 
 {
 	sportist_t ** auxSportist;
 	auxSportist = realloc(league->sportists, sizeof(user_t*)*( uCant + ARRAY_SIZE));
@@ -66,12 +66,12 @@ void newTeam(league_t * league, team_t * team)
 	}
 	league->teams[league->tCant++] = team;
 }
-/*
+
 void newSportist(league_t * league, sportist_t * sportist) 
 {
-	if(league->sCant%ARRAY_SIZE==0)
+	//if(league->sCant%ARRAY_SIZE==0)
 	{
 		resizeSportists(league);
 	}
-	league->sportists[league->sCant++] = sportist;
-}*/
+//	league->sportists[league->sCant++] = sportist;
+}

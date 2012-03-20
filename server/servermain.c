@@ -28,9 +28,9 @@ int main()
 {
 	clients=newList(cmpClient);
 	loadAll();
-	char st[3];
-	sprintf(st, "%c%d", 's', DEFAULTID);
-	connect(st);
+
+	
+
 	pthread_t clThread;
 	pthread_create(&clThread, NULL, listenClient, NULL);
 	pthread_join(clThread, NULL);
@@ -40,15 +40,21 @@ int main()
 void * listenClient()
 {
 	printf("entre al thread\n");
+	char defWChannel[3], defRChannel[3];
+	sprintf(defWChannel, "%c%d", 's', DEFAULTID);
+	sprintf(defRChannel, "%c%d", 'c', DEFAULTID);
+	connect(defWChannel);
+	connect(defRChannel);
+
 	while(1)
 	{
 		int msg;
-		rcvMsg(DEFAULTID, (void*)&msg, sizeof(int));
+		rcvMsg(defRChannel, (void*)&msg, sizeof(int));
 		printf("recibi %d\n", msg);
 		if(msg==NEWCLIENT)
 		{
 				int id= nextClientID++;
-				sndMsg(DEFAULTID, (void*)&id, sizeof(int));
+				sndMsg(defWChannel, (void*)&id, sizeof(int));
 				client_t* newClient = malloc(sizeof(client_t));
 				newClient->ID=id;
 				insert(clients, newClient);

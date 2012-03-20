@@ -7,21 +7,34 @@
 #include "../msg.h"
 #include "../common.h"
 
-int MsgID;
-void startUp();
+void startUp(int MsgID);
 
 int main()
 {
-	int aux= NEWCLIENT;
-	sndMsg(DEFAULTID, (void*)&aux, sizeof(int));
+	int aux= NEWCLIENT, MsgID;
+	char defWChannel[3], defRChannel[3];
+	sprintf(defWChannel, "%c%d", 'c', DEFAULTID);
+	sprintf(defRChannel, "%c%d", 's', DEFAULTID);
+	connect(defWChannel);
+	connect(defRChannel);
+
+	sndMsg(defWChannel, (void*)&aux, sizeof(int));
 	printf("mande\n");
-	rcvMsg(DEFAULTID, (void*)&MsgID, sizeof(int));
+	rcvMsg(defRChannel, (void*)&MsgID, sizeof(int));
 	printf("recibi msgid %d\n", MsgID);
-	startUp();
+
+		
+
+	startUp(MsgID);
 }
 
-void startUp()
+void startUp(int MsgID)
 {
+	char writeChannel[4], readChannel[4];
+	sprintf(readChannel, "%c%d", 's', MsgID);
+	sprintf(writeChannel, "%c%d", 'c', MsgID);
+	connect(readChannel);
+	connect(writeChannel);
 	while(1)
 	{
 		int handshake;
@@ -30,14 +43,14 @@ void startUp()
 		if(strcmp(command, "login")==0)
 		{
 			int aux=LOGIN;
-			sndMsg(MsgID, (void*)&aux, sizeof(int));
+			sndMsg(writeChannel, (void*)&aux, sizeof(int));
 			printf("name:\n");
 			scanf("%s", name);
-			sndString(MsgID, name);
+			sndString(writeChannel, name);
 			printf("password:\n");
 			scanf("%s", password);
-			sndString(MsgID,password);
-			rcvMsg(MsgID, (void*)&handshake, sizeof(int));
+			sndString(writeChannel,password);
+			rcvMsg(readChannel, (void*)&handshake, sizeof(int));
 			switch(handshake)
 			{
 				case INCORRECT_PASSWORD:
@@ -52,17 +65,17 @@ void startUp()
 		else if(strcmp(command, "signup")==0)
 		{
 			int aux=SIGNUP;
-			sndMsg(MsgID, (void*)&aux, sizeof(int));
+			sndMsg(writeChannel, (void*)&aux, sizeof(int));
 			printf("Enter new name:\n");
 			scanf("%s", name);
-			sndString(MsgID, name);			
+			sndString(writeChannel, name);			
 			printf("password:\n");
 			scanf("%s", password);
-			sndString(MsgID, password);
-			rcvMsg(MsgID, (void*)&handshake, sizeof(int));
+			sndString(writeChannel, password);
+			rcvMsg(readChannel, (void*)&handshake, sizeof(int));
 			switch(handshake)
 			{
-				case USER_NAME_OCCUPIED:
+				case NAME_OCCUPIED:
 					printf("User name already taken, choose an other\n");
 					break;
 				case NAME_OR_PASSWORD_TOO_LARGE:
