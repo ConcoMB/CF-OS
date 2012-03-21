@@ -58,9 +58,9 @@ listIsEmpty( listADT list)
 
 
 void
-reset( listADT list )
+reset(listADT list)
 {
-	if(!listIsEmpty)
+	if(!listIsEmpty(list))
 	{
 		list->current = list->first;
 	}
@@ -69,15 +69,16 @@ reset( listADT list )
 listElementT
 getNext( listADT list)
 {
-	listNode * current;
+	listNode * ans;
 	
 	if ( list->current == NULL )
+	{
 		return NULL;
+	}
+	ans= list->current;
+	list->current = list->current->next;
 	
-	current= list->current;
-	list->current = current->next;
-	
-	return current->data;
+	return ans->data;
 }
 
 
