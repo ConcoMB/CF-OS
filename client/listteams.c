@@ -12,11 +12,11 @@ int main(int argc, char** args)
     rcvMsg(readChannel, (void*)&msg, sizeof(int));
     while(msg==SEND_TEAM && msg!=END_SEND_TEAM)
     {
-	rcvString(readChannel, teamName);
-	rcvString(readChannel, leagueName);
-	rcvMsg(readChannel, (void*)&msg, sizeof(int));
-	printf("You own the team %s in the league %s, you currently hace %d points\n", teamName, leagueName, msg);
-	rcvMsg(readChannel, (void*)&msg, sizeof(int));
+	   rcvString(readChannel, teamName);
+	   rcvString(readChannel, leagueName);
+	   rcvMsg(readChannel, (void*)&msg, sizeof(int));
+	   printf("You own the team %s in the league %s, you currently hace %d points\n", teamName, leagueName, msg);
+	   rcvMsg(readChannel, (void*)&msg, sizeof(int));
     }
     
     exit(0);

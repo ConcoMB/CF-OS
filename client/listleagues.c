@@ -4,6 +4,7 @@
 
 int main(int argc, char** args)
 {
+    printf("entre al fork\n");
     int msg = SEND_LEAGUE;
     char name[NAME_LENGTH];
     int id;
@@ -14,11 +15,11 @@ int main(int argc, char** args)
     rcvMsg(readChannel, (void*)&msg, sizeof(int));
     while(msg!=END_SEND_LEAGUE && msg==SEND_LEAGUE)
     {
-	rcvString(readChannel, name);
-	printf("Liga %s", name);
-	rcvMsg(readChannel, (void*)&id, sizeof(int));
-	printf("-> ID: %d\n",id);
-	rcvMsg(readChannel, (void*)&msg, sizeof(int));
+	   rcvString(readChannel, name);
+	   printf("Liga %s", name);
+	   rcvMsg(readChannel, (void*)&id, sizeof(int));
+	   printf("-> ID: %d\n",id);
+	   rcvMsg(readChannel, (void*)&msg, sizeof(int));
     }
     
     exit(0);

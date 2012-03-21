@@ -31,7 +31,7 @@ int signUp(char* name, char* password)
     return 0;
 }
 
-int logIn(char* name, char* password)
+int logIn(char* name, char* password, client_t* client)
 {
     int i;
     for( i =0; i<uCant; i++)
@@ -40,6 +40,7 @@ int logIn(char* name, char* password)
         {
             if(strcmp(users[i]->password, password)==0)
             {
+                client->user=users[i];
                 return 0;
             }
             else

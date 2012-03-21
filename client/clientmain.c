@@ -85,6 +85,7 @@ void userLog(int msgID)
 			printf("password:\n");
 			scanf("%s", password);
 			sndString(writeChannel, password);
+			printf("recibiendo handshake\n");
 			rcvMsg(readChannel, (void*)&handshake, sizeof(int));
 			switch(handshake)
 			{
@@ -123,22 +124,23 @@ void start()
 		{
 			if(fork())
 			{
-				execl("./listleagues", "listleagues", writeChannel, readChannel);
+				wait((int*)0);
 			}
 			else
 			{
-				wait((int*)0);
+				printf("me forkeo\n");
+				execl("./listleagues", "listleagues", writeChannel, readChannel, NULL);
 			}
 		}
 		else if(strcmp(string, "listteams")==0)
 		{
 			if(fork())
 			{
-				execl("./listteams", "listteams", writeChannel, readChannel);
+				wait((int*)0);
 			}
 			else
 			{
-				wait((int*)0);
+				execl("./listteams", "listteams", writeChannel, readChannel, NULL);
 			}
 		}/*
 		else if(strcmp(string, "listtrades")==0)

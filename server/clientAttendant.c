@@ -12,17 +12,19 @@
 #include <sys/shm.h>
 
 char readChannel[4], writeChannel[4];
+client_t* myClient;
 
-void makeConnection(int id);
+void makeConnection();
 void start();
 void logClient();
 
 void* clientAtt(void* arg)
 {
-	client_t* myClient=(client_t*)arg;
-	makeConnection(myClient->ID);
+	printf("entre al attendant\n");
+	myClient=(client_t*)arg;
+	makeConnection();
 	logClient();
-	start(myClient);
+	start();
 }
 
 void logClient()
@@ -39,7 +41,7 @@ void logClient()
 		printf("%s\n", password);
 		if(msg==LOGIN)
 		{
-			if((aux=logIn(name,password))==0)
+			if((aux=logIn(name,password, myClient))==0)
 			{
 				loged=1;
 			}
@@ -47,19 +49,20 @@ void logClient()
 		}
 		else if(msg==SIGNUP)
 		{
+			printf("Hago el signup\n");
 			aux=signUp(name, password);
 			sndMsg(writeChannel, (void*)&aux, sizeof(int));
 			if(aux==0)
 			{
 			    loged=1;
 			    printf("voy al login\n");
-			    logIn(name, password);
+			    logIn(name, password, myClient);
 			}
 		}
 	}
 }
 
-void start(client_t* myClient)
+void start()
 {
 	int msg;
 	while(1)
@@ -76,8 +79,9 @@ void start(client_t* myClient)
 	}
 }
 
-void makeConnection(int id)
+void makeConnection()
 {
+	int id=myClient->ID;
 	sprintf(writeChannel, "%c%d", 's', id);
 	connect(writeChannel);
 	sprintf(readChannel, "%c%d", 'c', id);

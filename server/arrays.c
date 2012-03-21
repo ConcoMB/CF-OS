@@ -36,7 +36,8 @@ void newUser(user_t* user)
 	{
 		resizeUsers();
 	}
-	users[uCant++] = user;
+	users[user->ID] = user;
+	uCant++;
 }
 
 void newLeague(league_t* league) {
@@ -45,7 +46,8 @@ void newLeague(league_t* league) {
 	{
 		resizeLeagues();
 	}
-	leagues[lCant++] = league;
+	leagues[league->ID] = league;
+	lCant++;
 }
 
 void newTeam(league_t * league, team_t * team) 
@@ -54,5 +56,6 @@ void newTeam(league_t * league, team_t * team)
 	{
 		resizeTeams(league);
 	}
-	league->teams[league->tCant++] = team;
+	league->teams[team->ID] = team;
+	league->tCant++;
 }

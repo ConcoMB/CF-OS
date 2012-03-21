@@ -60,7 +60,10 @@ listIsEmpty( listADT list)
 void
 reset( listADT list )
 {
-	list->current = list->first;
+	if(!listIsEmpty)
+	{
+		list->current = list->first;
+	}
 }
 
 listElementT

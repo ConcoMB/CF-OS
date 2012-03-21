@@ -58,22 +58,25 @@ void listTrades(user_t* user)
 
 void listTeam(user_t* user, char* writeChannel)
 {
-     int msg;
+    printf("entre al display\n");
+    int msg;
     if(user->teams!=NULL)
     {
         team_t* team;
         reset(user->teams);
+        printf("pase el reset\n");
         while((team=(team_t*)getNext(user->teams))!=NULL)
         {
-		msg=SEND_TEAM;
-		sndMsg(writeChannel, (void*)&msg, sizeof(int));
-		sndString(writeChannel, team->name);
-		sndString(writeChannel, team->league->name);
-		msg=team->points;
-		sndMsg(writeChannel, (void*)&msg, sizeof(int));
-	}
+		  msg=SEND_TEAM;
+		  sndMsg(writeChannel, (void*)&msg, sizeof(int));
+		  sndString(writeChannel, team->name);
+		  sndString(writeChannel, team->league->name);
+		  msg=team->points;
+		  sndMsg(writeChannel, (void*)&msg, sizeof(int));
+	   }
 	msg=END_SEND_TEAM;
 	sndMsg(writeChannel, (void*)&msg, sizeof(int));
+    printf("termine\n");
     }
 }
 

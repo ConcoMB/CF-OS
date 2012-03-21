@@ -10,7 +10,7 @@
 #include "list.h"
 
 int signUp(char* name, char* password);
-int logIn(char* name, char* password);
+int logIn(char* name, char* password, client_t* myClient);
 int joinLeague(user_t* user, league_t* league, char* teamName, char* password);
 int createLeague(char* name, char* password);
 
