@@ -12,6 +12,9 @@ void printAll(void);
 int main(void)
 {
   loadAll();
+  trade_t trade={2,NULL,NULL,NULL};
+  insert(leagues[0]->trades,&trade);
+  printf("%d\n",((trade_t*)getNext(leagues[0]->trades))->ID);
   printAll();  
   saveAll();
   return 0;
