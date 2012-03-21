@@ -30,6 +30,16 @@ void resizeTeams(league_t * league)
 	}
 }
 
+void resizeSportists(league_t * league) 
+{
+	sportist_t ** auxSportist;
+	auxSportist = realloc(league->sportists, sizeof(user_t*)*( uCant + ARRAY_SIZE));
+	if (auxSportist) 
+	{
+		league-> sportists= auxSportist;
+	}
+}
+
 void newUser(user_t* user) 
 {
 	if(uCant%ARRAY_SIZE==0)

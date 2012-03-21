@@ -1,0 +1,2 @@
+0 lobos 0 20
+1 ranas 1 30

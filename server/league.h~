@@ -5,6 +5,7 @@
 #include <pthread.h>
 #define SPORT_NAME_L 30
 #define USERS_SHM 120
+#define CANT_SPORTIST 50
 
 struct league_s;
 
@@ -40,10 +41,9 @@ typedef struct league_s
     int nextTeamID;
     char name[NAME_LENGTH];
     char password[NAME_LENGTH];
-    sportist_t** sportists; 
+    sportist_t* sportists[CANT_SPORTISTS]; 
     team_t** teams;
     int tCant;
-    int sCant;
     listADT trades;
 }league_t;
 

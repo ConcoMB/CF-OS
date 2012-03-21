@@ -41,7 +41,7 @@ typedef struct league_s
     int nextTeamID;
     char name[NAME_LENGTH];
     char password[NAME_LENGTH];
-    sportist_t** sportists; 
+    sportist_t* sportists[CANT_SPORTIST]; 
     team_t** teams;
     int tCant;
     listADT trades;
