@@ -28,9 +28,6 @@ int main()
 {
 	clients=newList(cmpClient);
 	loadAll();
-
-	
-
 	pthread_t clThread;
 	pthread_create(&clThread, NULL, listenClient, NULL);
 	pthread_join(clThread, NULL);
@@ -39,7 +36,7 @@ int main()
 
 void * listenClient()
 {
-	printf("entre al thread\n");
+	printf("listening to clients\n");
 	char defWChannel[3], defRChannel[3];
 	sprintf(defWChannel, "%c%d", 's', DEFAULTID);
 	sprintf(defRChannel, "%c%d", 'c', DEFAULTID);
@@ -58,7 +55,7 @@ void * listenClient()
 				client_t* newClient = malloc(sizeof(client_t));
 				newClient->ID=id;
 				insert(clients, newClient);
-				pthread_create(&newClient->att, NULL, clientAtt, (void*)&id);
+				pthread_create(&(newClient->att), NULL, clientAtt, (void*) newClient);
 		}
 	}
 }

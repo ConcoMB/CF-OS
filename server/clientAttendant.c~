@@ -7,7 +7,6 @@
 #include "list.h"
 #include <pthread.h>
 #include "join.h"
-#include "display.h"
 #include "league.h"
 #include <sys/shm.h>
 
