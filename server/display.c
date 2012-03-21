@@ -15,10 +15,14 @@ void listLeagues(char* writeChannel)
 
 }
 
-static void printTrade(trade_t* trade)
+static void sendTrade(trade_t* trade, char* writeChannel)
 {
-    printf("The team %s has offered the team %s to exchange his %s to %s\n", 
-    trade->from->name, trade->to->name, (char*)trade->offer, (char*)trade->change);
+    int code=SEND_TRADE;
+    sndMsg(writeChannel, (void*)&code, sizeof(int));
+    char msg[50];
+    sprintf(msg, "In the league %s the team %s has offered the team %s to exchange his %s to %s\n", 
+    trade->league->name, trade->from->name, trade->to->name, trade->offer->name, trade->change->name);
+    sndString(writeChannel, msg);
 }
 
 static int involved(trade_t* trade, user_t* user)
@@ -30,7 +34,7 @@ static int involved(trade_t* trade, user_t* user)
     return 0;
 }
 
-void listTrades(user_t* user)
+void listTrades(user_t* user, char* writeChannel)
 {
     if(user->teams!=NULL)
     {   
@@ -47,12 +51,14 @@ void listTrades(user_t* user)
                 {
                     if(involved(trade, user))
                     {
-                        printTrade(trade);
+                        sendTrade(trade, writeChannel);
                     }
                 }
             }
         }
     }
+    int msg=END_SEND_TRADE;
+    sndMsg(writeChannel, (void*)&msg, sizeof(int));
 }
     
 

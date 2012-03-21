@@ -68,13 +68,17 @@ void start()
 	while(1)
 	{
 		rcvMsg(readChannel,(void*)&msg, sizeof(int));
-		if(msg==SEND_LEAGUE)
+		switch(msg)
 		{
-		     listLeagues(writeChannel);
-		}
-		else if(msg==SEND_TEAM)
-		{
-		    listTeam(myClient->user ,writeChannel);
+			case SEND_LEAGUE:
+				listLeagues(writeChannel);
+				break;
+			case SEND_TEAM:
+				listTeam(myClient->user ,writeChannel);
+				break;
+			case SEND_TRADE:
+				listTrades(myClient->user, writeChannel);
+				break; 
 		}
 	}
 }

@@ -13,14 +13,14 @@
 
 
 void listLeagues(char* writeChannel);
-void listTrades(user_t* user);
+void listTrades(user_t* user, char* writeChannel);
 void listTeam(user_t* user, char* writeChannel);
 void leagueShow(league_t* league);
 void teamShow(team_t* team);
 void tradeShow(trade_t* trade);
 
 
-static void printTrade(trade_t* trade);
+static void sendTrade(trade_t* trade, char* writeChannel);
 static int involved(trade_t* trade, user_t* user);
 static void createOrderedList(listADT list, league_t* league);
 static void displayTeam(team_t* team);

@@ -142,94 +142,94 @@ void start()
 			{
 				execl("./listteams", "listteams", writeChannel, readChannel, NULL);
 			}
-		}/*
+		}
 		else if(strcmp(string, "listtrades")==0)
 		{
 			if(fork())
 			{
-				execl();
+				wait((int*)0);
 			}
 			else
 			{
-				wait((int*)0);
+				execl("./listtrades", "listtrades", writeChannel, readChannel, NULL);
 			}
 		}
 		else if(strcmp(string, "leagueshow")==0)
 		{
 			if(fork())
 			{
-				execl();
+				wait((int*)0);
 			}
 			else
 			{
-				wait((int*)0);
+				execl("./leagueshow", "leagueshow", writeChannel, readChannel, NULL);
 			}
 		}
 		else if(strcmp(string, "teamshow")==0)
 		{
 			if(fork())
 			{
-				execl();
+				wait((int*)0);
 			}
 			else
 			{
-				wait((int*)0);
+				execl();
 			}
 		}
 		else if(strcmp(string, "tradeshow")==0)
 		{
 			if(fork())
 			{
-				execl();
+				wait((int*)0);
 			}
 			else
 			{
-				wait((int*)0);
+				execl();
 			}
 		}
 		else if(strcmp(string, "trade")==0)
 		{
 			if(fork())
 			{
-				execl();
+				wait((int*)0);
 			}
 			else
 			{
-				wait((int*)0);
+				execl();
 			}
 		}
 		else if(strcmp(string, "tradewithdraw")==0)
 		{
 			if(fork())
 			{
-				execl();
+				wait((int*)0);
 			}
 			else
 			{
-				wait((int*)0);
-			}			
+				execl();
+			}
 		}
 		else if(strcmp(string, "tradeaccept")==0)
 		{
 			if(fork())
 			{
-				execl();
+				wait((int*)0);
 			}
 			else
 			{
-				wait((int*)0);
-			}			
+				execl();
+			}
 		}
 		else if(strcmp(string, "tradenegociate")==0)
 		{
 			if(fork())
 			{
-				execl();
+				wait((int*)0);
 			}
 			else
 			{
-				wait((int*)0);
-			}			
+				execl();
+			}
 		}*/
 		else 
 		{
