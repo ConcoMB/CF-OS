@@ -116,7 +116,7 @@ void leagueShow(league_t* league)
 static void displaySportists(sportist_t* sportists[], int teamID)
 {
     int i;
-    for( i=0; i<CANT_SPORTIST; i++)
+    for( i=0; i<spCant; i++)
     {
         if(teamID==NO_TEAM || sportists[i]->team->ID==teamID){
             printf("%s, %d points, %s\n", sportists[i]->name, sportists[i]-> score, sportists[i]->team->name);            

@@ -140,7 +140,7 @@ void start()
 			{
 				wait((int*)0);
 			}
-		}/*
+		}
 		else if(strcmp(string, "listtrades")==0)
 		{
 			if(fork())
