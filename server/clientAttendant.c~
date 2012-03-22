@@ -87,8 +87,7 @@ void start()
 				}
 				else
 				{
-					msg=LEAGUE_ID_INVALID;
-					sndMsg(writeChannel, (void*)&msg, sizeof(int));
+				  
 				}
 				break;
 		}

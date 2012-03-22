@@ -122,8 +122,6 @@ void leagueShow(league_t* league, char* writeChannel)
     createOrderedList(list, league);
     sendTeams(list, writeChannel);
     sendSportists(league->sportists, NO_TEAM, writeChannel);
-    int end= END_LEAGUE_SHOW;
-    sndMsg(writeChannel, (void*)&end, sizeof(int));
     freeList(list);
 }
 
@@ -133,11 +131,7 @@ static void sendSportists(sportist_t* sportists[], int teamID, char* writeChanne
     for( i=0; i<CANT_SPORTIST; i++)
     {
         if(teamID==NO_TEAM || sportists[i]->team->ID==teamID){
-          char msg[50];	  
-	  sprintf(msg, "%s, %d points, %s\n", sportists[i]->name, sportists[i]-> score, sportists[i]->team->name);           
-	    int code=LEAGUE_SHOW;
-	sndMsg(writeChannel, (void*)&code, sizeof(int));
-	sndString(writeChannel, msg);  
+            printf("%s, %d points, %s\n", sportists[i]->name, sportists[i]-> score, sportists[i]->team->name);            
         }
     }
 }

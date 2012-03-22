@@ -158,7 +158,6 @@ void start()
 		{	
 			int leagueID;
 			scanf("%d", &leagueID);
-			printf("%d\n" leagueID);
 			if(fork())
 			{
 				wait((int*)0);
