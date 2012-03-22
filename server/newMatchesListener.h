@@ -5,9 +5,14 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <stdio.h>
+#include <dirent.h>
+#include <pthread.h>
+#include "files.h"
+#include "externvars.h"
+
 
 void newMatchesListener();
 
-void actualizeSportistsPoints();
+void updateSportistPoints(int id, int score);
 
 #endif

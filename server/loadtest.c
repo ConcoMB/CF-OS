@@ -12,7 +12,7 @@ void printAll(void);
 int main(void)
 {
   loadAll();
-  printAll();  
+  printAll();
   saveAll();
   return 0;
 }
