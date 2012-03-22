@@ -1,6 +1,6 @@
 #include "display.h"
 
-void listLeagues(char* writeChannel)
+void listLeagues(int writeChannel)
 {
     int i, msg=SEND_LEAGUE;
     for(i=0; i<lCant; i++)
@@ -15,7 +15,7 @@ void listLeagues(char* writeChannel)
 
 }
 
-static void sendTrade(trade_t* trade, char* writeChannel)
+static void sendTrade(trade_t* trade, int writeChannel)
 {
     int code=SEND_TRADE;
     sndMsg(writeChannel, (void*)&code, sizeof(int));
@@ -34,7 +34,7 @@ static int involved(trade_t* trade, user_t* user)
     return 0;
 }
 
-void listTrades(user_t* user, char* writeChannel)
+void listTrades(user_t* user, int writeChannel)
 {
     if(user->teams!=NULL)
     {   
@@ -62,7 +62,7 @@ void listTrades(user_t* user, char* writeChannel)
 }
     
 
-void listTeam(user_t* user, char* writeChannel)
+void listTeam(user_t* user, int writeChannel)
 {
     printf("entre al display\n");
     int msg;
@@ -97,7 +97,7 @@ static void createOrderedList(listADT list, league_t* league)
     return;
 }
 
-static void sendTeam(team_t* team, char* writeChannel)
+static void sendTeam(team_t* team, int writeChannel)
 {
 	char msg[50];
     sprintf(msg, "Team %s, from user %s  ->  %d points\n", team->name, team->user->name, team->points);
@@ -105,7 +105,7 @@ static void sendTeam(team_t* team, char* writeChannel)
     sndMsg(writeChannel, (void*)&code, sizeof(int));
     sndString(writeChannel, msg);
 }
-static void sendTeams(listADT teams, char* writeChannel)
+static void sendTeams(listADT teams, int writeChannel)
 {
     team_t* team;
     reset(teams);
@@ -115,7 +115,7 @@ static void sendTeams(listADT teams, char* writeChannel)
     }
 }
 
-void leagueShow(league_t* league, char* writeChannel)
+void leagueShow(league_t* league, int writeChannel)
 {
     team_t * team;
     listADT list = newList(cmpTeam);
@@ -127,7 +127,7 @@ void leagueShow(league_t* league, char* writeChannel)
     freeList(list);
 }
 
-static void sendSportists(sportist_t* sportists[], int teamID, char* writeChannel)
+static void sendSportists(sportist_t* sportists[], int teamID, int writeChannel)
 {
     int i;
     for( i=0; i<CANT_SPORTIST; i++)

@@ -5,16 +5,17 @@
 int main(int argc, char** args)
 {
 	int msg = SEND_TRADE;
-	char readChannel[4], writeChannel[4], string[50];
-    strcpy(readChannel, args[2]);
-    strcpy(writeChannel, args[1]);
-    sndMsg(writeChannel, (void*)&msg, sizeof(int));
-    rcvMsg(readChannel, (void*)&msg, sizeof(int));
+	char string[50];
+	int read, write;
+	read=(int)args[2];
+	write=(int) args[1];
+    sndMsg(write, (void*)&msg, sizeof(int));
+    rcvMsg(read, (void*)&msg, sizeof(int));
     while(msg!=END_SEND_TRADE && msg==SEND_TRADE)
     {
-    	rcvString(readChannel, string);
+    	rcvString(read, string);
     	printf("%s\n", string);
-    	rcvMsg(readChannel, (void*)&msg, sizeof(int));
+    	rcvMsg(read, (void*)&msg, sizeof(int));
     }
 
     exit(0);

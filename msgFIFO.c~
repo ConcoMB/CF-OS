@@ -1,5 +1,7 @@
 #include "msg.h"
 
+int writeDesc, readDesc;
+
 int sndMsg(int fd, void* data, int size)
 {
 	return write(fd, data, size);

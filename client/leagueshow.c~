@@ -12,6 +12,11 @@ int main(int argc, char** args)
     sndMsg(writeChannel, (void*)&msg, sizeof(int));
     sndMsg(writeChannel, (void*)&leagueID, sizeof(int));
     rcvMsg(readChannel, (void*)&msg, sizeof(int));
+    if(msg==LEAGUE_ID_INVALID)
+    {
+	 printf("invalid league id\n");
+	 exit(0);
+    }
     while(msg==LEAGUE_SHOW&&msg!=END_LEAGUE_SHOW)
     {
       char string[50];

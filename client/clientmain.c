@@ -13,7 +13,7 @@
 void userLog(int msgID);
 void start();
 void makeDefConnection(int * msgID);
-char writeChannel[4], readChannel[4];
+int read, write;
 
 int main()
 {
@@ -28,23 +28,27 @@ void makeDefConnection(int * msgID)
 {
 	int aux= NEWCLIENT;
 	char defWChannel[3], defRChannel[3];
+	int defRead, defWrite;
 	sprintf(defWChannel, "%c%d", 'c', DEFAULTID);
 	sprintf(defRChannel, "%c%d", 's', DEFAULTID);
-	connect(defWChannel);
-	connect(defRChannel);
-
-	sndMsg(defWChannel, (void*)&aux, sizeof(int));
+	defWrite=connect(defWChannel, O_WRONLY);
+	defRead=connect(defRChannel, O_RDONLY);
+	
+	sndMsg(defWrite, (void*)&aux, sizeof(int));
 	printf("mande\n");
-	rcvMsg(defRChannel, (void*)msgID, sizeof(int));
+	rcvMsg(defRead, (void*)msgID, sizeof(int));
 	printf("recibi msgid %d\n", *msgID);
 }
 
 void userLog(int msgID)
 {
+	char readChannel[4], writeChannel[4];
 	sprintf(readChannel, "%c%d", 's', msgID);
 	sprintf(writeChannel, "%c%d", 'c', msgID);
-	connect(readChannel);
-	connect(writeChannel);
+	create(readChannel);
+	create(writeChannel);
+	read=connect(readChannel, O_RDONLY);
+	write=connect(writeChannel, O_WRONLY);
 	int loged=0;
 	while(!loged)
 	{
@@ -55,14 +59,14 @@ void userLog(int msgID)
 		if(strcmp(command, "login")==0)
 		{
 			int aux=LOGIN;
-			sndMsg(writeChannel, (void*)&aux, sizeof(int));
+			sndMsg(write, (void*)&aux, sizeof(int));
 			printf("name:\n");
 			scanf("%s", name);
-			sndString(writeChannel, name);
+			sndString(write, name);
 			printf("password:\n");
 			scanf("%s", password);
-			sndString(writeChannel,password);
-			rcvMsg(readChannel, (void*)&handshake, sizeof(int));
+			sndString(write,password);
+			rcvMsg(read, (void*)&handshake, sizeof(int));
 			switch(handshake)
 			{
 				case INCORRECT_PASSWORD:
@@ -78,15 +82,15 @@ void userLog(int msgID)
 		else if(strcmp(command, "signup")==0)
 		{
 			int aux=SIGNUP;
-			sndMsg(writeChannel, (void*)&aux, sizeof(int));
+			sndMsg(write, (void*)&aux, sizeof(int));
 			printf("Enter new name:\n");
 			scanf("%s", name);
-			sndString(writeChannel, name);			
+			sndString(write, name);			
 			printf("password:\n");
 			scanf("%s", password);
-			sndString(writeChannel, password);
+			sndString(write, password);
 			printf("recibiendo handshake\n");
-			rcvMsg(readChannel, (void*)&handshake, sizeof(int));
+			rcvMsg(read, (void*)&handshake, sizeof(int));
 			switch(handshake)
 			{
 				case NAME_OCCUPIED:
@@ -129,7 +133,7 @@ void start()
 			else
 			{
 				printf("me forkeo\n");
-				execl("./listleagues", "listleagues", writeChannel, readChannel, NULL);
+				execl("./listleagues", "listleagues", write, read, NULL);
 			}
 		}
 		else if(strcmp(string, "listteams")==0)
@@ -140,7 +144,7 @@ void start()
 			}
 			else
 			{
-				execl("./listteams", "listteams", writeChannel, readChannel, NULL);
+				execl("./listteams", "listteams", write, read, NULL);
 			}
 		}
 		else if(strcmp(string, "listtrades")==0)
@@ -151,7 +155,7 @@ void start()
 			}
 			else
 			{
-				execl("./listtrades", "listtrades", writeChannel, readChannel, NULL);
+				execl("./listtrades", "listtrades", write, read, NULL);
 			}
 		}
 		else if(strcmp(string, "leagueshow")==0)
@@ -165,7 +169,7 @@ void start()
 			}
 			else
 			{
-				execl("./leagueshow", "leagueshow", writeChannel, readChannel, (char*) leagueID, NULL);
+				execl("./leagueshow", "leagueshow", write, read, (char*) leagueID, NULL);
 			}
 		}
 		else if(strcmp(string, "teamshow")==0)

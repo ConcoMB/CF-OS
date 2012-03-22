@@ -11,7 +11,7 @@
 #include "league.h"
 #include <sys/shm.h>
 
-char readChannel[4], writeChannel[4];
+int read, write;
 client_t* myClient;
 
 void makeConnection();
@@ -87,7 +87,8 @@ void start()
 				}
 				else
 				{
-				  
+					msg=LEAGUE_ID_INVALID;
+					sndMsg(writeChannel, (void*)&msg, sizeof(int));
 				}
 				break;
 		}
@@ -96,9 +97,12 @@ void start()
 
 void makeConnection()
 {
+	char readChannel[4], writeChannel[4];
 	int id=myClient->ID;
 	sprintf(writeChannel, "%c%d", 's', id);
-	connect(writeChannel);
+	create(writeChannel);
+	write=connect(writeChannel, O_WRONLY);
 	sprintf(readChannel, "%c%d", 'c', id);
-	connect(readChannel);
+	create(readChannel);
+	read=connect(readChannel, O_RDONLY);
 }

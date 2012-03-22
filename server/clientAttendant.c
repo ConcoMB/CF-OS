@@ -11,7 +11,7 @@
 #include "league.h"
 #include <sys/shm.h>
 
-char readChannel[4], writeChannel[4];
+int read, write;
 client_t* myClient;
 
 void makeConnection();
@@ -33,11 +33,11 @@ void logClient()
 	char name[NAME_LENGTH], password[NAME_LENGTH];
 	while(!loged)
 	{
-		rcvMsg(readChannel,(void*)&msg, sizeof(int));
+		rcvMsg(read,(void*)&msg, sizeof(int));
 		printf("%d\n", msg);
-		rcvString(readChannel, name);
+		rcvString(read, name);
 		printf("%s\n", name);
-		rcvString(readChannel, password);
+		rcvString(read, password);
 		printf("%s\n", password);
 		if(msg==LOGIN)
 		{
@@ -45,13 +45,13 @@ void logClient()
 			{
 				loged=1;
 			}
-			sndMsg(writeChannel, (void*)&aux, sizeof(int));
+			sndMsg(write, (void*)&aux, sizeof(int));
 		}
 		else if(msg==SIGNUP)
 		{
 			printf("Hago el signup\n");
 			aux=signUp(name, password);
-			sndMsg(writeChannel, (void*)&aux, sizeof(int));
+			sndMsg(write, (void*)&aux, sizeof(int));
 			if(aux==0)
 			{
 			    loged=1;
@@ -67,28 +67,28 @@ void start()
 	int msg;
 	while(1)
 	{
-		rcvMsg(readChannel,(void*)&msg, sizeof(int));
+		rcvMsg(read,(void*)&msg, sizeof(int));
 		switch(msg)
 		{
 			case SEND_LEAGUE:
-				listLeagues(writeChannel);
+				listLeagues(write);
 				break;
 			case SEND_TEAM:
-				listTeam(myClient->user ,writeChannel);
+				listTeam(myClient->user ,write);
 				break;
 			case SEND_TRADE:
-				listTrades(myClient->user, writeChannel);
+				listTrades(myClient->user, write);
 				break; 
 			case LEAGUE_SHOW:
-				rcvMsg(readChannel, (void*)&msg, sizeof(int));
+				rcvMsg(read, (void*)&msg, sizeof(int));
 				if(msg<lCant&&msg>=0)
 				{
-					leagueShow(leagues[msg], writeChannel);
+					leagueShow(leagues[msg], write);
 				}
 				else
 				{
 					msg=LEAGUE_ID_INVALID;
-					sndMsg(writeChannel, (void*)&msg, sizeof(int));
+					sndMsg(write, (void*)&msg, sizeof(int));
 				}
 				break;
 		}
@@ -97,9 +97,12 @@ void start()
 
 void makeConnection()
 {
+	char readChannel[4], writeChannel[4];
 	int id=myClient->ID;
 	sprintf(writeChannel, "%c%d", 's', id);
-	connect(writeChannel);
+	create(writeChannel);
+	write=connect(writeChannel, O_WRONLY);
 	sprintf(readChannel, "%c%d", 'c', id);
-	connect(readChannel);
+	create(readChannel);
+	read=connect(readChannel, O_RDONLY);
 }
