@@ -95,6 +95,12 @@ void start()
 	}
 }
 
+void makeDisconnection()
+{
+	disconnect(readFD);
+	disconnect(writeFD);
+}
+
 void makeConnection()
 {
 	char readChannel[4], writeChannel[4];
@@ -105,4 +111,5 @@ void makeConnection()
 	sprintf(readChannel, "%c%d", 'c', id);
 	create(readChannel);
 	readFD=connect(readChannel, O_RDONLY);
+	signal(SIGPIPE, makeDisconnection);
 }

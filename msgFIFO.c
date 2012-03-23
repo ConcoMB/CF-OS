@@ -42,3 +42,7 @@ void sndString(int fd, char* string)
 	sndMsg(fd, (void*)string, strlen(string)+1);
 }
 
+void disconnect(int fd)
+{
+	close(fd);
+}
