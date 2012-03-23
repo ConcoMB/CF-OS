@@ -141,12 +141,12 @@ static void sendSportists(sportist_t* sportists[], int teamID, int writeChannel)
         }
     }
 }
-
+/*)
 void teamShow(team_t* team)
 {
-    displayTeam(team);
-    displaySportists(team->league->sportists, team->ID);
-}
+    senTeam(team);
+    sendSportists(team->league->sportists, team->ID);
+}*/
 
 void tradeShow(trade_t* trade)
 {

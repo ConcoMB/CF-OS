@@ -13,7 +13,7 @@
 void userLog(int msgID);
 void start();
 void makeDefConnection(int * msgID);
-int read, write;
+int readFD, writeFD;
 
 int main()
 {
@@ -47,8 +47,8 @@ void userLog(int msgID)
 	sprintf(writeChannel, "%c%d", 'c', msgID);
 	create(readChannel);
 	create(writeChannel);
-	read=connect(readChannel, O_RDONLY);
-	write=connect(writeChannel, O_WRONLY);
+	readFD=connect(readChannel, O_RDONLY);
+	writeFD=connect(writeChannel, O_WRONLY);
 	int loged=0;
 	while(!loged)
 	{
@@ -59,14 +59,14 @@ void userLog(int msgID)
 		if(strcmp(command, "login")==0)
 		{
 			int aux=LOGIN;
-			sndMsg(write, (void*)&aux, sizeof(int));
+			sndMsg(writeFD, (void*)&aux, sizeof(int));
 			printf("name:\n");
 			scanf("%s", name);
-			sndString(write, name);
+			sndString(writeFD, name);
 			printf("password:\n");
 			scanf("%s", password);
-			sndString(write,password);
-			rcvMsg(read, (void*)&handshake, sizeof(int));
+			sndString(writeFD,password);
+			rcvMsg(readFD, (void*)&handshake, sizeof(int));
 			switch(handshake)
 			{
 				case INCORRECT_PASSWORD:
@@ -82,15 +82,15 @@ void userLog(int msgID)
 		else if(strcmp(command, "signup")==0)
 		{
 			int aux=SIGNUP;
-			sndMsg(write, (void*)&aux, sizeof(int));
+			sndMsg(writeFD, (void*)&aux, sizeof(int));
 			printf("Enter new name:\n");
 			scanf("%s", name);
-			sndString(write, name);			
+			sndString(writeFD, name);			
 			printf("password:\n");
 			scanf("%s", password);
-			sndString(write, password);
+			sndString(writeFD, password);
 			printf("recibiendo handshake\n");
-			rcvMsg(read, (void*)&handshake, sizeof(int));
+			rcvMsg(readFD, (void*)&handshake, sizeof(int));
 			switch(handshake)
 			{
 				case NAME_OCCUPIED:
@@ -133,7 +133,7 @@ void start()
 			else
 			{
 				printf("me forkeo\n");
-				execl("./listleagues", "listleagues", write, read, NULL);
+				execl("./listleagues", "listleagues", (char*)writeFD, (char*)readFD, NULL);
 			}
 		}
 		else if(strcmp(string, "listteams")==0)
@@ -144,7 +144,7 @@ void start()
 			}
 			else
 			{
-				execl("./listteams", "listteams", write, read, NULL);
+				execl("./listteams", "listteams",(char*) writeFD, (char*)readFD, NULL);
 			}
 		}
 		else if(strcmp(string, "listtrades")==0)
@@ -155,23 +155,23 @@ void start()
 			}
 			else
 			{
-				execl("./listtrades", "listtrades", write, read, NULL);
+				execl("./listtrades", "listtrades", (char*)writeFD, (char*)readFD, NULL);
 			}
 		}
 		else if(strcmp(string, "leagueshow")==0)
 		{	
 			int leagueID;
 			scanf("%d", &leagueID);
-			printf("%d\n" leagueID);
+			printf("%d\n", leagueID);
 			if(fork())
 			{
 				wait((int*)0);
 			}
 			else
 			{
-				execl("./leagueshow", "leagueshow", write, read, (char*) leagueID, NULL);
+				execl("./leagueshow", "leagueshow",(char*) writeFD,(char*) readFD, (char*) leagueID, NULL);
 			}
-		}
+		}/*
 		else if(strcmp(string, "teamshow")==0)
 		{
 			if(fork())

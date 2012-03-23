@@ -12,28 +12,19 @@
 
 
 
-void listLeagues(char* writeChannel);
-void listTrades(user_t* user, char* writeChannel);
-void listTeam(user_t* user, char* writeChannel);
-void leagueShow(league_t* league);
+#include "display.h"
+
+void listLeagues(int writeChannel);
+void listTrades(user_t* user, int writeChannel);   
+void listTeam(user_t* user, int writeChannel);
+void leagueShow(league_t* league, int writeChannel);
 void teamShow(team_t* team);
 void tradeShow(trade_t* trade);
 
-
-static void sendTrade(trade_t* trade, char* writeChannel);
+static void sendTrade(trade_t* trade, int writeChannel);
 static int involved(trade_t* trade, user_t* user);
 static void createOrderedList(listADT list, league_t* league);
-static void displayTeam(team_t* team);
-static void displayTeams(listADT teams);
-static void displaySportists(sportist_t* sportists[], int teamID);
-
-
-
-
-
-
-
-
-
-
+static void sendTeam(team_t* team, int writeChannel);
+static void sendTeams(listADT teams, int writeChannel);
+static void sendSportists(sportist_t* sportists[], int teamID, int writeChannel);
 #endif
