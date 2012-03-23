@@ -1,6 +1,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <stdio.h>
+
 #include <string.h>
 #include <stdlib.h>
 #include <fcntl.h>
@@ -126,14 +127,15 @@ void start()
 		}
 		else if(strcmp(string, "listleagues")==0)
 		{
-			if(fork())
+			int cid=fork();
+			if(cid)
 			{
-				wait((int*)0);
+				waitpid(cid, NULL, 0);
 			}
 			else
 			{
 				printf("me forkeo\n");
-				execl("./listleagues", "listleagues", (char*)writeFD, (char*)readFD, NULL);
+				execl("./listleagues", "listleagues", writeFD, readFD, NULL);
 			}
 		}
 		else if(strcmp(string, "listteams")==0)
@@ -144,7 +146,7 @@ void start()
 			}
 			else
 			{
-				execl("./listteams", "listteams",(char*) writeFD, (char*)readFD, NULL);
+				execl("./listteams", "listteams", writeFD, readFD, NULL);
 			}
 		}
 		else if(strcmp(string, "listtrades")==0)
@@ -155,7 +157,7 @@ void start()
 			}
 			else
 			{
-				execl("./listtrades", "listtrades", (char*)writeFD, (char*)readFD, NULL);
+				execl("./listtrades", "listtrades", writeFD, readFD, NULL);
 			}
 		}
 		else if(strcmp(string, "leagueshow")==0)
@@ -169,7 +171,7 @@ void start()
 			}
 			else
 			{
-				execl("./leagueshow", "leagueshow",(char*) writeFD,(char*) readFD, (char*) leagueID, NULL);
+				execl("./leagueshow", "leagueshow", writeFD, readFD, leagueID, NULL);
 			}
 		}/*
 		else if(strcmp(string, "teamshow")==0)

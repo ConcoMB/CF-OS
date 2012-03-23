@@ -2,6 +2,7 @@
 
 void listLeagues(int writeChannel)
 {
+    printf("entre a listleagues\n");
     int i, msg=SEND_LEAGUE;
     for(i=0; i<lCant; i++)
     {

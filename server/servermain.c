@@ -28,6 +28,7 @@ int main()
 {
 	clients=newList(cmpClient);
 	loadAll();
+	printf("%s\n",leagues[0]->name);
 	pthread_t clThread;
 	pthread_create(&clThread, NULL, listenClient, NULL);
 	pthread_join(clThread, NULL);
