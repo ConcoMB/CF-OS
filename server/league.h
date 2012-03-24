@@ -52,6 +52,8 @@ typedef struct
     int ID;
     user_t* user;
     pthread_t att;
+    int readFD;
+    int writeFD;
 }client_t;
    
     

@@ -12,12 +12,12 @@
 #include <sys/shm.h>
 #include <signal.h>
 
-int readFD, writeFD;
 client_t* myClient;
 
 void makeConnection();
 void start();
 void logClient();
+void makeDisconnection();
 
 void* clientAtt(void* arg)
 {
@@ -34,25 +34,34 @@ void logClient()
 	char name[NAME_LENGTH], password[NAME_LENGTH];
 	while(!loged)
 	{
-		rcvMsg(readFD,(void*)&msg, sizeof(int));
-		printf("%d\n", msg);
-		rcvString(readFD, name);
-		printf("%s\n", name);
-		rcvString(readFD, password);
-		printf("%s\n", password);
+		if(!rcvMsg(myClient->readFD,(void*)&msg, sizeof(int)))
+		{
+			makeDisconnection();
+		}
+		printf("msg: %d\n", msg);
+		if(!rcvString(myClient->readFD, name))
+		{
+			makeDisconnection();
+		}
+		printf("name: %s\n", name);
+		if(!rcvString(myClient->readFD, password))
+		{
+			makeDisconnection();
+		}
+		printf("psswd: %s\n", password);
 		if(msg==LOGIN)
 		{
 			if((aux=logIn(name,password, myClient))==0)
 			{
 				loged=1;
 			}
-			sndMsg(writeFD, (void*)&aux, sizeof(int));
+			sndMsg(myClient->writeFD, (void*)&aux, sizeof(int));
 		}
 		else if(msg==SIGNUP)
 		{
 			printf("Hago el signup\n");
 			aux=signUp(name, password);
-			sndMsg(writeFD, (void*)&aux, sizeof(int));
+			sndMsg(myClient->writeFD, (void*)&aux, sizeof(int));
 			if(aux==0)
 			{
 			    loged=1;
@@ -68,38 +77,39 @@ void start()
 	int msg;
 	while(1)
 	{
-		rcvMsg(readFD,(void*)&msg, sizeof(int));
+		rcvMsg(myClient->readFD,(void*)&msg, sizeof(int));
+		printf("%d\n",msg);
 		switch(msg)
 		{
 			case SEND_LEAGUE:
-				listLeagues(writeFD);
+				listLeagues(myClient->writeFD);
 				break;
 			case SEND_TEAM:
-				listTeam(myClient->user ,writeFD);
+				listTeam(myClient->user ,myClient->writeFD);
 				break;
 			case SEND_TRADE:
-				listTrades(myClient->user, writeFD);
+				listTrades(myClient->user, myClient->writeFD);
 				break; 
 			case LEAGUE_SHOW:
-				rcvMsg(readFD, (void*)&msg, sizeof(int));
+				rcvMsg(myClient->readFD, (void*)&msg, sizeof(int));
 				if(msg<lCant&&msg>=0)
 				{
-					leagueShow(leagues[msg], writeFD);
+					leagueShow(leagues[msg], myClient->writeFD);
 				}
 				else
 				{
 					msg=LEAGUE_ID_INVALID;
-					sndMsg(writeFD, (void*)&msg, sizeof(int));
+					sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
 				}
 				break;
 		}
 	}
 }
 
-void makeDisconnection(int param)
+void makeDisconnection()
 {
-	disconnect(readFD);
-	disconnect(writeFD);
+	disconnect(myClient->readFD);
+	disconnect(myClient->writeFD);
 	printf("cliente desconectado\n");
 	pthread_exit(0);
 }
@@ -110,9 +120,8 @@ void makeConnection()
 	int id=myClient->ID;
 	sprintf(writeChannel, "%c%d", 's', id);
 	create(writeChannel);
-	writeFD=connect(writeChannel, O_WRONLY);
+	myClient->writeFD=connect(writeChannel, O_WRONLY);
 	sprintf(readChannel, "%c%d", 'c', id);
 	create(readChannel);
-	readFD=connect(readChannel, O_RDONLY);
-	signal(SIGPIPE, makeDisconnection);
+	myClient->readFD=connect(readChannel, O_RDONLY);
 }

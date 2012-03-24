@@ -40,8 +40,9 @@ int main()
 	return 0;
 }
 
-void disconn()
+void disconn(int param)
 {
+	printf("Disconected\n");
 	/*disconnect(readFD);
 	disconnect(writeFD);
 	char fifo[10];
@@ -61,7 +62,7 @@ void * listenClient()
 	create(defRChannel);
 	readFD=connect(defRChannel, O_RDONLY);
 	writeFD=connect(defWChannel, O_WRONLY);
-	signal(SIGPIPE, disconn);
+	signal(SIGPIPE, SIG_IGN);
 	newClient();
 }
 
@@ -70,17 +71,21 @@ void newClient()
 {
 	while(1)
 	{
+		sleep(2);
 		int msg;
-	rcvMsg(readFD, (void*)&msg, sizeof(int));
-	printf("recibi %d\n", msg);
-	if(msg==NEWCLIENT)
-	{
-			int id= nextClientID++;
-			sndMsg(writeFD, (void*)&id, sizeof(int));
-			client_t* newClient = malloc(sizeof(client_t));
-			newClient->ID=id;
-			insert(clients, newClient);
-			pthread_create(&(newClient->att), NULL, clientAtt, (void*) newClient);
-	}
+		int bytes;
+		bytes=rcvMsg(readFD, (void*)&msg, sizeof(int));
+		if(bytes>0){
+			printf("recibi %d\n", msg);
+			if(msg==NEWCLIENT)
+			{
+				int id= nextClientID++;
+				sndMsg(writeFD, (void*)&id, sizeof(int));
+				client_t* newClient = malloc(sizeof(client_t));
+				newClient->ID=id;
+				insert(clients, newClient);
+				pthread_create(&(newClient->att), NULL, clientAtt, (void*) newClient);
+			}
+		}
 	}
 }

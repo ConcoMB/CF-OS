@@ -24,7 +24,7 @@ int connect(char* id, int flag)
 	return open(fifo, flag);
 }
 
-void rcvString(int fd, char* data)
+int rcvString(int fd, char* data)
 {
 	int i=0;
 	char c;
@@ -32,14 +32,18 @@ void rcvString(int fd, char* data)
 	while(c)
 	{
 		data[i++]=c;
-		read(fd, &c, sizeof(char));
+		if(!read(fd, &c, sizeof(char)))
+		{
+			return i;
+		}
 	}
 	data[i]='\0';
+	return i;
 }
 
-void sndString(int fd, char* string)
+int sndString(int fd, char* string)
 {
-	sndMsg(fd, (void*)string, strlen(string)+1);
+	return sndMsg(fd, (void*)string, strlen(string)+1);
 }
 
 void disconnect(int fd)
