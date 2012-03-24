@@ -10,7 +10,9 @@
 #define END_SEND_TRADE 65
 #define LEAGUE_SHOW 66
 #define END_LEAGUE_SHOW 67
-#define LEAGUE_ID_INVALID 68
+#define ID_INVALID 68
+#define TEAM_SHOW 69
+#define END_TEAM_SHOW 70
 
 
 

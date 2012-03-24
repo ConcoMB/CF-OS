@@ -1,5 +1,19 @@
 #include "getbyid.h"
 
+trade_t* getTradeByID(league_t* league, int searchID)
+{
+  trade_t* trade;
+  reset(league->trades);
+  while((trade=getNext(league->trades))!=NULL)
+  {
+    if(trade->ID==searchID)
+    {
+      return trade;
+    }
+  }
+  return NULL;
+}
+
 /*
 sportist_t* getSportistByID(league_t* league, int sportistID)
 {

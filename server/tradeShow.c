@@ -7,28 +7,23 @@
 int main(int argc, char** args)
 {
   printf("entre\n");
-  int readFD, writeFD;
+  int readFD, writeFD, msg;
   readFD=atoi(args[2]);
   writeFD=atoi(args[1]);
   int ID=atoi(args[3]);
-  int control=atoi(arg[4]);
-  int end=atoi(arg[5]);
-  int msg=control;
+  msg=TRADE_SHOW;
+  char string[50];
   sndMsg(writeFD, (void*)&msg, sizeof(int));
   sndMsg(writeFD, (void*)&ID, sizeof(int));
   rcvMsg(readFD, (void*)&msg, sizeof(int));
   if(msg==ID_INVALID)
   {
-	   printf("invalid ID\n");
-	   exit(0);
+  	printf("ID INVALID\n");
   }
-  while(msg==control && msg!=end)
+  else
   {
-     char string[50];
-     rcvString(readFD, string);
-     printf("%s", string);
-     rcvMsg(readFD, (void*)&msg, sizeof(int));
+  	rcvString(readFD, string);
+  	printf("%s\n", string);
   }
-   
- exit(0);
+  exit(0);
 }

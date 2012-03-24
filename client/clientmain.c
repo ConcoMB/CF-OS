@@ -112,9 +112,9 @@ void userLog(int msgID)
 
 void start()
 {
-	int command;
+	int command, auxID;
 	printf("%d %d\n", readFD, writeFD);
-	char string[20], stringR[10], stringW[10]; 
+	char string[20], stringR[10], stringW[10], auxString[10], controlStr[10], endStr[10]; 
 	sprintf(stringW, "%d", writeFD);
 	sprintf(stringR, "%d", readFD);
 	do
@@ -123,7 +123,7 @@ void start()
 		scanf("%s", string);
 		if(strcmp(string, "quit")==0)
 		{
-			command==QUIT;
+			command=QUIT;
 		}
 		else if(strcmp(string, "listleagues")==0)
 		{
@@ -146,7 +146,7 @@ void start()
 			}
 			else
 			{
-				execl("./listteams", "listteams", writeFD, readFD, NULL);
+				execl("./listteams", "listteams", stringW, stringR, NULL);
 			}
 		}
 		else if(strcmp(string, "listtrades")==0)
@@ -157,45 +157,55 @@ void start()
 			}
 			else
 			{
-				execl("./listtrades", "listtrades", writeFD, readFD, NULL);
+				execl("./listtrades", "listtrades", stringW, stringR, NULL);
 			}
 		}
 		else if(strcmp(string, "leagueshow")==0)
 		{	
-			int leagueID;
-			scanf("%d", &leagueID);
-			printf("%d\n", leagueID);
+			scanf("%d", &auxID);
+			sprintf(auxString, "%d",auxID );
+			sprintf(controlStr, "%d", LEAGUE_SHOW);
+			sprintf(endStr, "%d", END_LEAGUE_SHOW);
+
+			printf("%d es el id de la liga\n", auxID);
 			if(fork())
 			{
 				wait((int*)0);
 			}
 			else
 			{
-				execl("./leagueshow", "leagueshow", writeFD, readFD, leagueID, NULL);
+				execl("./ltShow", "ltShow", stringW, stringR, auxString, controlStr, endStr,  NULL);
 			}
-		}/*
+		}
 		else if(strcmp(string, "teamshow")==0)
 		{
+			scanf("%d", &auxID);
+			sprintf(auxString, "%d",auxID);
+			sprintf(controlStr, "%d", TEAM_SHOW);
+			sprintf(endStr, "%d", END_TEAM_SHOW);
+
 			if(fork())
 			{
 				wait((int*)0);
 			}
 			else
 			{
-				execl();
+				execl("./ltShow", "ltShow", stringW, stringR, auxString, controlStr, endStr, NULL);
 			}
 		}
 		else if(strcmp(string, "tradeshow")==0)
 		{
+			scanf("%d", &auxID);
+			sprintf(auxString, "%d",auxID);
 			if(fork())
 			{
 				wait((int*)0);
 			}
 			else
 			{
-				execl();
+				execl("./tradeShow", "tradeShow", stringW, stringR, auxString);
 			}
-		}
+		}/*
 		else if(strcmp(string, "trade")==0)
 		{
 			if(fork())

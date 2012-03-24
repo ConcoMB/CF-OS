@@ -13,17 +13,17 @@ void listLeagues(int writeChannel)
     }
     msg=END_SEND_LEAGUE;
     sndMsg(writeChannel, (void*)&msg, sizeof(int));
-
 }
 
 static void sendTrade(trade_t* trade, int writeChannel)
 {
     int code=SEND_TRADE;
     sndMsg(writeChannel, (void*)&code, sizeof(int));
-    char msg[50];
-    sprintf(msg, "In the league %s the team %s has offered the team %s to exchange his %s to %s\n", 
+    char string[50];
+    sprintf(string, "In the league %s the team %s has offered the team %s to exchange his %s to %s\n", 
     trade->league->name, trade->from->name, trade->to->name, trade->offer->name, trade->change->name);
-    sndString(writeChannel, msg);
+    printf("%s\n", string);
+    sndString(writeChannel, string);
 }
 
 static int involved(trade_t* trade, user_t* user)
@@ -37,6 +37,7 @@ static int involved(trade_t* trade, user_t* user)
 
 void listTrades(user_t* user, int writeChannel)
 {
+    printf("listtrades\n");
     if(user->teams!=NULL)
     {   
         team_t* team;
@@ -52,6 +53,7 @@ void listTrades(user_t* user, int writeChannel)
                 {
                     if(involved(trade, user))
                     {
+                        printf("involucrado! mando\n");
                         sendTrade(trade, writeChannel);
                     }
                 }
@@ -65,21 +67,18 @@ void listTrades(user_t* user, int writeChannel)
 
 void listTeam(user_t* user, int writeChannel)
 {
-    printf("entre al display\n");
     int msg;
     if(user->teams!=NULL)
     {
         team_t* team;
         reset(user->teams);
-        printf("pase el reset\n");
         while((team=(team_t*)getNext(user->teams))!=NULL)
         {
 		  msg=SEND_TEAM;
 		  sndMsg(writeChannel, (void*)&msg, sizeof(int));
 		  sndString(writeChannel, team->name);
 		  sndString(writeChannel, team->league->name);
-		  msg=team->points;
-		  sndMsg(writeChannel, (void*)&msg, sizeof(int));
+		  sndMsg(writeChannel, (void*)&(team->points), sizeof(int));
 	   }
 	msg=END_SEND_TEAM;
 	sndMsg(writeChannel, (void*)&msg, sizeof(int));
@@ -98,61 +97,60 @@ static void createOrderedList(listADT list, league_t* league)
     return;
 }
 
-static void sendTeam(team_t* team, int writeChannel)
+static void sendTeam(team_t* team, int writeChannel, int code)
 {
 	char msg[50];
     sprintf(msg, "Team %s, from user %s  ->  %d points\n", team->name, team->user->name, team->points);
-    int code=LEAGUE_SHOW;
     sndMsg(writeChannel, (void*)&code, sizeof(int));
     sndString(writeChannel, msg);
 }
-static void sendTeams(listADT teams, int writeChannel)
+static void sendTeams(listADT teams, int writeChannel, int code)
 {
     team_t* team;
     reset(teams);
     while((team=(team_t*)getNext(teams))!=NULL)
     {
-        sendTeam(team, writeChannel);
+        sendTeam(team, writeChannel, code);
     }
 }
 
-void leagueShow(league_t* league, int writeChannel)
+void leagueShow(league_t* league, int writeChannel, int code, int end)
 {
     team_t * team;
     listADT list = newList(cmpTeam);
     createOrderedList(list, league);
-    sendTeams(list, writeChannel);
-    sendSportists(league->sportists, NO_TEAM, writeChannel);
-    int end= END_LEAGUE_SHOW;
+    sendTeams(list, writeChannel, code);
+    sendSportists(league->sportists, NO_TEAM, writeChannel, code);
     sndMsg(writeChannel, (void*)&end, sizeof(int));
     freeList(list);
 }
 
-static void sendSportists(sportist_t* sportists[], int teamID, int writeChannel)
+static void sendSportists(sportist_t* sportists[], int teamID, int writeChannel, int code)
 {
     int i;
     for( i=0; i<CANT_SPORTIST; i++)
     {
         if(teamID==NO_TEAM || sportists[i]->team->ID==teamID){
-          char msg[50];	  
-	  sprintf(msg, "%s, %d points, %s\n", sportists[i]->name, sportists[i]-> score, sportists[i]->team->name);           
-	    int code=LEAGUE_SHOW;
-	sndMsg(writeChannel, (void*)&code, sizeof(int));
-	sndString(writeChannel, msg);  
+           char string[50];	  
+	       sprintf(string, "%s, %d points, %s\n", sportists[i]->name, sportists[i]-> score, sportists[i]->team->name);           
+	       sndMsg(writeChannel, (void*)&code, sizeof(int));
+	       sndString(writeChannel, string);  
         }
     }
 }
-/*)
-void teamShow(team_t* team)
-{
-    senTeam(team);
-    sendSportists(team->league->sportists, team->ID);
-}*/
 
-void tradeShow(trade_t* trade)
+void teamShow(team_t* team, int writeChannel, int code, int end)
 {
-    printf("The sportist %s from %s team has been offered in exchange of %s from %s team\n", 
-            trade->offer->name, trade->from->name, trade->change->name, trade->to->name);
+    senTeam(team, writeChannel, code);
+    sendSportists(team->league->sportists, team->ID, writeChannel, code);
+    sndMsg(writeChannel, (void*)&end, sizeof(int));
 }
 
+void tradeShow(trade_t* trade, writeChannel)
+{
+    char string[50];
+    sprintf(string, "The sportist %s from %s team has been offered in exchange of %s from %s team\n", 
+            trade->offer->name, trade->from->name, trade->change->name, trade->to->name);
+    sndString(writeChannel, string);
+}
 

@@ -11,8 +11,8 @@ int main(int argc, char** args)
   readFD=atoi(args[2]);
   writeFD=atoi(args[1]);
   int ID=atoi(args[3]);
-  int control=atoi(arg[4]);
-  int end=atoi(arg[5]);
+  int control=atoi(args[4]);
+  int end=atoi(args[5]);
   int msg=control;
   sndMsg(writeFD, (void*)&msg, sizeof(int));
   sndMsg(writeFD, (void*)&ID, sizeof(int));
