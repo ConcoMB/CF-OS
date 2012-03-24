@@ -141,7 +141,7 @@ static void sendSportists(sportist_t* sportists[], int teamID, int writeChannel,
 
 void teamShow(team_t* team, int writeChannel, int code, int end)
 {
-    senTeam(team, writeChannel, code);
+    sendTeam(team, writeChannel, code);
     sendSportists(team->league->sportists, team->ID, writeChannel, code);
     sndMsg(writeChannel, (void*)&end, sizeof(int));
 }

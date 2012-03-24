@@ -124,7 +124,7 @@ void loadLeagues(){
 static league_t* loadLeague(FILE* leagueFile){
 	league_t* league;
 	league=malloc(sizeof(league_t));
-	if(fscanf(leagueFile, "%d %s %s %d\n", &league->ID, league->password, league->name, league->tMax)!=EOF){
+	if(fscanf(leagueFile, "%d %s %s %d\n", &league->ID, league->password, league->name, &(league->tMax))!=EOF){
 		loadTeams(league);
 		loadSportists(league);
 		league->trades=newList(cmpTrade);
@@ -237,7 +237,7 @@ void loadNewSportists(league_t* league){
 	sportistFile=fopen("sportists.txt","r");
 	for(i=0; i<CANT_SPORTIST;i++)
 	{
-		char[30] name;
+		char name[SPORT_NAME_L];
 		if(fscanf(sportistFile,"%s\n",name)!=EOF)
 		{
 			sportist=malloc(sizeof(sportist_t));
