@@ -67,7 +67,7 @@ void saveLeagues(){
 }
 
 static void saveLeague(FILE* leagueFile, league_t* league){
-	fprintf(leagueFile, "%d %s %s\n", league->ID, league->password, league->name);
+	fprintf(leagueFile, "%d %s %s %d\n", league->ID, league->password, league->name, league->tMax);
 }
 
 void saveTeam(FILE* teamFile, team_t* team){
@@ -124,7 +124,7 @@ void loadLeagues(){
 static league_t* loadLeague(FILE* leagueFile){
 	league_t* league;
 	league=malloc(sizeof(league_t));
-	if(fscanf(leagueFile, "%d %s %s\n", &league->ID, league->password, league->name)!=EOF){
+	if(fscanf(leagueFile, "%d %s %s %d\n", &league->ID, league->password, league->name, league->tMax)!=EOF){
 		loadTeams(league);
 		loadSportists(league);
 		league->trades=newList(cmpTrade);
@@ -134,21 +134,6 @@ static league_t* loadLeague(FILE* leagueFile){
 	free(league);
 	return NULL;
 }
-
-/*void loadNewSportists(listADT sportists){
-	FILE* sportistFile;
-	sportist_t* sportist;
-	int sportistID;
-	
-	sportistFile=fopen("newSportists.txt","r");
-	while(scanf(sportistFile,"%d %s",&sportistID)){
-		sportist=malloc(sizeof(sportist_t));
-		sportist->ID=sportistID;
-		fgets(sportist->name, 30, sportistFile);
-	}
-	
-	fclose(sportistFile);
-}*/
 
 void loadTeams(league_t* league){
 	FILE* teamFile;
@@ -243,4 +228,23 @@ sportist_t* loadSportist(FILE* sportistFile, league_t* league){
 	}
 	free(sportist);
 	return NULL;
+}
+
+void loadNewSportists(league_t* league){
+	FILE* sportistFile;
+	sportist_t* sportist;
+	int i;
+	sportistFile=fopen("sportists.txt","r");
+	for(i=0; i<CANT_SPORTIST;i++)
+	{
+		char[30] name;
+		if(fscanf(sportistFile,"%s\n",name)!=EOF)
+		{
+			sportist=malloc(sizeof(sportist_t));
+			strcpy(sportist->name,name);
+			sportist->ID=i++;
+			sportist->team=NULL;
+		}
+	}
+	fclose(sportistFile);
 }
