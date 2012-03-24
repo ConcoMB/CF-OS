@@ -6,10 +6,10 @@ void listLeagues(int writeChannel)
     int i, msg=SEND_LEAGUE;
     for(i=0; i<lCant; i++)
     {
-	sndMsg(writeChannel,(void*)&msg, sizeof(int));
-	sndString(writeChannel, leagues[i]->name);
-	msg=leagues[i]->ID;
-	sndMsg(writeChannel, (void*)&msg, sizeof(int));
+	   sndMsg(writeChannel,(void*)&msg, sizeof(int));
+       printf("%s\n", leagues[i]->name);
+	   sndString(writeChannel, leagues[i]->name);
+	   sndMsg(writeChannel, (void*)&(leagues[i]->ID), sizeof(int));
     }
     msg=END_SEND_LEAGUE;
     sndMsg(writeChannel, (void*)&msg, sizeof(int));

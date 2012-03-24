@@ -23,6 +23,8 @@ int lCant, uCant;
 user_t** users;
 listADT clients;
 int nextUserID=0;
+	char defWChannel[3], defRChannel[3];
+
 int nextLeagueID=0;
 
 int nextClientID=1;
@@ -40,15 +42,19 @@ int main()
 
 void disconn()
 {
-	disconnect(readFD);
+	/*disconnect(readFD);
 	disconnect(writeFD);
-	listenClient();
+	char fifo[10];
+	sprintf(fifo, "../fifo%s", defWChannel); 
+	remove(fifo);
+	sprintf(fifo, "../fifo%s", defRChannel);
+	remove(fifo);
+	listenClient();*/
 }
 
 void * listenClient()
 {
 	printf("listening to clients\n");
-	char defWChannel[3], defRChannel[3];
 	sprintf(defWChannel, "%c%d", 's', DEFAULTID);
 	sprintf(defRChannel, "%c%d", 'c', DEFAULTID);
 	create(defWChannel);
