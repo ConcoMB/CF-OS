@@ -1,10 +1,7 @@
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <stdio.h>
-
 #include <string.h>
 #include <stdlib.h>
-#include <fcntl.h>
+#include <sys/wait.h>
 #include <unistd.h>
 #include "../msg.h"
 #include "../common.h"
@@ -116,7 +113,10 @@ void userLog(int msgID)
 void start()
 {
 	int command;
-	char string[20];
+	printf("%d %d\n", readFD, writeFD);
+	char string[20], stringR[10], stringW[10]; 
+	sprintf(stringW, "%d", writeFD);
+	sprintf(stringR, "%d", readFD);
 	do
 	{
 		printf("type your command \n");
@@ -135,7 +135,7 @@ void start()
 			else
 			{
 				printf("me forkeo\n");
-				execl("./listleagues", "listleagues", writeFD, readFD, NULL);
+				execl("./listleagues", "listleagues",stringW, stringR, NULL);
 			}
 		}
 		else if(strcmp(string, "listteams")==0)

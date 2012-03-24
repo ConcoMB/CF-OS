@@ -1,6 +1,7 @@
 #include "../common.h"
 #include "../msg.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 int main(int argc, char** args)
 {
@@ -9,8 +10,8 @@ int main(int argc, char** args)
     char name[NAME_LENGTH];
     int id;
     int readFD, writeFD;
-	readFD=(int)args[2];
-	writeFD=(int) args[1];
+	readFD=atoi(args[2]);
+	writeFD=atoi(args[1]);
     sndMsg(writeFD, (void*)&msg, sizeof(int));
     rcvMsg(readFD, (void*)&msg, sizeof(int));
     while(msg!=END_SEND_LEAGUE && msg==SEND_LEAGUE)
