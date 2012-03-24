@@ -24,8 +24,8 @@ int sndMsg(int fd, void* data, int size);
 int rcvMsg(int fd, void* data, int size);
 void create(char* id);
 int connect(char* id, int flag);
-void rcvString(int fd, char* data);
-void sndString(int fd, char* string);
+int rcvString(int fd, char* data);
+int sndString(int fd, char* string);
 void disconnect(int fd);
 
 #endif
