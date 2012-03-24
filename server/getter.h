@@ -16,4 +16,6 @@ league_t* getLeagueByID(int leagueID);
 
 team_t* getTeamByClient(league_t* league, client_t* client);
 
+trade_t* getTradeByID(league_t* league, int searchID);
+
 #endif

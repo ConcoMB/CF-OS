@@ -146,7 +146,7 @@ void teamShow(team_t* team, int writeChannel, int code, int end)
     sndMsg(writeChannel, (void*)&end, sizeof(int));
 }
 
-void tradeShow(trade_t* trade, writeChannel)
+void tradeShow(trade_t* trade, int writeChannel)
 {
     char string[50];
     sprintf(string, "The sportist %s from %s team has been offered in exchange of %s from %s team\n", 

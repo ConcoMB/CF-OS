@@ -13,6 +13,7 @@
 #define ID_INVALID 68
 #define TEAM_SHOW 69
 #define END_TEAM_SHOW 70
+#define TRADE_SHOW 71
 
 #define YOUR_TURN 100
 #define DRAFT_WAIT 101

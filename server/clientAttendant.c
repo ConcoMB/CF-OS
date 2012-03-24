@@ -12,6 +12,7 @@
 #include <sys/shm.h>
 #define CONVERSION 1000
 #include <signal.h>
+#include "draft.c"
 
 client_t* myClient;
 
@@ -97,7 +98,7 @@ void start()
 				rcvMsg(myClient->readFD, (void*)&msg, sizeof(int));
 				if(msg<lCant && msg>=0)
 				{
-					leagueShow(leagues[msg], myClient->writeFD), LEAGUE_SHOW, END_LEAGUE_SHOW;
+					leagueShow(leagues[msg], myClient->writeFD, LEAGUE_SHOW, END_LEAGUE_SHOW);
 				}
 				else
 				{
@@ -133,7 +134,7 @@ void start()
 				tID=msg%CONVERSION;
  				if(lID<lCant && lID>=0)
 				{
-					trade_t* tradeAux=getTradeByID(leagues[lID], tID);
+					trade_t* tradeAux = getTradeByID(leagues[lID], tID);
 					if(tradeAux!=NULL)
 					{
 						tradeShow(tradeAux, myClient->writeFD);
@@ -202,7 +203,7 @@ void makeConnection()
 void controlDraft(draft_t* draft)
 {
 	int i;
-	for(i=0; i<draft->league->tMax;i++)
+	for(i=0; i< (draft->league->tMax) ;i++)
 	{
 		if(!draft->clients[i])
 		{

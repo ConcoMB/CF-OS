@@ -7,3 +7,7 @@ make:
 	$(CC) listleagues.c -o listleagues  ../msgFIFO.c $(CFLAGS)
 	$(CC) listtrades.c -o listtrades  ../msgFIFO.c $(CFLAGS)
 	$(CC) ltShow.c -o ltShow  ../msgFIFO.c $(CFLAGS)
+	$(CC) tradeShow.c -o tradeShow  ../msgFIFO.c $(CFLAGS)
+	$(CC) draft.c -o draft  ../msgFIFO.c $(CFLAGS)
+
+

@@ -1,4 +1,4 @@
-#include "getbyid.h"
+#include "getter.h"
 
 trade_t* getTradeByID(league_t* league, int searchID)
 {

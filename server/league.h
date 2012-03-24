@@ -47,7 +47,7 @@ typedef  struct
 
 typedef struct 
 {
-    struct league_t* league;
+    struct league_s* league;
     client_t ** clients;
     int flag;
     int turn;

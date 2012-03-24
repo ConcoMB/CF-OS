@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include "league.h"
 #include "list.h"
-#include "getbyid.h"
+#include "getter.h"
 #include "externvars.h"
 #include "cmp.h"
 #include "arrays.h"
