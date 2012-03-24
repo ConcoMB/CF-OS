@@ -10,6 +10,7 @@
 #include "display.h"
 #include "league.h"
 #include <sys/shm.h>
+#include <signal.h>
 
 int readFD, writeFD;
 client_t* myClient;
@@ -95,10 +96,12 @@ void start()
 	}
 }
 
-void makeDisconnection()
+void makeDisconnection(int param)
 {
 	disconnect(readFD);
 	disconnect(writeFD);
+	printf("cliente desconectado\n");
+	pthread_exit(0);
 }
 
 void makeConnection()
