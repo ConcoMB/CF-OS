@@ -203,9 +203,23 @@ void start()
 			}
 			else
 			{
-				execl("./tradeShow", "tradeShow", stringW, stringR, auxString);
+				execl("./tradeShow", "tradeShow", stringW, stringR, auxString, NULL);
 			}
-		}/*
+		}
+		else if(strcmp(string, "draft")==0)
+		{
+			scanf("%d", &auxID);
+			sprintf(auxString, "%d",auxID);
+			if(fork())
+			{
+				wait((int*)0);
+			}
+			else
+			{
+				execl("./draft", "draft", stringW, stringR, auxString, NULL);
+			}
+		}
+		/*
 		else if(strcmp(string, "trade")==0)
 		{
 			if(fork())

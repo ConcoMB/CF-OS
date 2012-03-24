@@ -14,4 +14,6 @@ user_t* getUserByID(int userID);
 
 league_t* getLeagueByID(int leagueID);
 
+team_t* getTeamByClient(league_t* league, client_t* client);
+
 #endif

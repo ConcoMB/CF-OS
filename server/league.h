@@ -6,6 +6,7 @@
 #define SPORT_NAME_L 30
 #define USERS_SHM 120
 #define CANT_SPORTIST 50
+#define TEAM_SIZE 5
 
 struct league_s;
 
@@ -16,6 +17,16 @@ typedef struct
     char name[NAME_LENGTH];
     char password[NAME_LENGTH];
 }user_t;
+
+typedef struct
+{
+    int ID;
+    user_t* user;
+    pthread_t att;
+    int readFD;
+    int writeFD;
+}client_t;
+
     
 typedef struct
 {
@@ -34,28 +45,29 @@ typedef  struct
     team_t* team;
 }sportist_t;
 
+typedef struct 
+{
+    struct league_t* league;
+    client_t ** clients;
+    int flag;
+    int turn;
+}draft_t;
+
 typedef struct league_s
 {
 	int ID;
-    char drafted;
     int nextTeamID;
     char name[NAME_LENGTH];
     char password[NAME_LENGTH];
     sportist_t* sportists[CANT_SPORTIST]; 
     team_t** teams;
     int tCant;
+    int tMax;
     listADT trades;
+    draft_t* draft;
 }league_t;
 
-typedef struct
-{
-    int ID;
-    user_t* user;
-    pthread_t att;
-    int readFD;
-    int writeFD;
-}client_t;
-   
+
     
 typedef struct 
 {
@@ -66,5 +78,7 @@ typedef struct
     sportist_t* offer;
     sportist_t* change;
 }trade_t;
+
+
 
 #endif

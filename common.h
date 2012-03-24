@@ -14,6 +14,11 @@
 #define TEAM_SHOW 69
 #define END_TEAM_SHOW 70
 
+#define YOUR_TURN 100
+#define DRAFT_WAIT 101
+#define END_DRAFT 102
+#define DRAFT 103
+#define DRAFT_BEGUN 104
 
 
 #endif

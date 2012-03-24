@@ -19,6 +19,8 @@ void makeConnection();
 void start();
 void logClient();
 void makeDisconnection();
+void controlDraft(draft_t* draft);
+
 
 void* clientAtt(void* arg)
 {
@@ -148,6 +150,30 @@ void start()
 					sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
 				}
 				break;
+			case DRAFT:
+				rcvMsg(myClient->readFD, (void*)&msg, sizeof(int));
+				if(msg>=0 && msg<lCant && leagues[msg]->draft!=NULL)
+				{
+					team_t* team= getTeamByClient(leagues[msg], myClient);
+					if(team==NULL)
+					{
+						msg=ID_INVALID;
+						sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
+					}
+					else
+					{
+						leagues[msg]->draft->clients[team->ID]=myClient;
+						controlDraft(leagues[msg]->draft);
+						msg=DRAFT_WAIT;
+						sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
+					}
+				}
+				else
+				{
+					msg=ID_INVALID;
+					sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
+				}
+				break;
 		}
 	}
 }
@@ -171,5 +197,19 @@ void makeConnection()
 	create(readChannel);
 	myClient->readFD=connect(readChannel, O_RDONLY);
 
+}
+
+void controlDraft(draft_t* draft)
+{
+	int i;
+	for(i=0; i<draft->league->tMax;i++)
+	{
+		if(!draft->clients[i])
+		{
+			return;
+		}
+	}
+	pthread_t draftT;
+	pthread_create(&draftT, NULL, draftAttendant, (void*) draft);
 }
 

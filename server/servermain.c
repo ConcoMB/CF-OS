@@ -40,18 +40,6 @@ int main()
 	return 0;
 }
 
-void disconn(int param)
-{
-	printf("Disconected\n");
-	/*disconnect(readFD);
-	disconnect(writeFD);
-	char fifo[10];
-	sprintf(fifo, "../fifo%s", defWChannel); 
-	remove(fifo);
-	sprintf(fifo, "../fifo%s", defRChannel);
-	remove(fifo);
-	listenClient();*/
-}
 
 void * listenClient()
 {

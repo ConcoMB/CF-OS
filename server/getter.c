@@ -14,6 +14,19 @@ trade_t* getTradeByID(league_t* league, int searchID)
   return NULL;
 }
 
+team_t* getTeamByClient(league_t* league, client_t* client)
+{
+  int i;
+  for(i=0; i<league->tCant; i++)
+  {
+    if(league->teams[i]->user->ID==client->user->ID)
+    {
+      return league->teams[i];
+    }
+  }
+  return NULL;
+}
+
 /*
 sportist_t* getSportistByID(league_t* league, int sportistID)
 {
