@@ -29,8 +29,8 @@ void makeDefConnection(int * msgID)
 	int defRead, defWrite;
 	sprintf(defWChannel, "%c%d", 'c', DEFAULTID);
 	sprintf(defRChannel, "%c%d", 's', DEFAULTID);
-	defWrite=connect(defWChannel, O_WRONLY);
-	defRead=connect(defRChannel, O_RDONLY);
+	defWrite=connectChannel(defWChannel, O_WRONLY);
+	defRead=connectChannel(defRChannel, O_RDONLY);
 	
 	sndMsg(defWrite, (void*)&aux, sizeof(int));
 	printf("mande\n");
@@ -45,8 +45,8 @@ void userLog(int msgID)
 	sprintf(writeChannel, "%c%d", 'c', msgID);
 	create(readChannel);
 	create(writeChannel);
-	readFD=connect(readChannel, O_RDONLY);
-	writeFD=connect(writeChannel, O_WRONLY);
+	readFD=connectChannel(readChannel, O_RDONLY);
+	writeFD=connectChannel(writeChannel, O_WRONLY);
 	int loged=0;
 	while(!loged)
 	{

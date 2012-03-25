@@ -4,12 +4,16 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#include <errno.h>
 #include <string.h>
 
 #define SOCKET_MSGSIZE 30
 
 int sndMsg(int fd, void* data, int size){
-	return send(fd, data, size, 0);
+	int aux = send(fd, data, size, 0);
+	printf("\n%d\n",errno);
+	sleep(2);
+	return aux;
 }
 
 int rcvMsg(int fd, void* data, int size){
