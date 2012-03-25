@@ -37,8 +37,8 @@ int main()
 	loadAll();
 	pthread_t clThread,newMatchFilesThread;
 	pthread_create(&clThread, NULL, listenClient, NULL);
-	pthread_join(clThread, NULL);
 	pthread_create(&newMatchFilesThread, NULL, newMatchesListener, NULL);
+	pthread_join(clThread, NULL);
 	pthread_join(newMatchFilesThread, NULL);
 	return 0;
 }

@@ -29,7 +29,7 @@
 28 0 -1 Kennen 
 29 0 -1 Kog'Maw 
 30 0 -1 LeBlanc 
-31 0 -1 Lee Sin 
+31 0 -1 LeeSin 
 32 0 -1 Leona 
 33 0 -1 Lulu 
 34 0 -1 Lux 

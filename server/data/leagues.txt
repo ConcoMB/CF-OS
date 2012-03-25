@@ -1,2 +1,2 @@
-0 pass LoL 4
-1 passW0rd WoW 5
+0 pass LoL 4 0
+1 passW0rd WoW 5 0

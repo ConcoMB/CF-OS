@@ -1,5 +1,6 @@
 #include "msg.h"
 #include <mqueue.h>
+#include <errno.h>
 
 #define MQ_MSGSIZE 30
 
@@ -10,9 +11,8 @@ int sndMsg(int fd, void* data, int size)
 
 int rcvMsg(int fd, void* data, int size)
 {
-	int p;
-	int i= mq_receive(fd, (char*)data, MQ_MSGSIZE, &p);
-	printf("msgLenght=%d",i);
+	int i= mq_receive(fd, (char*)data, MQ_MSGSIZE,0 );
+	printf("OK!\n");
 	return i;
 }
 
@@ -23,16 +23,19 @@ void create(char* id)
 
 int connectChannel(char* id, int flag)
 {
+	char mq[10];
+	sprintf(mq, "/mq%s",id);
 	struct mq_attr attr;
 	attr.mq_maxmsg = 10;
 	attr.mq_msgsize = MQ_MSGSIZE;
-	return mq_open(id, O_CREAT|flag, 0666, &attr);
+	attr.mq_flags=0;
+	int i= mq_open(mq, O_CREAT|O_RDWR, 0666, &attr);
+	return i;
 }
 
 int rcvString(int fd, char* data)
 {
-	int p;
-	return mq_receive(fd, data, MQ_MSGSIZE, &p);
+	return mq_receive(fd, data, MQ_MSGSIZE, 0);
 }
 
 int sndString(int fd, char* string)
