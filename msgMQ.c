@@ -26,7 +26,7 @@ void create(char* id)
 	return;
 }
 
-int connect(char* id, int flag)
+int connectChannel(char* id, int flag)
 {
 	char mq[10];
 	sprintf(mq, "/mq%s",id);

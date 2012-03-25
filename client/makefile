@@ -9,5 +9,11 @@ make:
 	$(CC) ltShow.c -o ltShow  ../msg$(IPC).c $(CFLAGS)
 	$(CC) tradeShow.c -o tradeShow  ../msg$(IPC).c $(CFLAGS)
 	$(CC) draft.c -o draft  ../msg$(IPC).c $(CFLAGS)
+	$(CC) tradeNegociate.c -o tradeNegociate  ../msg$(IPC).c $(CFLAGS)
+	$(CC) tradeAW.c -o tradeAW  ../msg$(IPC).c $(CFLAGS)
+	$(CC) joinLeague.c -o joinLeague  ../msg$(IPC).c $(CFLAGS)
+	$(CC) makeTrade.c -o makeTrade  ../msg$(IPC).c $(CFLAGS)
+	$(CC) makeLeague.c -o makeLeague  ../msg$(IPC).c $(CFLAGS)
+
 
 

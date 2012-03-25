@@ -20,8 +20,8 @@ static void sendTrade(trade_t* trade, int writeChannel)
     int code=SEND_TRADE;
     sndMsg(writeChannel, (void*)&code, sizeof(int));
     char string[50];
-    sprintf(string, "In the league %s the team %s has offered the team %s to exchange his %s to %s\n", 
-    trade->league->name, trade->from->name, trade->to->name, trade->offer->name, trade->change->name);
+    sprintf(string, "In the league %s the team %s has offered the team %s to exchange his %s to %s (Trade ID %d)\n", 
+    trade->league->name, trade->from->name, trade->to->name, trade->offer->name, trade->change->name, trade->league->ID*CONVERSION + trade->ID);
     printf("%s\n", string);
     sndString(writeChannel, string);
 }
@@ -74,10 +74,12 @@ void listTeam(user_t* user, int writeChannel)
         reset(user->teams);
         while((team=(team_t*)getNext(user->teams))!=NULL)
         {
+            int teamID = team->league->ID*CONVERSION + team->ID;
 		  msg=SEND_TEAM;
 		  sndMsg(writeChannel, (void*)&msg, sizeof(int));
 		  sndString(writeChannel, team->name);
 		  sndString(writeChannel, team->league->name);
+          sndMsg(writeChannel, (void*)&teamID, sizeof(int));
 		  sndMsg(writeChannel, (void*)&(team->points), sizeof(int));
 	   }
 	msg=END_SEND_TEAM;
@@ -100,7 +102,7 @@ static void createOrderedList(listADT list, league_t* league)
 static void sendTeam(team_t* team, int writeChannel, int code)
 {
 	char msg[50];
-    sprintf(msg, "Team %s, from user %s  ->  %d points\n", team->name, team->user->name, team->points);
+    sprintf(msg, "Team %s, ID %d , from user %s  ->  %d points\n", team->name, team->league->ID*CONVERSION+team->ID, team->user->name, team->points);
     sndMsg(writeChannel, (void*)&code, sizeof(int));
     sndString(writeChannel, msg);
 }
@@ -149,8 +151,8 @@ void teamShow(team_t* team, int writeChannel, int code, int end)
 void tradeShow(trade_t* trade, int writeChannel)
 {
     char string[50];
-    sprintf(string, "The sportist %s from %s team has been offered in exchange of %s from %s team\n", 
-            trade->offer->name, trade->from->name, trade->change->name, trade->to->name);
+    sprintf(string, "The sportist %s from %s team has been offered in exchange of %s from %s team (TRADE ID %d)\n", 
+            trade->offer->name, trade->from->name, trade->change->name, trade->to->name, trade->league->ID*CONVERSION + trade->ID);
     sndString(writeChannel, string);
 }
 
