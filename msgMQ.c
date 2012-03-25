@@ -21,7 +21,7 @@ void create(char* id)
 	return;
 }
 
-int connect(char* id, int flag)
+int connectChannel(char* id, int flag)
 {
 	struct mq_attr attr;
 	attr.mq_maxmsg = 10;
