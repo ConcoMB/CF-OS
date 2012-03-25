@@ -78,7 +78,10 @@ void logClient()
 
 void start()
 {
-	int msg, lID, tID;
+	int msg, lID, tID, offer, change;
+	char name[NAME_LENGTH], pass[NAME_LENGTH];
+	team_t * team;
+	trade_t* trade;
 	while(1)
 	{
 		rcvMsg(myClient->readFD,(void*)&msg, sizeof(int));
@@ -134,10 +137,10 @@ void start()
 				tID=msg%CONVERSION;
  				if(lID<lCant && lID>=0)
 				{
-					trade_t* tradeAux = getTradeByID(leagues[lID], tID);
+					trade= getTradeByID(leagues[lID], tID);
 					if(tradeAux!=NULL)
 					{
-						tradeShow(tradeAux, myClient->writeFD);
+						tradeShow(trade, myClient->writeFD);
 					}
 					else
 					{
@@ -166,6 +169,150 @@ void start()
 						leagues[msg]->draft->clients[team->ID]=myClient;
 						controlDraft(leagues[msg]->draft);
 						msg=DRAFT_WAIT;
+						sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
+					}
+				}
+				else
+				{
+					msg=ID_INVALID;
+					sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
+				}
+				break;
+			case MAKE_TRADE:
+				rcvMsg(myClient->readFD, (void*)&lID, sizeof(int));
+				rcvMsg(myClient->readFD, (void*)&offer, sizeof(int));
+				rcvMsg(myClient->readFD, (void*)&change, sizeof(int));
+				tID=lID%1000;
+				lID/=1000;
+				if(lID<lCant && lID>=0 && tID<leagues[lID] && tID>=leagues[tID] && 
+					(team=getTeamByClient(leagues[ID], myClient))==NULL && offer>=0 && change>=0 &&
+					offer<CANT_SPORTIST && change<CANT_SPORTIST && 
+					team->ID!=leagues[lID]->teams[tID])
+				{
+					if(offerTrade(leagues[lID], team, leagues[lID]->teams[tID], leagues[lID]->sportists[offer], leagues[lID]->sportists[change])==0)
+					{
+						msg=TRADE_MADE;
+					}
+					else
+					{
+						msg=ERROR;
+					}
+					sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
+				}
+				else
+				{
+					msg=ID_INVALID;
+					sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
+				}
+				break;
+			case TRADE_WD:
+				rcvMsg(myClient->readFD, (void*)&tID, sizeof(int));
+				lID=tID/1000;
+				tID%=1000;
+				if(lID<lCant && lID>=0 (trade=getTeamByClient(leagues[lID], myClient))!=NULL)
+				{
+					if(tradeWithdraw(team, tID, leagues[lID])==0)
+					{
+						msg=TRADE_WD;
+					}
+					else
+					{
+						msg=ERROR;
+					}
+					sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
+				}
+				else
+				{
+					msg= ID_INVALID;
+					sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
+				}
+				break;
+			case TRADE_YES:
+				rcvMsg(myClient->readFD, (void*)&tID, sizeof(int));
+				lID=tID/1000;
+				tID%=1000;
+				if(lID<lCant && lID>=0 && (trade=getTradeByID(leagues[lID], tID)!=NULL)
+				{
+					acceptTrade(trade, leagues[lID]);
+					msg=TRADE_YES;
+				}
+				else
+				{
+					msg= ID_INVALID;
+				}
+				sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
+				break;
+			case TRADE_NEG:
+				rcvMsg(myClient->readFD, (void*)&tID, sizeof(int));
+				rcvMsg(myClient->readFD, (void*)&offer, sizeof(int));
+				rcvMsg(myClient->readFD, (void*)&change, sizeof(int));
+				lID=tID/1000;
+				tID%=1000;
+				if(lID<lCant && lID>=0 && (trade=getTradeByID(leagues[lID], tID))!=NULL && offer>=0 &&
+					change>=0 && offer<CANT_SPORTIST && change<CANT_SPORTIST)
+				{
+					if(tradeNegociate(trade, leagues[lID]->sportists[offer], leagues[lID]->sportists[change], leagues[lID])==0)
+					{
+						msg=TRADE_NEG;
+					}
+					else
+					{
+						msg=ERROR;
+					}
+					sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
+
+				}
+				else
+				{
+					msg= ID_INVALID;
+					sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
+				}
+				break;
+			case MAKE_LEAGUE:
+				rcvString(myClient->readFD, name);
+				rcvString(myClient->readFD, pass);
+				rcvMsg(myClient->readFD, (void*)&msg, sizeof(int));
+				msg=createLeague(name, pass, msg);
+				if(msg==0)
+					msg=MAKE_LEAGUE;
+				sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
+
+				break;
+			case JOIN_LEAGUE:
+				rcvMsg(myClient->readFD, (void*)&lID, sizeof(int));
+				if(lID<lCant && lID>=0)
+				{
+					if(userAlreadyJoined(myClient->user, leagues[lID]))
+					{
+						msg=USER_ALREADY_JOINED;
+						sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
+					}
+					msg=JOIN_LEAGUE;
+					sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
+					rcvString(myClient->readFD, name);
+					if(teamNameTaken(leagues[lID], name))
+					{
+						msg=NAME_TAKEN;
+						sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
+					}
+					else
+					{
+						msg=JOIN_LEAGUE;
+						sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
+						if(leagues[lID]->password==NULL)
+						{
+							msg=NO_PASSWORD;
+							sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
+						}
+						else
+						{
+							msg=SEND_PASSWORD;
+							sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
+							rcvString(myClient->readFD, password);
+						}
+						msg = joinLeague(myClient->user, leagues[lID], name, password);
+						if(msg==0)
+							msg=JOIN_LEAGUE;
 						sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
 					}
 				}

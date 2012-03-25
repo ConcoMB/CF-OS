@@ -112,9 +112,9 @@ void userLog(int msgID)
 
 void start()
 {
-	int command, auxID;
+	int command, auxID, auxOffer, auxChange, aux4;
 	printf("%d %d\n", readFD, writeFD);
-	char string[20], stringR[10], stringW[10], auxString[10], controlStr[10], endStr[10]; 
+	char string[20], stringR[10], stringW[10], auxString[10], auxStr2[10], auxStr3[10], auxStr4[10]; 
 	sprintf(stringW, "%d", writeFD);
 	sprintf(stringR, "%d", readFD);
 	do
@@ -127,14 +127,12 @@ void start()
 		}
 		else if(strcmp(string, "listleagues")==0)
 		{
-			int cid=fork();
-			if(cid)
+			if(fork())
 			{
-				waitpid(cid, NULL, 0);
+				wait((int*) 0);
 			}
 			else
 			{
-				printf("me forkeo\n");
 				execl("./listleagues", "listleagues",stringW, stringR, NULL);
 			}
 		}
@@ -164,8 +162,8 @@ void start()
 		{	
 			scanf("%d", &auxID);
 			sprintf(auxString, "%d",auxID );
-			sprintf(controlStr, "%d", LEAGUE_SHOW);
-			sprintf(endStr, "%d", END_LEAGUE_SHOW);
+			sprintf(auxStr2, "%d", LEAGUE_SHOW);
+			sprintf(auxStr3, "%d", END_LEAGUE_SHOW);
 
 			printf("%d es el id de la liga\n", auxID);
 			if(fork())
@@ -174,15 +172,15 @@ void start()
 			}
 			else
 			{
-				execl("./ltShow", "ltShow", stringW, stringR, auxString, controlStr, endStr,  NULL);
+				execl("./ltShow", "ltShow", stringW, stringR, auxString, auxStr2, auxStr3,  NULL);
 			}
 		}
 		else if(strcmp(string, "teamshow")==0)
 		{
 			scanf("%d", &auxID);
 			sprintf(auxString, "%d",auxID);
-			sprintf(controlStr, "%d", TEAM_SHOW);
-			sprintf(endStr, "%d", END_TEAM_SHOW);
+			sprintf(auxStr2, "%d", TEAM_SHOW);
+			sprintf(auxStr3, "%d", END_TEAM_SHOW);
 
 			if(fork())
 			{
@@ -190,7 +188,7 @@ void start()
 			}
 			else
 			{
-				execl("./ltShow", "ltShow", stringW, stringR, auxString, controlStr, endStr, NULL);
+				execl("./ltShow", "ltShow", stringW, stringR, auxString, auxStr2, auxStr3, NULL);
 			}
 		}
 		else if(strcmp(string, "tradeshow")==0)
@@ -219,41 +217,66 @@ void start()
 				execl("./draft", "draft", stringW, stringR, auxString, NULL);
 			}
 		}
-		/*
+		
 		else if(strcmp(string, "trade")==0)
 		{
+			scanf("%d", &auxID);
+			sprintf(auxString, "%d",auxID);
+			
 			if(fork())
 			{
 				wait((int*)0);
 			}
 			else
 			{
-				execl();
+				execl("./makeTrade", "makeTrade", stringW, stringR, auxString, NULL);
 			}
 		}
 		else if(strcmp(string, "tradewithdraw")==0)
 		{
+			scanf("%d", &auxID);
+			sprintf(auxString, "%d",auxID);
+			aux=TRADE_WD;
+			sprintf(auxStr2, "%d", aux);
 			if(fork())
 			{
 				wait((int*)0);
 			}
 			else
 			{
-				execl();
+				execl("./tradeAW", "tradeAW", stringW, stringR, auxString, auxStr2, NULL);
 			}
 		}
 		else if(strcmp(string, "tradeaccept")==0)
 		{
+			scanf("%d", &auxID);
+			sprintf(auxString, "%d",auxID);
+			aux=TRADE_YES;
+			sprintf(auxStr2, "%d", aux);
 			if(fork())
 			{
 				wait((int*)0);
 			}
 			else
 			{
-				execl();
+				execl("./tradeAW", "tradeAW", stringW, stringR, auxString, auxStr2, NULL);
 			}
 		}
 		else if(strcmp(string, "tradenegociate")==0)
+		{
+			scanf("%d", &auxID);
+			sprintf(auxString, "%d",auxID);
+			
+			if(fork())
+			{
+				wait((int*)0);
+			}
+			else
+			{
+				execl("tradeNegociate", "tradeNegociate", stringW, stringR, auxString, NULL);
+			}
+		}
+		else if(strcmp(string, "createleague"))
 		{
 			if(fork())
 			{
@@ -261,9 +284,24 @@ void start()
 			}
 			else
 			{
-				execl();
+				execl("makeLeague.c", "makeLeague", stringW, stringR, NULL);
 			}
-		}*/
+
+		}
+		else if(strcmp(string, "joinleague"))
+		{
+			scanf("%d", &auxID);
+			sprintf(auxString, "%d",auxID);
+			if(fork())
+			{
+				wait((int*)0);
+			}
+			else
+			{
+				execl("joinLeague.c", "joinLeague", stringW, stringR, auxString, NULL);
+			}
+
+		}
 		else 
 		{
 			printf("invalid command, type 'help' for help\n");

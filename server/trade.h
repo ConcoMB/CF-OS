@@ -5,13 +5,13 @@
 #include "league.h"
 #include <stdlib.h>
 
-void offerTrade(league_t* league, team_t* from, team_t* to, sportist_t* offer, sportist_t* change);
+int offerTrade(league_t* league, team_t* from, team_t* to, sportist_t* offer, sportist_t* change);
 
-void withdrawTrade(trade_t* trade, league_t* league);
+int withdrawTrade(team_t* team, int tradeID, league_t* league);
 
 void acceptTrade(trade_t* trade, league_t* league);
 
-void negociate(trade_t* oldTrade, sportist_t* newOffer, sportist_t* newChange, league_t* league);
+int negociate(trade_t* oldTrade, sportist_t* newOffer, sportist_t* newChange, league_t* league);
 
 
 #endif
