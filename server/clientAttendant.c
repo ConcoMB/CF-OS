@@ -80,12 +80,11 @@ void start(client_t* myClient)
 	int msg, lID, tID;
 	while(1)
 	{
-		printf("recibiendo comando...");
+		sleep(2);
 		if(rcvMsg(myClient->readFD,(void*)&msg, sizeof(int))<=0)
 		{
 			makeDisconnection(myClient);
 		}
-		printf("%d\n",msg);
 		switch(msg)
 		{
 			case SEND_LEAGUE:

@@ -6,13 +6,18 @@
 
 int sndMsg(int fd, void* data, int size)
 {
-	return mq_send(fd, (char*)data, size, 0);
+	int i;
+	i= mq_send(fd, (char*)data, size, 0);
+	if(i==-1)
+	{
+		printf("Send Error: errno %d\n", errno);
+	}
+	return i;
 }
 
 int rcvMsg(int fd, void* data, int size)
 {
 	int i= mq_receive(fd, (char*)data, MQ_MSGSIZE,0 );
-	printf("OK!\n");
 	return i;
 }
 
@@ -30,6 +35,7 @@ int connect(char* id, int flag)
 	attr.mq_msgsize = MQ_MSGSIZE;
 	attr.mq_flags=0;
 	int i= mq_open(mq, O_CREAT|O_RDWR, 0666, &attr);
+	printf("connected %s? %d %d\n",mq,i,errno);
 	return i;
 }
 
