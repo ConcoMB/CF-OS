@@ -27,7 +27,7 @@
 #define MAKE_LEAGUE 79
 #define NO_PASSWORD 80
 #define ERROR 12321
-
+#define CONVERSION 1000
 #define YOUR_TURN 100
 #define DRAFT_WAIT 101
 #define END_DRAFT 102

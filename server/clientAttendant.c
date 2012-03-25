@@ -11,7 +11,6 @@
 #include "league.h"
 #include "trade.h"
 #include <sys/shm.h>
-#define CONVERSION 1000
 #include <signal.h>
 #include "draft.c"
 
