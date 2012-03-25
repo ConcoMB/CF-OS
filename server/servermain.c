@@ -14,6 +14,7 @@
 #include "externvars.h"
 #include "clientAttendant.c"
 #include "cmp.h"
+#include "newMatchesListener.h"
 #include <signal.h>
 
 void * listenClient();
@@ -34,9 +35,11 @@ int main()
 {
 	clients=newList(cmpClient);
 	loadAll();
-	pthread_t clThread;
+	pthread_t clThread,newMatchFilesThread;
 	pthread_create(&clThread, NULL, listenClient, NULL);
 	pthread_join(clThread, NULL);
+	pthread_create(&newMatchFilesThread, NULL, newMatchesListener, NULL);
+	pthread_join(newMatchFilesThread, NULL);
 	return 0;
 }
 
