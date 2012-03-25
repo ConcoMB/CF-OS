@@ -1,13 +1,13 @@
 CC=gcc
-CFLAGS=-g -lpthread
+CFLAGS=-g -lpthread -lrt
 OBJ= clientmain.o listteams.o listleagues.o ../msgFIFO.o
 make:
-	$(CC) clientmain.c -o client  ../msgFIFO.c $(CFLAGS)
-	$(CC) listteams.c -o listteams  ../msgFIFO.c $(CFLAGS)
-	$(CC) listleagues.c -o listleagues  ../msgFIFO.c $(CFLAGS)
-	$(CC) listtrades.c -o listtrades  ../msgFIFO.c $(CFLAGS)
-	$(CC) ltShow.c -o ltShow  ../msgFIFO.c $(CFLAGS)
-	$(CC) tradeShow.c -o tradeShow  ../msgFIFO.c $(CFLAGS)
-	$(CC) draft.c -o draft  ../msgFIFO.c $(CFLAGS)
+	$(CC) clientmain.c -o client  ../msg$(IPC).c $(CFLAGS)
+	$(CC) listteams.c -o listteams  ../msg$(IPC).c $(CFLAGS)
+	$(CC) listleagues.c -o listleagues  ../msg$(IPC).c $(CFLAGS)
+	$(CC) listtrades.c -o listtrades  ../msg$(IPC).c $(CFLAGS)
+	$(CC) ltShow.c -o ltShow  ../msg$(IPC).c $(CFLAGS)
+	$(CC) tradeShow.c -o tradeShow  ../msg$(IPC).c $(CFLAGS)
+	$(CC) draft.c -o draft  ../msg$(IPC).c $(CFLAGS)
 
 

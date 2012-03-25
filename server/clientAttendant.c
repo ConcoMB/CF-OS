@@ -14,8 +14,6 @@
 #include <signal.h>
 #include "draft.c"
 
-client_t* myClient;
-
 void makeConnection();
 void start();
 void logClient();
@@ -25,32 +23,33 @@ void controlDraft(draft_t* draft);
 
 void* clientAtt(void* arg)
 {
+	client_t* myClient;
 	printf("entre al attendant\n");
 	myClient=(client_t*)arg;
-	makeConnection();
-	logClient();
-	start();
+	makeConnection(myClient);
+	logClient(myClient);
+	start(myClient);
 }
 
-void logClient()
+void logClient(client_t* myClient)
 {
 	int aux, loged=0, msg;
 	char name[NAME_LENGTH], password[NAME_LENGTH];
 	while(!loged)
 	{
-		if(!rcvMsg(myClient->readFD,(void*)&msg, sizeof(int)))
+		if(rcvMsg(myClient->readFD,(void*)&msg, sizeof(int))<=0)
 		{
-			makeDisconnection();
+			makeDisconnection(myClient);
 		}
 		printf("msg: %d\n", msg);
-		if(!rcvString(myClient->readFD, name))
+		if(rcvString(myClient->readFD, name)<=0)
 		{
-			makeDisconnection();
+			makeDisconnection(myClient);
 		}
 		printf("name: %s\n", name);
-		if(!rcvString(myClient->readFD, password))
+		if(rcvString(myClient->readFD, password)<=0)
 		{
-			makeDisconnection();
+			makeDisconnection(myClient);
 		}
 		printf("psswd: %s\n", password);
 		if(msg==LOGIN)
@@ -76,7 +75,7 @@ void logClient()
 	}
 }
 
-void start()
+void start(client_t* myClient)
 {
 	int msg, lID, tID, offer, change;
 	char name[NAME_LENGTH], pass[NAME_LENGTH];
@@ -84,7 +83,11 @@ void start()
 	trade_t* trade;
 	while(1)
 	{
-		rcvMsg(myClient->readFD,(void*)&msg, sizeof(int));
+		if(rcvMsg(myClient->readFD,(void*)&msg, sizeof(int))<=0)
+		{
+			makeDisconnection(myClient);
+		}
+		
 		printf("%d\n",msg);
 		switch(msg)
 		{
@@ -326,7 +329,7 @@ void start()
 	}
 }
 
-void makeDisconnection()
+void makeDisconnection(client_t* myClient)
 {
 	disconnect(myClient->readFD);
 	disconnect(myClient->writeFD);
@@ -334,7 +337,7 @@ void makeDisconnection()
 	pthread_exit(0);
 }
 
-void makeConnection()
+void makeConnection(client_t* myClient)
 {
 	char readChannel[4], writeChannel[4];
 	int id=myClient->ID;
