@@ -26,7 +26,7 @@ int main(int argc, char** args)
     	do
     	{
     		printf("Enter your team name\n");
-    		scanf("%s" name);
+    		scanf("%s", name);
     		sndString(writeFD, name);
    			rcvMsg(readFD, (void*)&msg, sizeof(int));
    			if(msg==NAME_TAKEN)

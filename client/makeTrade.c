@@ -31,9 +31,9 @@ int main(int argc, char** args)
     }
     else if(msg==ID_INVALID)
     {
-    	printf("You entered an invalid ID, please check that you're playing 
-    		at the same league of the team whose player you want and assure that he has that player and
-    		you have the one you offer\n");
+    	printf("You entered an invalid ID, please check that you're playing "
+    		"at the same league of the team whose player you want and assure that he has that player and "
+    		"you have the one you offer\n");
     }
     exit(0);
 

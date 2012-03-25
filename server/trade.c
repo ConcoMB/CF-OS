@@ -51,7 +51,7 @@ void acceptTrade(trade_t* trade, league_t* league)
 
 int negociate(trade_t* oldTrade, sportist_t* newOffer, sportist_t* newChange, league_t* league)
 {
-    if(offerTrade(league, oldTrade->to, oldTrade->from, newOffer, newChange) || withdrawTrade(oldTrade, league))
+    if(offerTrade(league, oldTrade->to, oldTrade->from, newOffer, newChange) || withdrawTrade(oldTrade->from, oldTrade->ID, league))
     {
         return 1;
     }

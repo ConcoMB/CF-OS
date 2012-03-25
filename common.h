@@ -19,6 +19,13 @@
 #define TRADE_SHOW 71
 #define MAKE_TRADE 72
 #define TRADE_MADE 73
+#define TRADE_WD 74
+#define TRADE_YES 75
+#define TRADE_NEG 76
+#define JOIN_LEAGUE 77
+#define SEND_PASSWORD 78
+#define MAKE_LEAGUE 79
+#define NO_PASSWORD 80
 #define ERROR 12321
 
 #define YOUR_TURN 100

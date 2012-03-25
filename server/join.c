@@ -1,6 +1,19 @@
 #include "join.h"
 
 
+int teamNameOccupied(league_t* league, char name[NAME_LENGTH])
+{
+    int i;
+    for(i=0; i<league->tCant; i++)
+    {
+        if(strcmp(name, league->teams[i]->name)==0)
+        {
+            return 1;
+        }
+    }
+    return 0;
+}
+
 static int userNameOccupied(char* name)
 {
     int i;

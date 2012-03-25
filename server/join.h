@@ -13,6 +13,8 @@
 
 static int userNameOccupied(char* name);
 
+int teamNameOccupied(league_t* league, char name[NAME_LENGTH]);
+
 int signUp(char* name, char* password);
 
 int logIn(char* name, char* password, client_t* client);

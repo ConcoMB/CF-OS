@@ -8,7 +8,7 @@ int main(int argc, char** args)
     printf("entre al fork\n");
     int msg = atoi(args[4]);
     int code=msg;
-    int id=atoi(args[3])
+    int id=atoi(args[3]);
     int readFD, writeFD;
 	readFD=atoi(args[2]);
 	writeFD=atoi(args[1]);

@@ -112,7 +112,7 @@ void userLog(int msgID)
 
 void start()
 {
-	int command, auxID, auxOffer, auxChange, aux4;
+	int command, auxID, auxOffer, auxChange;
 	printf("%d %d\n", readFD, writeFD);
 	char string[20], stringR[10], stringW[10], auxString[10], auxStr2[10], auxStr3[10], auxStr4[10]; 
 	sprintf(stringW, "%d", writeFD);
@@ -236,8 +236,8 @@ void start()
 		{
 			scanf("%d", &auxID);
 			sprintf(auxString, "%d",auxID);
-			aux=TRADE_WD;
-			sprintf(auxStr2, "%d", aux);
+			command=TRADE_WD;
+			sprintf(auxStr2, "%d", command);
 			if(fork())
 			{
 				wait((int*)0);
@@ -251,8 +251,8 @@ void start()
 		{
 			scanf("%d", &auxID);
 			sprintf(auxString, "%d",auxID);
-			aux=TRADE_YES;
-			sprintf(auxStr2, "%d", aux);
+			command=TRADE_YES;
+			sprintf(auxStr2, "%d", command);
 			if(fork())
 			{
 				wait((int*)0);
