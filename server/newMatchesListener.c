@@ -1,34 +1,29 @@
 #include "newMatchesListener.h"
 
-league_t** leagues;
-int lCant, uCant;
-user_t** users;
-listADT clients;
-int nextUserID = 0;
-int nextLeagueID = 0;
-int nextClientID = 1;
-void printAll(void);
+//void printAll(void);
 
-void newMatchesListener() {
+void * newMatchesListener() {
 	while (1) {
 		struct dirent * entry;
 		DIR * dir = opendir("./matches");
 
 		while ((entry = readdir(dir)) != NULL) {
-			FILE * matchFile = fopen(entry->d_name, "r");
+			char matchFilePath[100];
+			sprintf(matchFilePath, "./matches/%s", entry->d_name);
+			FILE * matchFile = fopen(matchFilePath, "r");
 			if (matchFile != NULL) {
-
 				int sportistID = 0, sportistPoints = 0,j=0;
 				while (fscanf(matchFile, "%d %d\n", &sportistID,&sportistPoints) != EOF) {
 					if (sportistID >= 0 && sportistID < CANT_SPORTIST) {
 						updateSportistPoints(sportistID, sportistPoints);
 					}
 				}
-				j=unlink(entry->d_name);
-				printf("%d\n",j);
+				fclose(matchFile);
+				j=unlink(matchFilePath);
+				printf("valor q retorna unlink %d, d_name: %s\n",j, entry->d_name);
 			}
 		}
-		printAll();
+		//printAll();
 		closedir(dir);
 		sleep(5);
 	}
@@ -38,10 +33,12 @@ void newMatchesListener() {
 void updateSportistPoints(int id, int score) {
 	int lid;
 	for (lid = 0; lid < lCant; lid++) {
-		leagues[lid]->sportists[id]->score += score;
+		if(leagues[lid]->sportists[id] != NULL){
+			leagues[lid]->sportists[id]->score += score;
+		}
 	}
 }
-
+/*
 void printAll()
 {
   int i;
@@ -64,7 +61,7 @@ void printAll()
     for(j=0;j<CANT_SPORTIST&&leagues[i]->sportists[j];j++)
     {
       sportist_t* sportist=leagues[i]->sportists[j];
-      printf("	%d %d %s\n",sportist->ID, sportist->team->ID, sportist->name);
+      printf("	%d %d %s %d\n",sportist->ID, sportist->team->ID, sportist->name, sportist->score);
     }
     printf("	-- TRADES -- \n");
     trade_t* trade;
@@ -74,9 +71,4 @@ void printAll()
       printf("	%d %d %d %d\n",trade->ID, trade->from->ID, trade->to->ID, trade->offer->ID, trade->change->ID);
     }
   }
-}
-
-int main(void) {
-	loadAll();
-	newMatchesListener();
-}
+}*/

@@ -11,7 +11,7 @@
 #include "externvars.h"
 
 
-void newMatchesListener();
+void * newMatchesListener();
 
 void updateSportistPoints(int id, int score);
 
