@@ -20,7 +20,7 @@ void * newMatchesListener() {
 				}
 				fclose(matchFile);
 				j=unlink(matchFilePath);
-				printf("valor q retorna unlink %d, d_name: %s\n",j, entry->d_name);
+				//printf("valor q retorna unlink %d, d_name: %s\n",j, entry->d_name);
 			}
 		}
 		//printAll();

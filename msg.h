@@ -23,7 +23,7 @@
 int sndMsg(int fd, void* data, int size);
 int rcvMsg(int fd, void* data, int size);
 void create(char* id);
-int connect(char* id, int flag);
+int connectChannel(char* id, int flag);
 int rcvString(int fd, char* data);
 int sndString(int fd, char* string);
 void disconnect(int fd);

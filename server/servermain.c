@@ -37,8 +37,8 @@ int main()
 	loadAll();
 	pthread_t clThread,newMatchFilesThread;
 	pthread_create(&clThread, NULL, listenClient, NULL);
-	pthread_join(clThread, NULL);
 	pthread_create(&newMatchFilesThread, NULL, newMatchesListener, NULL);
+	pthread_join(clThread, NULL);
 	pthread_join(newMatchFilesThread, NULL);
 	return 0;
 }
@@ -51,8 +51,8 @@ void * listenClient()
 	sprintf(defRChannel, "%c%d", 'c', DEFAULTID);
 	create(defWChannel);
 	create(defRChannel);
-	readFD=connect(defRChannel, O_RDONLY);
-	writeFD=connect(defWChannel, O_WRONLY);
+	readFD=connectChannel(defRChannel, O_RDONLY);
+	writeFD=connectChannel(defWChannel, O_WRONLY);
 	signal(SIGPIPE, SIG_IGN);
 	newClient();
 }

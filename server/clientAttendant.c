@@ -84,11 +84,11 @@ void start(client_t* myClient)
 	trade_t* trade;
 	while(1)
 	{
+		printf("recibiendo comando...");
 		if(rcvMsg(myClient->readFD,(void*)&msg, sizeof(int))<=0)
 		{
 			makeDisconnection(myClient);
 		}
-		
 		printf("%d\n",msg);
 		switch(msg)
 		{
@@ -351,10 +351,10 @@ void makeConnection(client_t* myClient)
 	int id=myClient->ID;
 	sprintf(writeChannel, "%c%d", 's', id);
 	create(writeChannel);
-	myClient->writeFD=connect(writeChannel, O_WRONLY);
+	myClient->writeFD=connectChannel(writeChannel, O_WRONLY);
 	sprintf(readChannel, "%c%d", 'c', id);
 	create(readChannel);
-	myClient->readFD=connect(readChannel, O_RDONLY);
+	myClient->readFD=connectChannel(readChannel, O_RDONLY);
 
 }
 

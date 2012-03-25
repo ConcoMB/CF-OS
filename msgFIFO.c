@@ -17,7 +17,7 @@ void create(char* id)
 	mkfifo(fifo, 0666);
 }
 
-int connect(char* id, int flag)
+int connectChannel(char* id, int flag)
 {
   	char fifo[10];
 	sprintf(fifo, "../fifo%s",id);
