@@ -3,7 +3,6 @@
 #include "list.h"
 #include "../common.h"
 #include <pthread.h>
-#define SPORT_NAME_L 30
 #define USERS_SHM 120
 #define CANT_SPORTIST 55
 #define TEAM_SIZE 5

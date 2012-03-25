@@ -6,17 +6,26 @@
 #include <string.h>
 #include "arrays.h"
 #include "externvars.h"
+#include "files.h"
 #include "cmp.h"
 #include "list.h"
 
-int signUp(char* name, char* password);
-int logIn(char* name, char* password, client_t* myClient);
-int joinLeague(user_t* user, league_t* league, char* teamName, char* password);
-int createLeague(char* name, char* password);
 
-static int userAlreadyJoined(league_t* league, user_t* user);
 static int userNameOccupied(char* name);
+
+int teamNameOccupied(league_t* league, char name[NAME_LENGTH]);
+
+int signUp(char* name, char* password);
+
+int logIn(char* name, char* password, client_t* client);
+
+int userAlreadyJoined(league_t* league, user_t* user);
+
+int joinLeague(user_t* user, league_t* league, char* teamName, char* password);
+
 static int leagueNameOccupied(char* name);
+
+int createLeague(char* name, char* password, int cant);
 
 
 #endif

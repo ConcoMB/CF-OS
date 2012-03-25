@@ -1,6 +1,19 @@
 #include "join.h"
 
 
+int teamNameOccupied(league_t* league, char name[NAME_LENGTH])
+{
+    int i;
+    for(i=0; i<league->tCant; i++)
+    {
+        if(strcmp(name, league->teams[i]->name)==0)
+        {
+            return 1;
+        }
+    }
+    return 0;
+}
+
 static int userNameOccupied(char* name)
 {
     int i;
@@ -53,7 +66,7 @@ int logIn(char* name, char* password, client_t* client)
 }
 
 
-static int userAlreadyJoined(league_t* league, user_t* user)
+int userAlreadyJoined(league_t* league, user_t* user)
 {
     int i;
     for(i=0; i<league->tCant; i++) 
@@ -68,17 +81,13 @@ static int userAlreadyJoined(league_t* league, user_t* user)
 
 int joinLeague(user_t* user, league_t* league, char* teamName, char* password)
 {
-    if(strcmp(password, league->password)!=0)
+    if(league->tCant==league->tMax)
+    {
+        return LEAGUE_FULL;
+    }
+    if(password!=NULL && strcmp(password, league->password)!=0)
     {
        return INCORRECT_PASSWORD;
-    }
-    if(userAlreadyJoined(league, user))
-    {
-        return USER_ALREADY_JOINED;
-    }
-    if(strlen(teamName)>=NAME_LENGTH)
-    {
-        return NAME_OR_PASSWORD_TOO_LARGE;
     }
     team_t * team = malloc(sizeof(team_t));
     team->user=user;
@@ -86,6 +95,7 @@ int joinLeague(user_t* user, league_t* league, char* teamName, char* password)
     team->points=0;
     team->ID=league->nextTeamID++;
     newTeam(league, team);
+    return 0;
 }
 
 
@@ -100,24 +110,20 @@ static int leagueNameOccupied(char* name)
     return 0;
 }
 
-//REVISAR       
-int createLeague(char* name, char* password)
+int createLeague(char* name, char* password, int cant)
 {
     if(leagueNameOccupied(name))
     {
         return NAME_OCCUPIED;
-    }
-    if(strlen(name)>=NAME_LENGTH || strlen(password)>=NAME_LENGTH)
-    {
-        return NAME_OR_PASSWORD_TOO_LARGE;
     }
     league_t* newLeague=malloc(sizeof(league_t));
     newLeague->ID=nextLeagueID++;
     newLeague->nextTeamID=0;
     strcpy(newLeague->name, name);
     strcpy(newLeague->password,password);
-    //cargar deportistas
+    loadNewSportists(newLeague);
     newLeague->tCant=0;
+    newLeague->tMax=cant;
     newLeague->trades=newList(cmpTrade);
     return 0;
 }
