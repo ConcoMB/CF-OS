@@ -5,13 +5,14 @@
 #include <unistd.h>
 #include "../msg.h"
 #include "../common.h"
+#include "connection.h"
 #define QUIT 12345
 
 
 void userLog(int msgID);
-void start();
+void start(int msgID);
 void makeDefConnection(int * msgID);
-int readFD, writeFD;
+void* readFD, *writeFD;
 
 int main()
 {
@@ -26,7 +27,7 @@ void makeDefConnection(int * msgID)
 {
 	int aux= NEWCLIENT;
 	char defWChannel[3], defRChannel[3];
-	int defRead, defWrite;
+	void* defRead, *defWrite;
 	sprintf(defWChannel, "%c%d", 'c', DEFAULTID);
 	sprintf(defRChannel, "%c%d", 's', DEFAULTID);
 	defWrite=connectChannel(defWChannel, O_WRONLY);
@@ -40,13 +41,7 @@ void makeDefConnection(int * msgID)
 
 void userLog(int msgID)
 {
-	char readChannel[4], writeChannel[4];
-	sprintf(readChannel, "%c%d", 's', msgID);
-	sprintf(writeChannel, "%c%d", 'c', msgID);
-	create(readChannel);
-	create(writeChannel);
-	readFD=connectChannel(readChannel, O_RDONLY);
-	writeFD=connectChannel(writeChannel, O_WRONLY);
+	connectClient(msgID,&writeFD,&readFD);
 	int loged=0;
 	while(!loged)
 	{
@@ -107,16 +102,14 @@ void userLog(int msgID)
 			printf("invalid command\n");
 		}
 	}
-	start();
+	start(msgID);
 }
 
-void start()
+void start(int msgID)
 {
 	int command, auxID, auxOffer, auxChange;
-	printf("%d %d\n", readFD, writeFD);
-	char string[20], stringR[10], stringW[10], auxString[10], auxStr2[10], auxStr3[10], auxStr4[10]; 
-	sprintf(stringW, "%d", writeFD);
-	sprintf(stringR, "%d", readFD);
+	char string[20], auxString[10], auxStr2[10], auxStr3[10], auxStr4[10], idStr[5]; 
+	sprintf(idStr,"%d",msgID);
 	do
 	{
 		printf("type your command \n");
@@ -133,7 +126,7 @@ void start()
 			}
 			else
 			{
-				execl("./listleagues", "listleagues",stringW, stringR, NULL);
+				execl("./listleagues", "listleagues",idStr, NULL);
 			}
 		}
 		else if(strcmp(string, "listteams")==0)
@@ -144,7 +137,7 @@ void start()
 			}
 			else
 			{
-				execl("./listteams", "listteams", stringW, stringR, NULL);
+				execl("./listteams", "listteams", (char*)writeFD, (char*)readFD, NULL);
 			}
 		}
 		else if(strcmp(string, "listtrades")==0)
@@ -155,7 +148,7 @@ void start()
 			}
 			else
 			{
-				execl("./listtrades", "listtrades", stringW, stringR, NULL);
+				execl("./listtrades", "listtrades", (char*)writeFD, (char*)readFD, NULL);
 			}
 		}
 		else if(strcmp(string, "leagueshow")==0)
@@ -172,7 +165,7 @@ void start()
 			}
 			else
 			{
-				execl("./ltShow", "ltShow", stringW, stringR, auxString, auxStr2, auxStr3,  NULL);
+				execl("./ltShow", "ltShow", (char*)writeFD, (char*)readFD, auxString, auxStr2, auxStr3,  NULL);
 			}
 		}
 		else if(strcmp(string, "teamshow")==0)
@@ -188,7 +181,7 @@ void start()
 			}
 			else
 			{
-				execl("./ltShow", "ltShow", stringW, stringR, auxString, auxStr2, auxStr3, NULL);
+				execl("./ltShow", "ltShow", (char*)writeFD, (char*)readFD, auxString, auxStr2, auxStr3, NULL);
 			}
 		}
 		else if(strcmp(string, "tradeshow")==0)
@@ -201,7 +194,7 @@ void start()
 			}
 			else
 			{
-				execl("./tradeShow", "tradeShow", stringW, stringR, auxString, NULL);
+				execl("./tradeShow", "tradeShow", (char*)writeFD, (char*)readFD, auxString, NULL);
 			}
 		}
 		else if(strcmp(string, "draft")==0)
@@ -214,7 +207,7 @@ void start()
 			}
 			else
 			{
-				execl("./draft", "draft", stringW, stringR, auxString, NULL);
+				execl("./draft", "draft", (char*)writeFD, (char*)readFD, auxString, NULL);
 			}
 		}
 		
@@ -229,7 +222,7 @@ void start()
 			}
 			else
 			{
-				execl("./makeTrade", "makeTrade", stringW, stringR, auxString, NULL);
+				execl("./makeTrade", "makeTrade", (char*)writeFD, (char*)readFD, auxString, NULL);
 			}
 		}
 		else if(strcmp(string, "tradewithdraw")==0)
@@ -244,7 +237,7 @@ void start()
 			}
 			else
 			{
-				execl("./tradeAW", "tradeAW", stringW, stringR, auxString, auxStr2, NULL);
+				execl("./tradeAW", "tradeAW", (char*)writeFD, (char*)readFD, auxString, auxStr2, NULL);
 			}
 		}
 		else if(strcmp(string, "tradeaccept")==0)
@@ -259,7 +252,7 @@ void start()
 			}
 			else
 			{
-				execl("./tradeAW", "tradeAW", stringW, stringR, auxString, auxStr2, NULL);
+				execl("./tradeAW", "tradeAW", (char*)writeFD, (char*)readFD, auxString, auxStr2, NULL);
 			}
 		}
 		else if(strcmp(string, "tradenegociate")==0)
@@ -273,7 +266,7 @@ void start()
 			}
 			else
 			{
-				execl("tradeNegociate", "tradeNegociate", stringW, stringR, auxString, NULL);
+				execl("tradeNegociate", "tradeNegociate", (char*)writeFD, (char*)readFD, auxString, NULL);
 			}
 		}
 		else if(strcmp(string, "createleague"))
@@ -284,7 +277,7 @@ void start()
 			}
 			else
 			{
-				execl("makeLeague.c", "makeLeague", stringW, stringR, NULL);
+				execl("makeLeague.c", "makeLeague", (char*)writeFD, (char*)readFD, NULL);
 			}
 
 		}
@@ -298,7 +291,7 @@ void start()
 			}
 			else
 			{
-				execl("joinLeague.c", "joinLeague", stringW, stringR, auxString, NULL);
+				execl("joinLeague.c", "joinLeague", (char*)writeFD, (char*)readFD, auxString, NULL);
 			}
 
 		}

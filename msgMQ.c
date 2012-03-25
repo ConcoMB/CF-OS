@@ -21,11 +21,6 @@ int rcvMsg(int fd, void* data, int size)
 	return i;
 }
 
-void create(char* id)
-{
-	return;
-}
-
 int connectChannel(char* id, int flag)
 {
 	char mq[10];

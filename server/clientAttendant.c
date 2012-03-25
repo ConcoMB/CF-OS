@@ -348,10 +348,8 @@ void makeConnection(client_t* myClient)
 	char readChannel[4], writeChannel[4];
 	int id=myClient->ID;
 	sprintf(writeChannel, "%c%d", 's', id);
-	create(writeChannel);
 	myClient->writeFD=connectChannel(writeChannel, O_WRONLY);
 	sprintf(readChannel, "%c%d", 'c', id);
-	create(readChannel);
 	myClient->readFD=connectChannel(readChannel, O_RDONLY);
 
 }

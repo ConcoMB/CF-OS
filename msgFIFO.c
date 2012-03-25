@@ -1,38 +1,36 @@
 #include "msg.h"
 
-int sndMsg(int fd, void* data, int size)
+int sndMsg(void* fd, void* data, int size)
 {
-	return write(fd, data, size);
+	int i=write(*(int*)fd, data, size);
+	printf("sent %d:%d\n",*(int*)fd,i);
+	return i;
 }
 
-int rcvMsg(int fd, void* data, int size)
+int rcvMsg(void* fd, void* data, int size)
 {
-	return read(fd, data, size);
+	return read(*(int*)fd, data, size);
 }
 
-void create(char* id)
-{
-	char fifo[10];
-	sprintf(fifo, "../fifo%s",id);
-	mkfifo(fifo, 0666);
-}
-
-int connectChannel(char* id, int flag)
+void* connectChannel(char* id, int flag)
 {
   	char fifo[10];
 	sprintf(fifo, "../fifo%s",id);
-	return open(fifo, flag);
+	mkfifo(fifo, 0666);
+	int* fd=malloc(sizeof(int));
+	*fd=open(fifo, flag);
+	return (void*)fd;
 }
 
-int rcvString(int fd, char* data)
+int rcvString(void* fd, char* data)
 {
 	int i=0;
 	char c;
-	read(fd, &c, sizeof(char));	
+	read(*(int*)fd, &c, sizeof(char));	
 	while(c)
 	{
 		data[i++]=c;
-		if(!read(fd, &c, sizeof(char)))
+		if(!read(*(int*)fd, &c, sizeof(char)))
 		{
 			return i;
 		}
@@ -41,12 +39,12 @@ int rcvString(int fd, char* data)
 	return i;
 }
 
-int sndString(int fd, char* string)
+int sndString(void* fd, char* string)
 {
 	return sndMsg(fd, (void*)string, strlen(string)+1);
 }
 
-void disconnect(int fd)
+void disconnect(void* fd)
 {
-	close(fd);
+	close(*(int*)fd);
 }

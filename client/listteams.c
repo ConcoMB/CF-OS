@@ -8,9 +8,10 @@ int main(int argc, char** args)
 {
     int msg = SEND_TEAM;
     char teamName[NAME_LENGTH], leagueName[NAME_LENGTH];
-    int readFD, writeFD, teamID;
-    readFD=atoi(args[2]);
-    writeFD=atoi(args[1]);
+    int teamID;
+    void* readFD, *writeFD;
+	readFD=(void*)(args[2]);
+	writeFD=(void*)(args[1]);
     sndMsg(writeFD, (void*)&msg, sizeof(int));
     rcvMsg(readFD, (void*)&msg, sizeof(int));
     while(msg==SEND_TEAM && msg!=END_SEND_TEAM)

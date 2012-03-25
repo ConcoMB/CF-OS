@@ -1,6 +1,6 @@
 #include "display.h"
 
-void listLeagues(int writeChannel)
+void listLeagues(void* writeChannel)
 {
     printf("entre a listleagues\n");
     int i, msg=SEND_LEAGUE;
@@ -15,7 +15,7 @@ void listLeagues(int writeChannel)
     sndMsg(writeChannel, (void*)&msg, sizeof(int));
 }
 
-static void sendTrade(trade_t* trade, int writeChannel)
+static void sendTrade(trade_t* trade, void* writeChannel)
 {
     int code=SEND_TRADE;
     sndMsg(writeChannel, (void*)&code, sizeof(int));
@@ -35,7 +35,7 @@ static int involved(trade_t* trade, user_t* user)
     return 0;
 }
 
-void listTrades(user_t* user, int writeChannel)
+void listTrades(user_t* user, void* writeChannel)
 {
     printf("listtrades\n");
     if(user->teams!=NULL)
@@ -65,7 +65,7 @@ void listTrades(user_t* user, int writeChannel)
 }
     
 
-void listTeam(user_t* user, int writeChannel)
+void listTeam(user_t* user, void* writeChannel)
 {
     int msg;
     if(user->teams!=NULL)
@@ -99,14 +99,14 @@ static void createOrderedList(listADT list, league_t* league)
     return;
 }
 
-static void sendTeam(team_t* team, int writeChannel, int code)
+static void sendTeam(team_t* team, void* writeChannel, int code)
 {
 	char msg[50];
     sprintf(msg, "Team %s, ID %d , from user %s  ->  %d points\n", team->name, team->league->ID*CONVERSION+team->ID, team->user->name, team->points);
     sndMsg(writeChannel, (void*)&code, sizeof(int));
     sndString(writeChannel, msg);
 }
-static void sendTeams(listADT teams, int writeChannel, int code)
+static void sendTeams(listADT teams, void* writeChannel, int code)
 {
     team_t* team;
     reset(teams);
@@ -116,7 +116,7 @@ static void sendTeams(listADT teams, int writeChannel, int code)
     }
 }
 
-void leagueShow(league_t* league, int writeChannel, int code, int end)
+void leagueShow(league_t* league, void* writeChannel, int code, int end)
 {
     team_t * team;
     listADT list = newList(cmpTeam);
@@ -127,7 +127,7 @@ void leagueShow(league_t* league, int writeChannel, int code, int end)
     freeList(list);
 }
 
-static void sendSportists(sportist_t* sportists[], int teamID, int writeChannel, int code)
+static void sendSportists(sportist_t* sportists[], int teamID, void* writeChannel, int code)
 {
     int i;
     for( i=0; i<CANT_SPORTIST; i++)
@@ -141,14 +141,14 @@ static void sendSportists(sportist_t* sportists[], int teamID, int writeChannel,
     }
 }
 
-void teamShow(team_t* team, int writeChannel, int code, int end)
+void teamShow(team_t* team, void* writeChannel, int code, int end)
 {
     sendTeam(team, writeChannel, code);
     sendSportists(team->league->sportists, team->ID, writeChannel, code);
     sndMsg(writeChannel, (void*)&end, sizeof(int));
 }
 
-void tradeShow(trade_t* trade, int writeChannel)
+void tradeShow(trade_t* trade, void* writeChannel)
 {
     char string[50];
     sprintf(string, "The sportist %s from %s team has been offered in exchange of %s from %s team (TRADE ID %d)\n", 

@@ -20,12 +20,11 @@
 
 #include "msg.h"
 
-int sndMsg(int fd, void* data, int size);
-int rcvMsg(int fd, void* data, int size);
-void create(char* id);
-int connectChannel(char* id, int flag);
-int rcvString(int fd, char* data);
-int sndString(int fd, char* string);
-void disconnect(int fd);
+int sndMsg(void* fd, void* data, int size);
+int rcvMsg(void* fd, void* data, int size);
+void* connectChannel(char* id, int flag);
+int rcvString(void* fd, char* data);
+int sndString(void* fd, char* string);
+void disconnect(void* fd);
 
 #endif

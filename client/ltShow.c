@@ -7,9 +7,9 @@
 int main(int argc, char** args)
 {
   printf("entre\n");
-  int readFD, writeFD;
-  readFD=atoi(args[2]);
-  writeFD=atoi(args[1]);
+  void* readFD, *writeFD;
+	readFD=(void*)(args[2]);
+	writeFD=(void*)(args[1]);
   int ID=atoi(args[3]);
   int control=atoi(args[4]);
   int end=atoi(args[5]);

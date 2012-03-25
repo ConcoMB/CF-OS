@@ -24,12 +24,12 @@ int lCant, uCant;
 user_t** users;
 listADT clients;
 int nextUserID=0;
-	char defWChannel[3], defRChannel[3];
+char defWChannel[3], defRChannel[3];
 
 int nextLeagueID=0;
 
 int nextClientID=1;
-int readFD, writeFD;
+void* readFD, *writeFD;
 
 int main()
 {
@@ -49,8 +49,6 @@ void * listenClient()
 	printf("listening to clients\n");
 	sprintf(defWChannel, "%c%d", 's', DEFAULTID);
 	sprintf(defRChannel, "%c%d", 'c', DEFAULTID);
-	create(defWChannel);
-	create(defRChannel);
 	readFD=connectChannel(defRChannel, O_RDONLY);
 	writeFD=connectChannel(defWChannel, O_WRONLY);
 	signal(SIGPIPE, SIG_IGN);

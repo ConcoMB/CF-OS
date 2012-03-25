@@ -12,9 +12,9 @@ int main(int argc, char** args)
     scanf("%d", &change);
     int msg = MAKE_TRADE;
     int toID;
-    int readFD, writeFD;
-	readFD=atoi(args[2]);
-	writeFD=atoi(args[1]);
+    void* readFD, *writeFD;
+	readFD=(void*)(args[2]);
+	writeFD=(void*)(args[1]);
 	toID=atoi(args[3]);
     sndMsg(writeFD, (void*)&msg, sizeof(int));
     sndMsg(writeFD, (void*)&toID, sizeof(int));

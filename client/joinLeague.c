@@ -6,10 +6,11 @@
 int main(int argc, char** args)
 {
 	int msg = JOIN_LEAGUE;
-	int readFD, writeFD, lID;
+	int lID;
 	char name[NAME_LENGTH];
-	readFD=atoi(args[2]);
-    writeFD=atoi(args[1]);
+	void* readFD, *writeFD;
+	readFD=(void*)(args[2]);
+	writeFD=(void*)(args[1]);
     lID=atoi(args[3]);
     sndMsg(writeFD, (void*)&msg, sizeof(int));
     rcvMsg(readFD, (void*)&msg, sizeof(int));

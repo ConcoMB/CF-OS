@@ -7,9 +7,10 @@
 int main(int argc, char** args)
 {
   printf("entre\n");
-  int readFD, writeFD, msg;
-  readFD=atoi(args[2]);
-  writeFD=atoi(args[1]);
+  int msg;
+  void* readFD, *writeFD;
+	readFD=(void*)(args[2]);
+	writeFD=(void*)(args[1]);
   int ID=atoi(args[3]);
   msg=TRADE_SHOW;
   char string[50];
