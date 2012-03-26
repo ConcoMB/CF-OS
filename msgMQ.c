@@ -4,10 +4,10 @@
 
 #define MQ_MSGSIZE 30
 
-int sndMsg(int fd, void* data, int size)
+int sndMsg(void* fd, void* data, int size)
 {
 	int i;
-	i= mq_send(fd, (char*)data, size, 0);
+	i= mq_send(*(int*)fd, (char*)data, size, 0);
 	if(i==-1)
 	{
 		printf("Send Error: errno %d\n", errno);
@@ -15,13 +15,13 @@ int sndMsg(int fd, void* data, int size)
 	return i;
 }
 
-int rcvMsg(int fd, void* data, int size)
+int rcvMsg(void* fd, void* data, int size)
 {
-	int i= mq_receive(fd, (char*)data, MQ_MSGSIZE,0 );
+	int i= mq_receive(*(int*)fd, (char*)data, MQ_MSGSIZE,0 );
 	return i;
 }
 
-int connectChannel(char* id, int flag)
+void* connectChannel(char* id, int flag)
 {
 	char mq[10];
 	sprintf(mq, "/mq%s",id);
@@ -29,22 +29,23 @@ int connectChannel(char* id, int flag)
 	attr.mq_maxmsg = 10;
 	attr.mq_msgsize = MQ_MSGSIZE;
 	attr.mq_flags=0;
-	int i= mq_open(mq, O_CREAT|O_RDWR, 0666, &attr);
-	printf("connected %s? %d %d\n",mq,i,errno);
-	return i;
+	int *i=malloc(sizeof(int));
+	*i=mq_open(mq, O_CREAT|O_RDWR, 0666, &attr);
+	//printf("connected %s? %d %d\n",mq,*i,errno);
+	return (void*)i;
 }
 
-int rcvString(int fd, char* data)
+int rcvString(void* fd, char* data)
 {
-	return mq_receive(fd, data, MQ_MSGSIZE, 0);
+	return mq_receive(*(int*)fd, data, MQ_MSGSIZE, 0);
 }
 
-int sndString(int fd, char* string)
+int sndString(void* fd, char* string)
 {
 	return sndMsg(fd, (void*)string, strlen(string)+1);
 }
 
-void disconnect(int fd)
+void disconnect(void* fd)
 {
-	mq_close(fd);
+	mq_close(*(int*)fd);
 }
