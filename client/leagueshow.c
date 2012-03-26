@@ -8,11 +8,11 @@ int main(int argc, char** args)
 {
   printf("entre\n");
   void* readFD, *writeFD;
-	readFD=(void*)(args[2]);
-	writeFD=(void*)(args[1]);
-  int ID=atoi(args[3]);
-  int control=atoi(arg[4]);
-  int end=atoi(arg[5]);
+  clientID=atoi(args[1]);
+  connectClient(clientID,&writeFD,&readFD);
+  int ID=atoi(args[2]);
+  int control=atoi(arg[3]);
+  int end=atoi(arg[4]);
   int msg=control;
   sndMsg(writeFD, (void*)&msg, sizeof(int));
   sndMsg(writeFD, (void*)&ID, sizeof(int));

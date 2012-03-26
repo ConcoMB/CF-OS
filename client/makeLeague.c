@@ -7,10 +7,10 @@ int main(int argc, char** args)
 {
 	char lName[NAME_LENGTH], pass[NAME_LENGTH];
 	int msg = MAKE_LEAGUE;
-	int cantT;
-	void* readFD, *writeFD;
-	readFD=(void*)(args[2]);
-	writeFD=(void*)(args[1]);
+	int cantT, clientID;
+    void* readFD, *writeFD;
+	clientID=atoi(args[1]);
+	connectClient(clientID,&writeFD,&readFD);
     char c;
 	printf("Enter the league name\n");
 	scanf("%s", lName);

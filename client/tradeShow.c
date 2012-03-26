@@ -7,11 +7,11 @@
 int main(int argc, char** args)
 {
   printf("entre\n");
-  int msg;
+  int msg, clientID;
   void* readFD, *writeFD;
-	readFD=(void*)(args[2]);
-	writeFD=(void*)(args[1]);
-  int ID=atoi(args[3]);
+  clientID=atoi(args[1]);
+  connectClient(clientID,&writeFD,&readFD);
+  int ID=atoi(args[2]);
   msg=TRADE_SHOW;
   char string[50];
   sndMsg(writeFD, (void*)&msg, sizeof(int));

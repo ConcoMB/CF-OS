@@ -137,18 +137,21 @@ void start(int msgID)
 			}
 			else
 			{
-				execl("./listteams", "listteams", (char*)writeFD, (char*)readFD, NULL);
+				execl("./listteams", "listteams", idStr, NULL);
 			}
 		}
 		else if(strcmp(string, "listtrades")==0)
 		{
+			printf("antes de preguntar por el pid de listtrades");
+			sleep(5);
 			if(fork())
 			{
 				wait((int*)0);
 			}
 			else
 			{
-				execl("./listtrades", "listtrades", (char*)writeFD, (char*)readFD, NULL);
+				printf("antes del excl de listtrades");
+				execl("./listtrades", "listtrades", idStr, NULL);
 			}
 		}
 		else if(strcmp(string, "leagueshow")==0)
@@ -165,7 +168,7 @@ void start(int msgID)
 			}
 			else
 			{
-				execl("./ltShow", "ltShow", (char*)writeFD, (char*)readFD, auxString, auxStr2, auxStr3,  NULL);
+				execl("./ltShow", "ltShow", idStr, auxString, auxStr2, auxStr3,  NULL);
 			}
 		}
 		else if(strcmp(string, "teamshow")==0)
@@ -181,7 +184,7 @@ void start(int msgID)
 			}
 			else
 			{
-				execl("./ltShow", "ltShow", (char*)writeFD, (char*)readFD, auxString, auxStr2, auxStr3, NULL);
+				execl("./ltShow", "ltShow", idStr, auxString, auxStr2, auxStr3, NULL);
 			}
 		}
 		else if(strcmp(string, "tradeshow")==0)
@@ -194,7 +197,7 @@ void start(int msgID)
 			}
 			else
 			{
-				execl("./tradeShow", "tradeShow", (char*)writeFD, (char*)readFD, auxString, NULL);
+				execl("./tradeShow", "tradeShow", idStr, auxString, NULL);
 			}
 		}
 		else if(strcmp(string, "draft")==0)
@@ -207,7 +210,7 @@ void start(int msgID)
 			}
 			else
 			{
-				execl("./draft", "draft", (char*)writeFD, (char*)readFD, auxString, NULL);
+				execl("./draft", "draft", idStr, auxString, NULL);
 			}
 		}
 		
@@ -222,7 +225,7 @@ void start(int msgID)
 			}
 			else
 			{
-				execl("./makeTrade", "makeTrade", (char*)writeFD, (char*)readFD, auxString, NULL);
+				execl("./makeTrade", "makeTrade", idStr, auxString, NULL);
 			}
 		}
 		else if(strcmp(string, "tradewithdraw")==0)
@@ -237,7 +240,7 @@ void start(int msgID)
 			}
 			else
 			{
-				execl("./tradeAW", "tradeAW", (char*)writeFD, (char*)readFD, auxString, auxStr2, NULL);
+				execl("./tradeAW", "tradeAW", idStr, auxString, auxStr2, NULL);
 			}
 		}
 		else if(strcmp(string, "tradeaccept")==0)
@@ -252,7 +255,7 @@ void start(int msgID)
 			}
 			else
 			{
-				execl("./tradeAW", "tradeAW", (char*)writeFD, (char*)readFD, auxString, auxStr2, NULL);
+				execl("./tradeAW", "tradeAW", idStr, auxString, auxStr2, NULL);
 			}
 		}
 		else if(strcmp(string, "tradenegociate")==0)
@@ -266,7 +269,7 @@ void start(int msgID)
 			}
 			else
 			{
-				execl("tradeNegociate", "tradeNegociate", (char*)writeFD, (char*)readFD, auxString, NULL);
+				execl("tradeNegociate", "tradeNegociate", idStr, auxString, NULL);
 			}
 		}
 		else if(strcmp(string, "createleague"))
@@ -277,7 +280,7 @@ void start(int msgID)
 			}
 			else
 			{
-				execl("makeLeague.c", "makeLeague", (char*)writeFD, (char*)readFD, NULL);
+				execl("makeLeague.c", "makeLeague", idStr , NULL);
 			}
 
 		}
@@ -291,7 +294,7 @@ void start(int msgID)
 			}
 			else
 			{
-				execl("joinLeague.c", "joinLeague", (char*)writeFD, (char*)readFD, auxString, NULL);
+				execl("joinLeague.c", "joinLeague", idStr, auxString, NULL);
 			}
 
 		}

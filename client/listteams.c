@@ -8,10 +8,10 @@ int main(int argc, char** args)
 {
     int msg = SEND_TEAM;
     char teamName[NAME_LENGTH], leagueName[NAME_LENGTH];
-    int teamID;
+    int teamID,clientID;
     void* readFD, *writeFD;
-	readFD=(void*)(args[2]);
-	writeFD=(void*)(args[1]);
+	clientID=atoi(args[1]);
+	connectClient(clientID,&writeFD,&readFD);
     sndMsg(writeFD, (void*)&msg, sizeof(int));
     rcvMsg(readFD, (void*)&msg, sizeof(int));
     while(msg==SEND_TEAM && msg!=END_SEND_TEAM)
