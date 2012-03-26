@@ -72,7 +72,7 @@ static void saveLeague(FILE* leagueFile, league_t* league){
 	{
 		draft=1;
 	}
-	fprintf(leagueFile, "%d %s %s %d %d\n", league->ID, league->password, league->name, league->tMax, draft);
+	fprintf(leagueFile, "%d %d %s %d %d %d %s\n", league->ID , league->nextTeamID, league->name, league->tMax, league->nextTradeID, draft, league->password);
 }
 
 void saveTeam(FILE* teamFile, team_t* team){
@@ -84,7 +84,16 @@ void saveTrade(FILE* tradeFile, trade_t* trade){
 }
 
 void saveSportist(FILE* sportistFile, sportist_t* sportist){
-	fprintf(sportistFile, "%d %d %d %s\n", sportist->ID, sportist->score, sportist->team->ID, sportist->name);
+	int teamID;
+	if(sportist->team==NULL)
+	{
+		teamID=-1;
+	}
+	else
+	{
+		teamID=sportist->team->ID;
+	}
+	fprintf(sportistFile, "%d %d %d %s\n", sportist->ID, sportist->score, teamID, sportist->name);
 }
 
 /* LOAD */
@@ -130,7 +139,7 @@ static league_t* loadLeague(FILE* leagueFile){
 	league_t* league;
 	int draft;
 	league=malloc(sizeof(league_t));
-	if(fscanf(leagueFile, "%d %s %s %d %d\n", &league->ID, league->password, league->name, &(league->tMax), &draft)!=EOF){
+	if(fscanf(leagueFile, "%d %d %s %d %d %d %s\n", &league->ID , &league->nextTeamID, league->name, &league->tMax, &league->nextTradeID, &draft, league->password)!=EOF){
 		if(draft)
 		{
 			league->draft=malloc(sizeof(draft_t));
