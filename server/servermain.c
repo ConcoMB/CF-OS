@@ -24,7 +24,6 @@ int lCant, uCant;
 user_t** users;
 listADT clients;
 int nextUserID=0;
-char defWChannel[3], defRChannel[3];
 
 int nextLeagueID=0;
 
@@ -49,8 +48,10 @@ void * listenClient()
 	printf("listening to clients\n");
 	sprintf(defWChannel, "%c%d", 's', DEFAULTID);
 	sprintf(defRChannel, "%c%d", 'c', DEFAULTID);
-	readFD=connectChannel(defRChannel, O_RDONLY);
-	writeFD=connectChannel(defWChannel, O_WRONLY);
+	createChannel(DEFAULTID);
+	createChannel(DEFAULTID+1);
+	readFD=connectChannel(DEFAULTID);
+	writeFD=connectChannel(DEFAULTID+1);
 
 	signal(SIGPIPE, SIG_IGN);
 	newClient();
@@ -70,7 +71,8 @@ void newClient()
 			if(msg==NEWCLIENT)
 			{
 				printf("sending msgid...");
-				int id= nextClientID++;
+				int id= nextClientID;
+				nextClientID+=2;
 				sndMsg(writeFD, (void*)&id, sizeof(int));
 				printf("OK\n");
 				client_t* newClient = malloc(sizeof(client_t));

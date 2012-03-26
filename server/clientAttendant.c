@@ -347,12 +347,11 @@ void makeDisconnection(client_t* myClient)
 
 void makeConnection(client_t* myClient)
 {
-	char readChannel[4], writeChannel[4];
 	int id=myClient->ID;
-	sprintf(writeChannel, "%c%d", 's', id);
-	myClient->writeFD=connectChannel(writeChannel, O_WRONLY);
-	sprintf(readChannel, "%c%d", 'c', id);
-	myClient->readFD=connectChannel(readChannel, O_RDONLY);
+	createChannel(id);
+	createChannel(id+1);
+	myClient->writeFD=connectChannel(id+1);
+	myClient->readFD=connectChannel(id);
 
 }
 

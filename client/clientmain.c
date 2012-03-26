@@ -26,12 +26,9 @@ int main()
 void makeDefConnection(int * msgID)
 {
 	int aux= NEWCLIENT;
-	char defWChannel[3], defRChannel[3];
 	void* defRead, *defWrite;
-	sprintf(defWChannel, "%c%d", 'c', DEFAULTID);
-	sprintf(defRChannel, "%c%d", 's', DEFAULTID);
-	defWrite=connectChannel(defWChannel, O_WRONLY);
-	defRead=connectChannel(defRChannel, O_RDONLY);
+	defWrite=connectChannel(DEFAULTID);
+	defRead=connectChannel(DEFAULTID+1);
 
 	sndMsg(defWrite, (void*)&aux, sizeof(int));
 	printf("mande\n");
