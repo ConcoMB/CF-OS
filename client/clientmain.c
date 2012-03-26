@@ -32,7 +32,7 @@ void makeDefConnection(int * msgID)
 	sprintf(defRChannel, "%c%d", 's', DEFAULTID);
 	defWrite=connectChannel(defWChannel, O_WRONLY);
 	defRead=connectChannel(defRChannel, O_RDONLY);
-	
+
 	sndMsg(defWrite, (void*)&aux, sizeof(int));
 	printf("mande\n");
 	rcvMsg(defRead, (void*)msgID, sizeof(int));
@@ -78,7 +78,7 @@ void userLog(int msgID)
 			sndMsg(writeFD, (void*)&aux, sizeof(int));
 			printf("Enter new name:\n");
 			scanf("%s", name);
-			sndString(writeFD, name);			
+			sndString(writeFD, name);
 			printf("password:\n");
 			scanf("%s", password);
 			sndString(writeFD, password);
@@ -108,7 +108,7 @@ void userLog(int msgID)
 void start(int msgID)
 {
 	int command, auxID, auxOffer, auxChange;
-	char string[20], auxString[10], auxStr2[10], auxStr3[10], auxStr4[10], idStr[5]; 
+	char string[20], auxString[10], auxStr2[10], auxStr3[10], auxStr4[10], idStr[5];
 	sprintf(idStr,"%d",msgID);
 	do
 	{
@@ -152,7 +152,7 @@ void start(int msgID)
 			}
 		}
 		else if(strcmp(string, "leagueshow")==0)
-		{	
+		{
 			scanf("%d", &auxID);
 			sprintf(auxString, "%d",auxID );
 			sprintf(auxStr2, "%d", LEAGUE_SHOW);
@@ -210,12 +210,12 @@ void start(int msgID)
 				execl("./draft", "draft", idStr, auxString, NULL);
 			}
 		}
-		
+
 		else if(strcmp(string, "trade")==0)
 		{
 			scanf("%d", &auxID);
 			sprintf(auxString, "%d",auxID);
-			
+
 			if(fork())
 			{
 				wait((int*)0);
@@ -259,7 +259,7 @@ void start(int msgID)
 		{
 			scanf("%d", &auxID);
 			sprintf(auxString, "%d",auxID);
-			
+
 			if(fork())
 			{
 				wait((int*)0);
@@ -295,7 +295,7 @@ void start(int msgID)
 			}
 
 		}
-		else 
+		else
 		{
 			printf("invalid command, type 'help' for help\n");
 		}
