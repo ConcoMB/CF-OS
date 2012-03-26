@@ -7,10 +7,13 @@
 #include <errno.h>
 
 #define SIZE 1000
+#define BUFFER_S 50
 
 static sem_t* initMutex(char* id);
 static void enter(sem_t* sem);
 static void leave(sem_t* sem);
+
+int created=0;
 
 typedef struct
 {
@@ -28,7 +31,7 @@ int sndMsg(void* fd, void* data, int size)
 	{
 		((char*)shm->mem)[*head]=((char*)data)[i];
 		(*head)++;
-		if(*head>=SIZE)
+		if(*head>=BUFFER_S)
 		{
 			*head=sizeof(int)*2;
 		}
@@ -56,7 +59,7 @@ int rcvMsg(void* fd, void* data, int size)
 			((char*)data)[i]=((char*)shm->mem)[*tail];
 			(*tail)++;
 			bytes++;
-			if(*tail>=SIZE)
+			if(*tail>=BUFFER_S)
 			{
 				*tail=sizeof(int)*2;
 			}
@@ -66,25 +69,42 @@ int rcvMsg(void* fd, void* data, int size)
 	return bytes;
 }
 
-void* connectChannel(char* id, int flag)
+void createChannel(int id)
+{
+	if(!created)
+	{
+		int i;
+		created=1;
+		char shmName[10];
+		int fd;
+		sprintf(shmName,"/shm");
+		fd=shm_open(shmName, O_RDWR|O_CREAT, 0666);
+		ftruncate(fd, SIZE);
+		for(i=0; i<SIZE; i+=BUFFER_S)
+		{
+			((int*)shm->mem+i)[0]=sizeof(int)*2;
+			((int*)shm->mem+i)[1]=sizeof(int)*2;
+		}
+	}
+
+}
+
+void* connectChannel(int id)
 {
 	char shmName[10];
 	int fd;
+	sprintf(shmName,"/shm");
 	shm_t* shm=malloc(sizeof(shm_t));
-	
-	sprintf(shmName,"/shm%s",id);
-	fd=shm_open(shmName, O_RDWR|O_CREAT, 0666);
-	shm->sem=initMutex(id);
-	ftruncate(fd, SIZE);
+	fd=shm_open(shmName, O_RDWR, 0666);
 	shm->mem=mmap(NULL, SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
+	shm->sem=initMutex(id);
 	close(fd);
 	if(shm->mem==MAP_FAILED)
 	{
 		printf("Mapping failure: %d\n",errno);
 		exit(-1);
 	}
-	((int*)shm->mem)[0]=sizeof(int)*2;
-	((int*)shm->mem)[1]=sizeof(int)*2;
+	shm->mem+=id*BUFFER_S
 	return (void*)shm;
 }
 
@@ -125,9 +145,9 @@ int sndString(void* fd, char* string)
 
 void disconnect(void* fd)
 {
-	shm_t *shm=(shm_t*)fd;
+/*	shm_t *shm=(shm_t*)fd;
 	munmap(shm->mem,SIZE);
-	sem_close(shm->sem);
+	sem_close(shm->sem);*/
 }
 
 static sem_t* initMutex(char* id)
