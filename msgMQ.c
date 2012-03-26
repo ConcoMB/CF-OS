@@ -21,8 +21,8 @@ int sndMsg(void* fd, void* data, int size)
 	int i;
 	mq_t* mq=(mqd_t*) fd;
 	msg_t msg;
-	msg->fromID=id;
-	strncpy(msg->data, (char*)data, size);
+	msg.fromID=id;
+	strncpy(msg.data, (char*)data, size);
 	i= msgsnd(mq->mqd, (void*)&msg, sizeof(msg_t), 0);
 	if(i==-1)
 	{
@@ -36,13 +36,13 @@ int rcvMsg(void* fd, void* data, int size)
 	mq_t* mq=(mqd_t*) fd;
 	msg_t msg;
 	int i= msgrcv(mq->mqd, &msg, MQ_MSGSIZE, mq->id);
-	strncpy((char*)data, msg->data, size);
+	strncpy((char*)data, msg.data, size);
 	return i;
 }
 
 void createChannel(int id)
 {
-	msgget(id, IPC_CREAT|0666;
+	msgget(id, O_CREAT|0666;
 }
 
 void* connectChannel(int id)
@@ -58,7 +58,7 @@ int rcvString(void* fd, char* data)
 	mq_t* mq=(mqd_t*) fd;
 	msg_t msg;
 	int i=msgrcv(mq->mqd, &msg, MQ_MSGSIZE, mq->id);
-	strcpy((char*)data, msg->data);
+	strcpy((char*)data, msg.data);
 	return i;
 }
 
@@ -68,7 +68,7 @@ int sndString(void* fd, char* string)
 	mq_t* mq=(mqd_t*) fd;
 	msg_t msg;
 	msg->fromID=id;
-	strcpy(msg->data, (char*)data);
+	strcpy(msg.data, (char*)data);
 	i= msgsnd(mq->mqd, (void*)&msg, sizeof(msg_t), 0);
 	if(i==-1)
 	{
