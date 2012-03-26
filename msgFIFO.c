@@ -24,7 +24,7 @@ void* connectChannel(int id)
   	char fifo[10];
 	sprintf(fifo, "../fifo%d",id);
 	int* fd=malloc(sizeof(int));
-	*fd=open(fifo, flag);
+	*fd=open(fifo, O_RDWR);
 	return (void*)fd;
 }
 
