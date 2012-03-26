@@ -132,12 +132,12 @@ static void sendSportists(sportist_t* sportists[], int teamID, void* writeChanne
     int i;
     for( i=0; i<CANT_SPORTIST; i++)
     {
-        if(teamID==NO_TEAM || sportists[i]->team->ID==teamID){
-           char string[200];	  
-	       sprintf(string, "%s, %d points, %s\n", sportists[i]->name, sportists[i]-> score, sportists[i]->team->name);           
-	       sndMsg(writeChannel, (void*)&code, sizeof(int));
-	       sndString(writeChannel, string);  
-        }
+		if(teamID==NO_TEAM || sportists[i]->team->ID==teamID){
+		   char string[200];	  
+		   sprintf(string, "%s, %d points, %s\n", sportists[i]->name, sportists[i]-> score, sportists[i]->team->name);           
+		   sndMsg(writeChannel, (void*)&code, sizeof(int));
+		   sndString(writeChannel, string);  
+		}
     }
 }
 
