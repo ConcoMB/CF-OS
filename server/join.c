@@ -116,14 +116,16 @@ int createLeague(char* name, char* password, int cant)
     {
         return NAME_OCCUPIED;
     }
-    league_t* newLeague=malloc(sizeof(league_t));
-    newLeague->ID=nextLeagueID++;
-    newLeague->nextTeamID=0;
-    strcpy(newLeague->name, name);
-    strcpy(newLeague->password,password);
-    loadNewSportists(newLeague);
-    newLeague->tCant=0;
-    newLeague->tMax=cant;
-    newLeague->trades=newList(cmpTrade);
+    league_t* league=malloc(sizeof(league_t));
+    league->ID=nextLeagueID++;
+    league->nextTeamID=0;
+    strcpy(league->name, name);
+    strcpy(league->password, password);
+    loadNewSportists(league);
+    league->tCant=0;
+    league->tMax=cant;
+    league->nextTradeID=0;
+    league->trades=newList(cmpTrade);
+    newLeague(league);
     return 0;
 }
