@@ -27,7 +27,7 @@ int sndMsg(void* fd, void* data, int size)
 	for(i=0;i<size;i++)
 	{
 		((char*)shm->mem)[*head]=((char*)data)[i];
-		*head++;
+		(*head)++;
 		if(*head>=SIZE)
 		{
 			*head=sizeof(int)*2;
@@ -39,26 +39,31 @@ int sndMsg(void* fd, void* data, int size)
 
 int rcvMsg(void* fd, void* data, int size)
 {
-	int i;
+	int i,bytes=0;
 	shm_t *shm=(shm_t*)fd;
-	enter(shm->sem);
-	int *head=(int*)shm->mem;
-	int *tail=(int*)(shm->mem+sizeof(int));
-	for(i=0;i<size;i++)
+	while(bytes==0)
 	{
-		if(*tail==*head)
+		enter(shm->sem);
+		int *head=(int*)shm->mem;
+		int *tail=(int*)(shm->mem+sizeof(int));
+		for(i=0;i<size;i++)
 		{
-			leave(shm->sem);
-			return i;
+			//printf("h %d t %d\n",*head, *tail);
+			if(*tail==*head)
+			{
+				break;
+			}
+			((char*)data)[i]=((char*)shm->mem)[*tail];
+			(*tail)++;
+			bytes++;
+			if(*tail>=SIZE)
+			{
+				*tail=sizeof(int)*2;
+			}
 		}
-		((char*)data)[i]=((char*)shm->mem)[*tail];
-		*tail++;
-		if(*tail>=SIZE)
-		{
-			*tail=sizeof(int)*2;
-		}
+		leave(shm->sem);
 	}
-	leave(shm->sem);
+	return bytes;
 }
 
 void* connectChannel(char* id, int flag)
@@ -85,33 +90,37 @@ void* connectChannel(char* id, int flag)
 
 int rcvString(void* fd, char* data)
 {
-	int i=0;
+	int i=0, bytes=0;
 	shm_t *shm=(shm_t*)fd;
-	enter(shm->sem);
-	int *head=(int*)shm->mem;
-	int *tail=(int*)(shm->mem+sizeof(int));
-	while(*head!=*tail)
+	while(bytes==0)
 	{
-		data[i]=((char*)shm->mem)[*tail];
-		*tail++;
-		if(data[i]==0)
+		enter(shm->sem);
+		int *head=(int*)shm->mem;
+		int *tail=(int*)(shm->mem+sizeof(int));
+		while(*head!=*tail)
 		{
-			leave(shm->sem);
-			return i+1;
+			data[i]=((char*)shm->mem)[*tail];
+			(*tail)++;
+			bytes++;
+			if(data[i]==0)
+			{
+				leave(shm->sem);
+				return i+1;
+			}
+			if(*tail>=SIZE)
+			{
+				*tail=sizeof(int)*2;
+			}
+			i++;
 		}
-		if(*tail>=SIZE)
-		{
-			*tail=sizeof(int)*2;
-		}
-		i++;
+		leave(shm->sem);
 	}
-	leave(shm->sem);
-	return i;
+	return bytes;
 }
 
 int sndString(void* fd, char* string)
 {
-	return sndMsg(fd,string,strlen(string));
+	return sndMsg(fd,string,strlen(string)+1);
 }
 
 void disconnect(void* fd)

@@ -69,12 +69,18 @@ void newClient()
 			printf("recibi %d\n", msg);
 			if(msg==NEWCLIENT)
 			{
+				printf("sending msgid...");
 				int id= nextClientID++;
 				sndMsg(writeFD, (void*)&id, sizeof(int));
+				printf("OK\n");
 				client_t* newClient = malloc(sizeof(client_t));
 				newClient->ID=id;
 				insert(clients, newClient);
 				pthread_create(&(newClient->att), NULL, clientAtt, (void*) newClient);
+			}
+			else
+			{
+				printf("wrong cmd\n");
 			}
 		}
 	}
