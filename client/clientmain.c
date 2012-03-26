@@ -142,15 +142,12 @@ void start(int msgID)
 		}
 		else if(strcmp(string, "listtrades")==0)
 		{
-			printf("antes de preguntar por el pid de listtrades");
-			sleep(5);
 			if(fork())
 			{
 				wait((int*)0);
 			}
 			else
 			{
-				printf("antes del excl de listtrades");
 				execl("./listtrades", "listtrades", idStr, NULL);
 			}
 		}

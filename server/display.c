@@ -19,7 +19,7 @@ static void sendTrade(trade_t* trade, void* writeChannel)
 {
     int code=SEND_TRADE;
     sndMsg(writeChannel, (void*)&code, sizeof(int));
-    char string[50];
+    char string[150];
     sprintf(string, "In the league %s the team %s has offered the team %s to exchange his %s to %s (Trade ID %d)\n", 
     trade->league->name, trade->from->name, trade->to->name, trade->offer->name, trade->change->name, trade->league->ID*CONVERSION + trade->ID);
     printf("%s\n", string);
@@ -132,12 +132,12 @@ static void sendSportists(sportist_t* sportists[], int teamID, void* writeChanne
     int i;
     for( i=0; i<CANT_SPORTIST; i++)
     {
-        if(teamID==NO_TEAM || sportists[i]->team->ID==teamID){
-           char string[50];	  
-	       sprintf(string, "%s, %d points, %s\n", sportists[i]->name, sportists[i]-> score, sportists[i]->team->name);           
-	       sndMsg(writeChannel, (void*)&code, sizeof(int));
-	       sndString(writeChannel, string);  
-        }
+		if(teamID==NO_TEAM || sportists[i]->team->ID==teamID){
+		   char string[200];	  
+		   sprintf(string, "%s, %d points, %s\n", sportists[i]->name, sportists[i]-> score, sportists[i]->team->name);           
+		   sndMsg(writeChannel, (void*)&code, sizeof(int));
+		   sndString(writeChannel, string);  
+		}
     }
 }
 
