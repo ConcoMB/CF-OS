@@ -187,7 +187,7 @@ void start(client_t* myClient)
 				tID=lID%CONVERSION;
 				lID/=CONVERSION;
 				if(lID<lCant && lID>=0 && tID<leagues[lID]->tCant && tID>=0 && 
-					(team=getTeamByClient(leagues[lID], myClient))==NULL && offer>=0 && change>=0 &&
+					(team=getTeamByClient(leagues[lID], myClient))!=NULL && offer>=0 && change>=0 &&
 					offer<CANT_SPORTIST && change<CANT_SPORTIST && 
 					team->ID!=leagues[lID]->teams[tID]->ID)
 				{
@@ -271,6 +271,7 @@ void start(client_t* myClient)
 				}
 				break;
 			case MAKE_LEAGUE:
+				
 				rcvString(myClient->readFD, name);
 				rcvString(myClient->readFD, password);
 				rcvMsg(myClient->readFD, (void*)&msg, sizeof(int));
@@ -279,6 +280,7 @@ void start(client_t* myClient)
 				{
 					msg=MAKE_LEAGUE;
 				}
+				printf("mensage %d\n", msg);
 				sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
 
 				break;

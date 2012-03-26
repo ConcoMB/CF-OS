@@ -252,7 +252,7 @@ void loadNewSportists(league_t* league){
 	FILE* sportistFile;
 	sportist_t* sportist;
 	int i;
-	sportistFile=fopen("sportists.txt","r");
+	sportistFile=fopen("./data/sportists.txt","r");
 	for(i=0; i<CANT_SPORTIST;i++)
 	{
 		char name[SPORT_NAME_L];

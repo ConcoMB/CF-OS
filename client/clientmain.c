@@ -269,7 +269,7 @@ void start(int msgID)
 				execl("tradeNegociate", "tradeNegociate", idStr, auxString, NULL);
 			}
 		}
-		else if(strcmp(string, "createleague"))
+		else if(strcmp(string, "createleague")==0)
 		{
 			if(fork())
 			{
@@ -277,11 +277,11 @@ void start(int msgID)
 			}
 			else
 			{
-				execl("makeLeague.c", "makeLeague", idStr , NULL);
+				execl("makeLeague", "makeLeague", idStr , NULL);
 			}
 
 		}
-		else if(strcmp(string, "joinleague"))
+		else if(strcmp(string, "joinleague")==0)
 		{
 			scanf("%d", &auxID);
 			sprintf(auxString, "%d",auxID);
@@ -291,7 +291,7 @@ void start(int msgID)
 			}
 			else
 			{
-				execl("joinLeague.c", "joinLeague", idStr, auxString, NULL);
+				execl("joinLeague", "joinLeague", idStr, auxString, NULL);
 			}
 
 		}

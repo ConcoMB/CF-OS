@@ -62,6 +62,7 @@ typedef struct league_s
     team_t** teams;
     int tCant;
     int tMax;
+    int nextTradeID;
     listADT trades;
     draft_t* draft;
 }league_t;

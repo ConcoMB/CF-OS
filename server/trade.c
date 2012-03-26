@@ -13,6 +13,7 @@ int offerTrade(league_t* league, team_t* from, team_t* to, sportist_t* offer, sp
         trade->to=to;
         trade->from=from;
         trade->change=change;
+        trade->ID=league->nextTradeID++;
         insert(league->trades, trade);
         return 0;
     }

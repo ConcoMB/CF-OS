@@ -11,15 +11,17 @@ int main(int argc, char** args)
     void* readFD, *writeFD;
 	clientID=atoi(args[1]);
 	connectClient(clientID,&writeFD,&readFD);
-    char c;
+    char c[3];
 	printf("Enter the league name\n");
 	scanf("%s", lName);
 	do
 	{
 		printf("Do you want it to be private? (y/n)\n");
-		scanf("%c",&c);
-	}while(c!='y' || c!='n');
-	if(c=='y')
+		scanf("%s",c);
+
+	}while(c[0]!='y' && c[0]!='n');
+
+	if(c[0]=='y')
 	{
 		printf("Enter the password\n");
 		scanf("%s", pass);
@@ -32,7 +34,9 @@ int main(int argc, char** args)
 	do
 	{
 		scanf("%d",&cantT);
-	}while(cantT<=10 && cantT>=3);
+		printf("lei %d\n", cantT);
+	}while(!(cantT<=10 && cantT>=3));
+
 	sndMsg(writeFD, (void*)&msg, sizeof(int));
 	sndString(writeFD, lName);
 	sndString(writeFD, pass);

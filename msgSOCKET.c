@@ -3,46 +3,75 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <sys/un.h>
+
 #include <netdb.h>
 #include <errno.h>
 #include <string.h>
 
-#define SOCKET_MSGSIZE 30
+typedef struct 
+{
+	int socket;
+	struct sockaddr_un to; 
+}sckt_t;
 
-int sndMsg(int fd, void* data, int size){
-	int aux = send(fd, data, size, 0);
-	printf("\n%d\n",errno);
-	sleep(2);
+int sndMsg(void* fd, void* data, int size)
+{
+	int aux = send(*(int*)fd, data, size, 0);
 	return aux;
 }
 
-int rcvMsg(int fd, void* data, int size){
-	return recv(fd, data, size, 0);
+int rcvMsg(void* fd, void* data, int size)
+{
+	return recv(*(int*)fd, data, size, 0);
 }
 
-void create(char* id){
+void* createChannel(int id, int flag, int mode)
+{
+	if(mode==SERVER)
+	{
+		int* fd=malloc(sizeof(int));
+		char sckName[10];
+		sprintf(sckName, "../sckt%s", id);
+		struct sockaddr_un addr;
+		addr.sun_family=AF_UNIX;
+		strcpy(addr.sun_path, sckName);
+		*fd = socket(AF_UNIX, SOCK_DGRAM, 0);
+	}
+
 }
 
-int connectChannel(char* id, int flag){
-	int fd;
-	struct sockaddr_in addr = {AF_INET, INADDR_ANY, INADDR_ANY};
-	fd = socket(AF_INET, SOCK_STREAM, 0);
-	bind(fd, (struct sockaddr *)&addr, sizeof(struct sockaddr_in));
-	listen(fd, 10);
-	return fd;
+void* connectChannel()
+{
+
+
 }
 
-int rcvString(int fd, char* data){
-	int aux;
-	return mq_receive(fd, data, SOCKET_MSGSIZE, &aux);
+int rcvString(void* fd, char* data)
+{
+	int i=0;
+	char c;
+	read(*(int*)fd, &c, sizeof(char));	
+	while(c)
+	{
+		data[i++]=c;
+		if(!recv(*(int*)fd, (void*)&c, sizeof(char), 0))
+		{
+			return i;
+		}
+	}
+	data[i]='\0';
+	return i;
 }
 
-int sndString(int fd, char* string){
+int sndString(void* fd, char* string)
+{
 	return sndMsg(fd, (void*)string, strlen(string)+1);
 }
 
-void disconnect(int fd){
-	close(fd);
+void disconnect(void* fd)
+{
+	close(*(int*)fd);
 }
 
 
