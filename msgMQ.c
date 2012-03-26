@@ -57,14 +57,24 @@ int rcvString(void* fd, char* data)
 {
 	mq_t* mq=(mqd_t*) fd;
 	msg_t msg;
-	int i= msgrcv(mq->mqd, &msg, MQ_MSGSIZE, mq->id);
-	strncpy((char*)data, msg->data, size);
+	int i=msgrcv(mq->mqd, &msg, MQ_MSGSIZE, mq->id);
+	strcpy((char*)data, msg->data);
 	return i;
 }
 
 int sndString(void* fd, char* string)
 {
-	return sndMsg(fd, (void*)string, strlen(string)+1);
+	int i;
+	mq_t* mq=(mqd_t*) fd;
+	msg_t msg;
+	msg->fromID=id;
+	strcpy(msg->data, (char*)data);
+	i= msgsnd(mq->mqd, (void*)&msg, sizeof(msg_t), 0);
+	if(i==-1)
+	{
+		printf("Send Error: errno %d\n", errno);
+	}
+	return i;
 }
 
 void disconnect(void* fd)

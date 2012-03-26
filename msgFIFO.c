@@ -12,11 +12,17 @@ int rcvMsg(void* fd, void* data, int size)
 	return read(*(int*)fd, data, size);
 }
 
-void* connectChannel(char* id, int flag)
+void createChannel(int id)
+{
+	char fifo[10];
+	sprintf(fifo, "../fifo%d",id);
+	mkfifo(fifo, 0666);
+}
+
+void* connectChannel(int id)
 {
   	char fifo[10];
-	sprintf(fifo, "../fifo%s",id);
-	mkfifo(fifo, 0666);
+	sprintf(fifo, "../fifo%d",id);
 	int* fd=malloc(sizeof(int));
 	*fd=open(fifo, flag);
 	return (void*)fd;
