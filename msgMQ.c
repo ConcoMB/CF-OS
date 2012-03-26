@@ -4,10 +4,26 @@
 
 #define MQ_MSGSIZE 30
 
+typedef struct
+{
+	int mqd;
+	int id;
+} mq_t;
+
+typedef struct
+{
+	long fromID;
+	char data[MQ_MSGSIZE];
+} msg_t;
+
 int sndMsg(void* fd, void* data, int size)
 {
 	int i;
-	i= mq_send(*(int*)fd, (char*)data, size, 0);
+	mq_t* mq=(mqd_t*) fd;
+	msg_t msg;
+	msg->fromID=id;
+	strncpy(msg->data, (char*)data, size);
+	i= msgsnd(mq->mqd, (void*)&msg, sizeof(msg_t), 0);
 	if(i==-1)
 	{
 		printf("Send Error: errno %d\n", errno);
@@ -17,27 +33,33 @@ int sndMsg(void* fd, void* data, int size)
 
 int rcvMsg(void* fd, void* data, int size)
 {
-	int i= mq_receive(*(int*)fd, (char*)data, MQ_MSGSIZE,0 );
+	mq_t* mq=(mqd_t*) fd;
+	msg_t msg;
+	int i= msgrcv(mq->mqd, &msg, MQ_MSGSIZE, mq->id);
+	strncpy((char*)data, msg->data, size);
 	return i;
 }
 
-void* connectChannel(char* id, int flag)
+void createChannel(int id)
 {
-	char mq[10];
-	sprintf(mq, "/mq%s",id);
-	struct mq_attr attr;
-	attr.mq_maxmsg = 10;
-	attr.mq_msgsize = MQ_MSGSIZE;
-	attr.mq_flags=0;
-	int *i=malloc(sizeof(int));
-	*i=mq_open(mq, O_CREAT|O_RDWR, 0666, &attr);
-	//printf("connected %s? %d %d\n",mq,*i,errno);
-	return (void*)i;
+	msgget(id, IPC_CREAT|0666;
+}
+
+void* connectChannel(int id)
+{
+	mq_t *mq=malloc(sizeof(mq_t));
+	mq->mqd=msgget(id, 0);
+	mq->id=id;
+	return (void*)mq;
 }
 
 int rcvString(void* fd, char* data)
 {
-	return mq_receive(*(int*)fd, data, MQ_MSGSIZE, 0);
+	mq_t* mq=(mqd_t*) fd;
+	msg_t msg;
+	int i= msgrcv(mq->mqd, &msg, MQ_MSGSIZE, mq->id);
+	strncpy((char*)data, msg->data, size);
+	return i;
 }
 
 int sndString(void* fd, char* string)
