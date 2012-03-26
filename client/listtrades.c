@@ -6,11 +6,11 @@
 int main(int argc, char** args)
 {
     printf("entre a listrtades\n");
-	int msg = SEND_TRADE;
+	int msg = SEND_TRADE, clientID;
 	char string[50];
 	void* readFD, *writeFD;
-	readFD=(void*)(args[2]);
-	writeFD=(void*)(args[1]);
+	clientID=atoi(args[1]);
+	connectClient(clientID,&writeFD,&readFD);
     sndMsg(writeFD, (void*)&msg, sizeof(int));
     rcvMsg(readFD, (void*)&msg, sizeof(int));
     while(msg!=END_SEND_TRADE && msg==SEND_TRADE)

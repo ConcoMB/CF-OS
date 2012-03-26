@@ -11,11 +11,11 @@ int main(int argc, char** args)
     scanf("%d", &offer);
     scanf("%d", &change);
     int msg = MAKE_TRADE;
-    int toID;
+    int toID, clientID;
     void* readFD, *writeFD;
-	readFD=(void*)(args[2]);
-	writeFD=(void*)(args[1]);
-	toID=atoi(args[3]);
+	clientID=atoi(args[1]);
+	connectClient(clientID,&writeFD,&readFD);
+	toID=atoi(args[2]);
     sndMsg(writeFD, (void*)&msg, sizeof(int));
     sndMsg(writeFD, (void*)&toID, sizeof(int));
     sndMsg(writeFD, (void*)&offer, sizeof(int));
