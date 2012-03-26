@@ -51,6 +51,7 @@ void * listenClient()
 	sprintf(defRChannel, "%c%d", 'c', DEFAULTID);
 	readFD=connectChannel(defRChannel, O_RDONLY);
 	writeFD=connectChannel(defWChannel, O_WRONLY);
+
 	signal(SIGPIPE, SIG_IGN);
 	newClient();
 }
