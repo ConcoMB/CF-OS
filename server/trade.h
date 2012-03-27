@@ -13,5 +13,6 @@ void acceptTrade(trade_t* trade, league_t* league);
 
 int negociate(trade_t* oldTrade, sportist_t* newOffer, sportist_t* newChange, league_t* league);
 
+int makeTrade(league_t* league, team_t* team, sportist_t* offer, sportist_t* change);
 
 #endif

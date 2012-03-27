@@ -18,6 +18,7 @@ int main()
 {
 	int msgID;
 	makeDefConnection(&msgID);
+	connectClient(msgID,&writeFD,&readFD);
 	while(1){
 		userLog(msgID);
 	}
@@ -38,7 +39,6 @@ void makeDefConnection(int * msgID)
 
 void userLog(int msgID)
 {
-	connectClient(msgID,&writeFD,&readFD);
 	int loged=0;
 	while(!loged)
 	{
@@ -79,7 +79,6 @@ void userLog(int msgID)
 			printf("password:\n");
 			scanf("%s", password);
 			sndString(writeFD, password);
-			printf("recibiendo handshake\n");
 			rcvMsg(readFD, (void*)&handshake, sizeof(int));
 			switch(handshake)
 			{
@@ -294,8 +293,11 @@ void start(int msgID)
 		}
 		else
 		{
-			printf("invalid command, type 'help' for help\n");
+			printf("invalid command\n");
 		}
 	}
 	while(command!=QUIT);
+	command = LOG_OUT;
+	sndMsg(writeFD, (void*)&command, sizeof(int));
+	return;
 }

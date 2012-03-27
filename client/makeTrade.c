@@ -6,7 +6,6 @@
 int main(int argc, char** args)
 {
     int offer, change;
-    printf("entre al fork\n");
     printf("Enter the ID of your offered sportist, followed by the one you want in exchange\n");
     scanf("%d", &offer);
     scanf("%d", &change);
@@ -21,9 +20,13 @@ int main(int argc, char** args)
     sndMsg(writeFD, (void*)&offer, sizeof(int));
     sndMsg(writeFD, (void*)&change, sizeof(int));
     rcvMsg(readFD, (void*)&msg, sizeof(int));
-    if(msg==TRADE_MADE)
+    if(msg==TRADE_OFFERED)
     {
     	printf("Trade made, waiting for its acceptance\n");
+    }
+    else if(msg==TRADE_MADE)
+    {
+        printf("Trade made\n");
     }
     else if(msg==ERROR)
     {
