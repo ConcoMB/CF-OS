@@ -75,6 +75,7 @@ void newClient()
 				createChannel(id+1);
 				sndMsg(writeFD, (void*)&id, sizeof(int));
 				printf("OK\n");
+				fflush(stdout);
 				client_t* newClient = malloc(sizeof(client_t));
 				newClient->ID=id;
 				insert(clients, newClient);
