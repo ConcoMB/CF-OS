@@ -1,6 +1,5 @@
 #include "trade.h"
 
-#include <stdio.h>
 
 int offerTrade(league_t* league, team_t* from, team_t* to, sportist_t* offer, sportist_t* change)
 {
