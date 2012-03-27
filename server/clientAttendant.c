@@ -24,11 +24,12 @@ void controlDraft(draft_t* draft);
 void* clientAtt(void* arg)
 {
 	client_t* myClient;
-	printf("entre al attendant\n");
 	myClient=(client_t*)arg;
 	makeConnection(myClient);
-	logClient(myClient);
-	start(myClient);
+	while(1)
+	{
+		logClient(myClient);
+	}
 }
 
 void logClient(client_t* myClient)
@@ -62,17 +63,16 @@ void logClient(client_t* myClient)
 		}
 		else if(msg==SIGNUP)
 		{
-			printf("Hago el signup\n");
 			aux=signUp(name, password);
 			sndMsg(myClient->writeFD, (void*)&aux, sizeof(int));
 			if(aux==0)
 			{
 			    loged=1;
-			    printf("voy al login\n");
 			    logIn(name, password, myClient);
 			}
 		}
 	}
+	start(myClient);
 }
 
 void start(client_t* myClient)
@@ -184,22 +184,49 @@ void start(client_t* myClient)
 				rcvMsg(myClient->readFD, (void*)&lID, sizeof(int));
 				rcvMsg(myClient->readFD, (void*)&offer, sizeof(int));
 				rcvMsg(myClient->readFD, (void*)&change, sizeof(int));
-				tID=lID%CONVERSION;
-				lID/=CONVERSION;
-				if(lID<lCant && lID>=0 && tID<leagues[lID]->tCant && tID>=0 && 
-					(team=getTeamByClient(leagues[lID], myClient))!=NULL && offer>=0 && change>=0 &&
-					offer<CANT_SPORTIST && change<CANT_SPORTIST && 
-					team->ID!=leagues[lID]->teams[tID]->ID)
+				if(lID!=-1)
 				{
-					if(offerTrade(leagues[lID], team, leagues[lID]->teams[tID], leagues[lID]->sportists[offer], leagues[lID]->sportists[change])==0)
+					tID=lID%CONVERSION;
+					lID/=CONVERSION;
+
+				}
+				else
+				{
+					lID=offer/CONVERSION;
+					tID=-1;
+				}
+				offer%=CONVERSION;
+				change%=CONVERSION;
+				if(lID==offer/CONVERSION && lID==change/CONVERSION && lID<lCant && lID>=0 && 
+					(tID==-1 || (tID<leagues[lID]->tCant && tID>=0)) && 
+					(team=getTeamByClient(leagues[lID], myClient))!=NULL && offer>=0 && change>=0 &&
+					offer<CANT_SPORTIST && change<CANT_SPORTIST && (tID==-1 ||
+					team->ID!=leagues[lID]->teams[tID]->ID))
+				{
+					if(tID!=-1)
 					{
-						msg=TRADE_MADE;
+						if(offerTrade(leagues[lID], team, leagues[lID]->teams[tID], leagues[lID]->sportists[offer], leagues[lID]->sportists[change])==0)
+						{
+							msg=TRADE_OFFERED;
+						}
+						else
+						{
+							msg=ERROR;
+						}
+						sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
 					}
 					else
 					{
-						msg=ERROR;
+						if(makeTrade(leagues[lID], team, leagues[lID]->sportists[offer], leagues[lID]->sportists[change])==0)
+						{
+							msg=TRADE_MADE;
+						}
+						else
+						{
+							msg=ERROR;
+						}
+						sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
 					}
-					sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
 				}
 				else
 				{
@@ -252,9 +279,13 @@ void start(client_t* myClient)
 				lID=tID/CONVERSION;
 				tID%=CONVERSION;
 				trade=getTradeByID(leagues[lID], tID);
-				if(lID<lCant && lID>=0 && trade!=NULL && offer>=0 &&
-					change>=0 && offer<CANT_SPORTIST && change<CANT_SPORTIST && trade->to->user->ID==myClient->user->ID)
+				if(lID==offer/CONVERSION && lID== change/CONVERSION &&
+					lID<lCant && lID>=0 && trade!=NULL && offer>=0 &&
+					change>=0 && offer<CANT_SPORTIST && change<CANT_SPORTIST && 
+					trade->to->user->ID==myClient->user->ID)
 				{
+					offer%=CONVERSION;
+					change&=CONVERSION;
 					if(negociate(trade, leagues[lID]->sportists[offer], leagues[lID]->sportists[change], leagues[lID])==0)
 					{
 						msg=TRADE_NEG;
@@ -336,6 +367,8 @@ void start(client_t* myClient)
 					sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
 				}
 				break;
+			case LOG_OUT:
+				return;
 		}
 	}
 }

@@ -69,3 +69,14 @@ int negociate(trade_t* oldTrade, sportist_t* newOffer, sportist_t* newChange, le
     }
     return 0;
 }
+
+int makeTrade(league_t* league, team_t* team, sportist_t* offer, sportist_t* change)
+{
+    if(offer->team->ID==team->ID && change->team==NULL)
+    {
+        change->team=team;
+        offer->team=NULL;
+        return 0;
+    }
+    return 1;
+}
