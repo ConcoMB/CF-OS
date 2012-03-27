@@ -27,9 +27,9 @@ int sndMsg(void* fd, void* data, int size)
 {
 	int i;
 	shm_t *shm=(shm_t*)fd;
-	printf("Enter ");
 	enter(shm->sem);
 	int *head=(int*)shm->mem;
+	//printf("Sending at address %p head:%d->",shm->mem,*head);
 	for(i=0;i<size;i++)
 	{
 		((char*)shm->mem)[*head]=((char*)data)[i];
@@ -39,8 +39,8 @@ int sndMsg(void* fd, void* data, int size)
 			*head=sizeof(int)*2;
 		}
 	}
+	//printf("%d\n",*head);
 	leave(shm->sem);
-	printf("Leave\n");
 	fflush(stdout);
 	return size;
 }
@@ -51,9 +51,11 @@ int rcvMsg(void* fd, void* data, int size)
 	shm_t *shm=(shm_t*)fd;
 	while(bytes==0)
 	{
+		//printf("Recieving at address %p ",shm->mem);
 		enter(shm->sem);
 		int *head=(int*)shm->mem;
 		int *tail=(int*)(shm->mem+sizeof(int));
+		//printf(" -> head: %d tail: %d\n",*head, *tail);
 		for(i=0;i<size;i++)
 		{
 			//printf("h %d t %d\n",*head, *tail);
@@ -87,31 +89,36 @@ void createChannel(int id)
 		fd=shm_open(shmName, O_RDWR|O_CREAT, 0666);
 		void* mem=mmap(NULL, SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
 		ftruncate(fd, SIZE);
+		close(fd);
+		memset(mem, 0, SIZE);
 		for(i=0; i<SIZE; i+=BUFFER_S)
 		{
-			((int*)mem+i)[0]=sizeof(int)*2;
-			((int*)mem+i)[1]=sizeof(int)*2;
+			((int*)(mem+i))[0]=sizeof(int)*2;
+			((int*)(mem+i))[1]=sizeof(int)*2;
+			//printf("%p:%d %p:%d -",&((int*)(mem+i))[0], ((int*)(mem+i))[0], &((int*)(mem+i))[1], ((int*)(mem+i))[1]);
 		}
-		munmap(mem, SIZE);
-		printf("Created shm\n");
+		//munmap(mem, SIZE);
+		startMem=mem;
+		mapped=1;
+		//printf("Created shm\n");
 	}
 }
 
 void* connectChannel(int id)
 {
-	printf("Trying to connect ...");
+	//printf("Trying to connect ...");
 	char semName[10];
-	int fd;
 	shm_t* shm=malloc(sizeof(shm_t));
-	fd=shm_open("/shm", O_RDWR, 0666);
 	if(!mapped)
 	{
+		int fd;
+		fd=shm_open("/shm", O_RDWR, 0666);
 		startMem=mmap(NULL, SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
+		close(fd);
 		mapped=1;
 	}
 	sprintf(semName, "%d", id);
 	shm->sem=initMutex(semName);
-	close(fd);
 	shm->mem=startMem+id*BUFFER_S;
 	if(startMem==MAP_FAILED)
 	{
@@ -120,7 +127,13 @@ void* connectChannel(int id)
 	}
 	else
 	{
-		printf("Mapped to %p\n", shm->mem);
+		/*printf("Mapped to %p (head:%d tail:%d)\n", shm->mem, ((int*)shm->mem)[0], ((int*)shm->mem)[1]);
+		int j;
+		for(j=0;j<BUFFER_S; j++)
+		{
+			printf("%d ",(int)((char*)shm->mem)[j]);
+		}
+		printf("\n");*/
 	}
 	return (void*)shm;
 }
