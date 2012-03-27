@@ -295,6 +295,7 @@ void start(client_t* myClient)
 					}
 					else
 					{
+
 						msg=JOIN_LEAGUE;
 						sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
 						rcvString(myClient->readFD, name);
@@ -307,7 +308,7 @@ void start(client_t* myClient)
 						{
 							msg=JOIN_LEAGUE;
 							sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
-							if(leagues[lID]->password[0]=0)
+							if(leagues[lID]->password[0]==0)
 							{
 								msg=NO_PASSWORD;
 								sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));

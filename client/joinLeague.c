@@ -5,14 +5,15 @@
 
 int main(int argc, char** args)
 {
-	int msg = JOIN_LEAGUE;
-	int lID, clientID;
-	char name[NAME_LENGTH];
+    int msg = JOIN_LEAGUE;
+	  int lID, clientID;
+	  char name[NAME_LENGTH];
     void* readFD, *writeFD;
-	clientID=atoi(args[1]);
-	connectClient(clientID,&writeFD,&readFD);
+	  clientID=atoi(args[1]);
+	  connectClient(clientID,&writeFD,&readFD);
     lID=atoi(args[2]);
     sndMsg(writeFD, (void*)&msg, sizeof(int));
+    sndMsg(writeFD, (void*)&lID, sizeof(int));
     rcvMsg(readFD, (void*)&msg, sizeof(int));
     if(msg==ID_INVALID)
     {
@@ -48,6 +49,10 @@ int main(int argc, char** args)
    		{
    			printf("Incorrect password\n");
    		}
+      else if(msg==LEAGUE_FULL)
+      {
+        printf("The league is full\n");
+      }
    		else if(msg==JOIN_LEAGUE)
    		{
    			printf("You joined the league!\n");

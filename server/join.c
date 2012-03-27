@@ -36,7 +36,7 @@ int signUp(char* name, char* password)
         return NAME_OR_PASSWORD_TOO_LARGE;
     }
     user_t* user=malloc(sizeof(user_t*));
-    user->ID=nextUserID++;
+    user->ID=uCant;
     user->teams=newList(cmpTeam);
     strcpy(user->name, name);
     strcpy(user->password, password);
@@ -81,21 +81,27 @@ int userAlreadyJoined(league_t* league, user_t* user)
 
 int joinLeague(user_t* user, league_t* league, char* teamName, char* password)
 {
+    printf("%s sent ps %s real ps %s\n", league->name, password, league->password);
     if(league->tCant==league->tMax)
     {
         return LEAGUE_FULL;
     }
-    if(password!=NULL && strcmp(password, league->password)!=0)
+    if(password[0]=='0' || strcmp(password, league->password)==0)
     {
-       return INCORRECT_PASSWORD;
+        team_t * team = malloc(sizeof(team_t));
+        team->user=user;
+        strcpy(team->name,teamName);
+        team->points=0;
+        team->ID=league->nextTeamID++;
+        team->league=league;
+        newTeam(league, team);
+        insert(user->teams, team);
+        return 0;
     }
-    team_t * team = malloc(sizeof(team_t));
-    team->user=user;
-    strcpy(team->name,teamName);
-    team->points=0;
-    team->ID=league->nextTeamID++;
-    newTeam(league, team);
-    return 0;
+    printf("INCORRECT_PASSWORD\n");
+    return INCORRECT_PASSWORD;
+    
+    
 }
 
 
@@ -117,7 +123,7 @@ int createLeague(char* name, char* password, int cant)
         return NAME_OCCUPIED;
     }
     league_t* league=malloc(sizeof(league_t));
-    league->ID=nextLeagueID++;
+    league->ID=lCant;
     league->nextTeamID=0;
     strcpy(league->name, name);
     strcpy(league->password, password);

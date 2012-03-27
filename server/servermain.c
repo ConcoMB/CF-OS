@@ -23,9 +23,6 @@ league_t** leagues;
 int lCant, uCant;
 user_t** users;
 listADT clients;
-int nextUserID=0;
-
-int nextLeagueID=0;
 
 int nextClientID=2;
 void* readFD, *writeFD;
