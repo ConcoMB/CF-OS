@@ -2,7 +2,6 @@
 
 void listLeagues(void* writeChannel) 
 {
-	printf("entre a listleagues\n");
 	int i, msg = SEND_LEAGUE;
 	for (i = 0; i < lCant; i++)
 	{
@@ -31,7 +30,6 @@ static void sendTrade(trade_t* trade, void* writeChannel)
 
 static int involved(trade_t* trade, user_t* user) 
 {
-	printf("voy a involved\n");
 	if (trade->from->user->ID == user->ID || trade->to->user->ID == user->ID) 
 	{
 		return 1;
@@ -41,7 +39,6 @@ static int involved(trade_t* trade, user_t* user)
 
 void listTrades(user_t* user, void* writeChannel) 
 {
-	printf("listtrades\n");
 	if (user->teams != NULL) 
 	{
 		team_t* team;
@@ -56,7 +53,6 @@ void listTrades(user_t* user, void* writeChannel)
 				while ((trade = (trade_t*) getNext(league->trades)) != NULL) 
 				{
 					if (involved(trade, user)) {
-						printf("involucrado! mando\n");
 						sendTrade(trade, writeChannel);
 					}
 				}
@@ -85,7 +81,6 @@ void listTeam(user_t* user, void* writeChannel)
 		}
 		msg = END_SEND_TEAM;
 		sndMsg(writeChannel, (void*) &msg, sizeof(int));
-		printf("termine\n");
 	}
 }
 
@@ -100,7 +95,6 @@ static void createOrderedList(listADT list, league_t* league)
 
 static void sendTeam(team_t* team, void* writeChannel, int code) 
 {
-	printf("mando el equipo");
 	char msg[100];
 	sprintf(msg, "Team %s, ID %d , from user %s  ->  %d points\n", team->name,
 			team->league->ID * CONVERSION + team->ID, team->user->name,

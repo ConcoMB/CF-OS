@@ -1,5 +1,6 @@
 #include "trade.h"
 
+#include <stdio.h>
 
 int offerTrade(league_t* league, team_t* from, team_t* to, sportist_t* offer, sportist_t* change)
 {
@@ -14,6 +15,7 @@ int offerTrade(league_t* league, team_t* from, team_t* to, sportist_t* offer, sp
         trade->from=from;
         trade->change=change;
         trade->ID=league->nextTradeID++;
+        trade->league=league;
         insert(league->trades, trade);
         return 0;
     }
@@ -47,12 +49,22 @@ int withdrawTrade(team_t* team, int tradeID, league_t* league)
 void acceptTrade(trade_t* trade, league_t* league)
 {
     trade->offer->team=trade->to;
-    trade->change->team=trade->from;      
+    trade->change->team=trade->from;  
+    withdrawTrade(trade->from, trade->ID, league);    
 }
 
 int negociate(trade_t* oldTrade, sportist_t* newOffer, sportist_t* newChange, league_t* league)
 {
-    if(offerTrade(league, oldTrade->to, oldTrade->from, newOffer, newChange) || withdrawTrade(oldTrade->from, oldTrade->ID, league))
+    if(newOffer->team->ID!=oldTrade->to->ID || newChange->team->ID!=oldTrade->from->ID)
+    {
+        return 3;
+    }
+
+    if(withdrawTrade(oldTrade->from, oldTrade->ID, league))
+    {
+        return 2;
+    }
+    if(offerTrade(league, oldTrade->to, oldTrade->from, newOffer, newChange))
     {
         return 1;
     }

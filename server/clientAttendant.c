@@ -206,6 +206,7 @@ void start(client_t* myClient)
 					msg=ID_INVALID;
 					sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
 				}
+
 				break;
 			case TRADE_WD:
 				rcvMsg(myClient->readFD, (void*)&tID, sizeof(int));
@@ -250,8 +251,9 @@ void start(client_t* myClient)
 				rcvMsg(myClient->readFD, (void*)&change, sizeof(int));
 				lID=tID/CONVERSION;
 				tID%=CONVERSION;
-				if(lID<lCant && lID>=0 && (trade=getTradeByID(leagues[lID], tID))!=NULL && offer>=0 &&
-					change>=0 && offer<CANT_SPORTIST && change<CANT_SPORTIST)
+				trade=getTradeByID(leagues[lID], tID);
+				if(lID<lCant && lID>=0 && trade!=NULL && offer>=0 &&
+					change>=0 && offer<CANT_SPORTIST && change<CANT_SPORTIST && trade->to->user->ID==myClient->user->ID)
 				{
 					if(negociate(trade, leagues[lID]->sportists[offer], leagues[lID]->sportists[change], leagues[lID])==0)
 					{
