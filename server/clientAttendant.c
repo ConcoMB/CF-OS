@@ -353,8 +353,8 @@ void makeConnection(client_t* myClient)
 	int id=myClient->ID;
 	createChannel(id);
 	createChannel(id+1);
-	myClient->writeFD=connectChannel(id+1);
 	myClient->readFD=connectChannel(id);
+	myClient->writeFD=connectChannel(id+1);
 
 }
 
