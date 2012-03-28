@@ -8,16 +8,16 @@ int main(int argc, char** args)
     printf("entre a listrtades\n");
 	int msg = SEND_TRADE, clientID;
 	char string[50];
-	void* readFD, *writeFD;
+	void* channel;
 	clientID=atoi(args[1]);
-	connectClient(clientID,&writeFD,&readFD);
-    sndMsg(writeFD, (void*)&msg, sizeof(int));
-    rcvMsg(readFD, (void*)&msg, sizeof(int));
+	connectClient(clientID,&channel);
+    sndMsg(channel, (void*)&msg, sizeof(int));
+    rcvMsg(channel, (void*)&msg, sizeof(int));
     while(msg!=END_SEND_TRADE && msg==SEND_TRADE)
     {
-    	rcvString(readFD, string);
+    	rcvString(channel, string);
     	printf("%s\n", string);
-    	rcvMsg(readFD, (void*)&msg, sizeof(int));
+    	rcvMsg(channel, (void*)&msg, sizeof(int));
     }
 
     exit(0);
