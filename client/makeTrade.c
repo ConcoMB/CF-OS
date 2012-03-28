@@ -13,7 +13,7 @@ int main(int argc, char** args)
     int toID, clientID;
     void* channel;
 	clientID=atoi(args[1]);
-	connectClient(clientID,&writeFD,&readFD);
+	connectClient(clientID,&channel);
 	toID=atoi(args[2]);
     sndMsg(channel, (void*)&msg, sizeof(int));
     sndMsg(channel, (void*)&toID, sizeof(int));

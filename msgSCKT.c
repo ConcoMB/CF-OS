@@ -77,8 +77,9 @@ int rcvString(void* fd, char* data)
 	sckt_t* sock= (sckt_t*)fd;
 	int i=0;
 	char c;
-	read(*(int*)fd, &c, sizeof(char));	
 	int len = sizeof(struct sockaddr_un);
+	recvfrom(sock->scktDesc, &c, sizeof(char), 0, (struct sockaddr *)&sock->dest, &len);
+
 	while(c)
 	{
 		data[i++]=c;

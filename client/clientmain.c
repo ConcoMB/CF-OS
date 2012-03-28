@@ -18,7 +18,7 @@ int main()
 {
 	int msgID;
 	makeDefConnection(&msgID);
-	connectClient(msgID,&channel,&channel);
+	connectClient(msgID,&channel);
 	while(1){
 		userLog(msgID);
 	}
@@ -29,7 +29,6 @@ void makeDefConnection(int * msgID)
 {
 	int aux= NEWCLIENT;
 	void* defChannel;
-	//defWrite=connectChannel(DEFAULTID);
 	defChannel=connectChannel(DEFAULTID+1);
 
 	sndMsg(defChannel, (void*)&aux, sizeof(int));
