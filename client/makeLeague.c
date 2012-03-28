@@ -8,9 +8,9 @@ int main(int argc, char** args)
 	char lName[NAME_LENGTH], pass[NAME_LENGTH];
 	int msg = MAKE_LEAGUE;
 	int cantT, clientID;
-    void* readFD, *writeFD;
+    void* channel;
 	clientID=atoi(args[1]);
-	connectClient(clientID,&writeFD,&readFD);
+	connectClient(clientID,&channel);
     char c[3];
 	printf("Enter the league name\n");
 	scanf("%s", lName);
@@ -37,11 +37,11 @@ int main(int argc, char** args)
 		printf("lei %d\n", cantT);
 	}while(!(cantT<=10 && cantT>=3));
 
-	sndMsg(writeFD, (void*)&msg, sizeof(int));
-	sndString(writeFD, lName);
-	sndString(writeFD, pass);
-	sndMsg(writeFD, (void*)&cantT, sizeof(int));
-	rcvMsg(readFD, (void*)&msg, sizeof(int));
+	sndMsg(channel, (void*)&msg, sizeof(int));
+	sndString(channel, lName);
+	sndString(channel, pass);
+	sndMsg(channel, (void*)&cantT, sizeof(int));
+	rcvMsg(channel, (void*)&msg, sizeof(int));
 	if(msg==MAKE_LEAGUE)
 	{
 		printf("League created\n");

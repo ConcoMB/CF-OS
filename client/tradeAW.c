@@ -9,12 +9,12 @@ int main(int argc, char** args)
     int msg = atoi(args[3]);
     int code=msg;
     int id=atoi(args[2]), clientID;
-    void* readFD, *writeFD;
+    void* channel;
 	clientID=atoi(args[1]);
-	connectClient(clientID,&writeFD,&readFD);
-    sndMsg(writeFD, (void*)&msg, sizeof(int));
-    sndMsg(writeFD, (void*)&id, sizeof(int));
-    rcvMsg(readFD, (void*)&msg, sizeof(int));
+	connectClient(clientID,&channel);
+    sndMsg(channel, (void*)&msg, sizeof(int));
+    sndMsg(channel, (void*)&id, sizeof(int));
+    rcvMsg(channel, (void*)&msg, sizeof(int));
     if(msg==code)
     {
         printf("Transaction successfull\n");
