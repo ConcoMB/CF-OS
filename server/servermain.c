@@ -25,7 +25,7 @@ user_t** users;
 listADT clients;
 
 int nextClientID=2;
-void* readFD, *writeFD;
+void* channel;
 
 int main()
 {
@@ -44,9 +44,9 @@ void * listenClient()
 {
 	printf("listening to clients\n");
 	createChannel(DEFAULTID);
-	createChannel(DEFAULTID+1);
-	readFD=connectChannel(DEFAULTID);
-	writeFD=connectChannel(DEFAULTID+1);
+	//createChannel(DEFAULTID+1);
+	channel=connectChannel(DEFAULTID);
+	//writeFD=connectChannel(DEFAULTID+1);
 
 	signal(SIGPIPE, SIG_IGN);
 	newClient();
@@ -60,7 +60,7 @@ void newClient()
 		sleep(2);
 		int msg;
 		int bytes;
-		bytes=rcvMsg(readFD, (void*)&msg, sizeof(int));
+		bytes=rcvMsg(channel, (void*)&msg, sizeof(int));
 		if(bytes>0){
 			printf("recibi %d\n", msg);
 			if(msg==NEWCLIENT)
@@ -70,7 +70,7 @@ void newClient()
 				nextClientID+=2;
 				createChannel(id);
 				createChannel(id+1);
-				sndMsg(writeFD, (void*)&id, sizeof(int));
+				sndMsg(channel, (void*)&id, sizeof(int));
 				printf("OK\n");
 				fflush(stdout);
 				client_t* newClient = malloc(sizeof(client_t));

@@ -72,7 +72,16 @@ static void saveLeague(FILE* leagueFile, league_t* league){
 	{
 		draft=1;
 	}
-	fprintf(leagueFile, "%d %d %s %d %d %d %s\n", league->ID , league->nextTeamID, league->name, league->tMax, league->nextTradeID, draft, league->password);
+	char pass[NAME_LENGTH];
+	if(league->password[0]=='\0')
+	{
+		pass[0]='0';
+	}
+	else
+	{
+		strcpy(pass, league->password);
+	}
+	fprintf(leagueFile, "%d %d %s %d %d %d %s\n", league->ID , league->nextTeamID, league->name, league->tMax, league->nextTradeID, draft, pass);
 }
 
 void saveTeam(FILE* teamFile, team_t* team){

@@ -1,7 +1,6 @@
 #include "connection.h"
 
-void connectClient(int clientID,void** writeFD, void** readFD)
+void connectClient(int clientID,void** channel)
 {
-	*writeFD=connectChannel(clientID);
-	*readFD=connectChannel(clientID+1);
+	*channel=connectChannel(clientID+1);
 }

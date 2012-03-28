@@ -12,29 +12,31 @@
 void userLog(int msgID);
 void start(int msgID);
 void makeDefConnection(int * msgID);
-void* readFD, *writeFD;
+void* channel;
 
 int main()
 {
 	int msgID;
 	makeDefConnection(&msgID);
-	connectClient(msgID,&writeFD,&readFD);
+	connectClient(msgID,&channel);
 	while(1){
 		userLog(msgID);
 	}
 }
 
+
 void makeDefConnection(int * msgID)
 {
 	int aux= NEWCLIENT;
-	void* defRead, *defWrite;
-	defWrite=connectChannel(DEFAULTID);
-	defRead=connectChannel(DEFAULTID+1);
+	void* defChannel;
+	defChannel=connectChannel(DEFAULTID+1);
 
-	sndMsg(defWrite, (void*)&aux, sizeof(int));
+	sndMsg(defChannel, (void*)&aux, sizeof(int));
 	printf("mande\n");
-	rcvMsg(defRead, (void*)msgID, sizeof(int));
+	rcvMsg(defChannel, (void*)msgID, sizeof(int));
 	printf("recibi msgid %d\n", *msgID);
+	disconnect(defChannel);
+
 }
 
 void userLog(int msgID)
@@ -49,14 +51,14 @@ void userLog(int msgID)
 		if(strcmp(command, "login")==0)
 		{
 			int aux=LOGIN;
-			sndMsg(writeFD, (void*)&aux, sizeof(int));
+			sndMsg(channel, (void*)&aux, sizeof(int));
 			printf("name:\n");
 			scanf("%s", name);
-			sndString(writeFD, name);
+			sndString(channel, name);
 			printf("password:\n");
 			scanf("%s", password);
-			sndString(writeFD,password);
-			rcvMsg(readFD, (void*)&handshake, sizeof(int));
+			sndString(channel,password);
+			rcvMsg(channel, (void*)&handshake, sizeof(int));
 			switch(handshake)
 			{
 				case INCORRECT_PASSWORD:
@@ -72,14 +74,14 @@ void userLog(int msgID)
 		else if(strcmp(command, "signup")==0)
 		{
 			int aux=SIGNUP;
-			sndMsg(writeFD, (void*)&aux, sizeof(int));
+			sndMsg(channel, (void*)&aux, sizeof(int));
 			printf("Enter new name:\n");
 			scanf("%s", name);
-			sndString(writeFD, name);
+			sndString(channel, name);
 			printf("password:\n");
 			scanf("%s", password);
-			sndString(writeFD, password);
-			rcvMsg(readFD, (void*)&handshake, sizeof(int));
+			sndString(channel, password);
+			rcvMsg(channel, (void*)&handshake, sizeof(int));
 			switch(handshake)
 			{
 				case NAME_OCCUPIED:
@@ -298,6 +300,6 @@ void start(int msgID)
 	}
 	while(command!=QUIT);
 	command = LOG_OUT;
-	sndMsg(writeFD, (void*)&command, sizeof(int));
+	sndMsg(channel, (void*)&command, sizeof(int));
 	return;
 }

@@ -38,17 +38,17 @@ void logClient(client_t* myClient)
 	char name[NAME_LENGTH], password[NAME_LENGTH];
 	while(!loged)
 	{
-		if(rcvMsg(myClient->readFD,(void*)&msg, sizeof(int))<=0)
+		if(rcvMsg(myClient->channel,(void*)&msg, sizeof(int))<=0)
 		{
 			makeDisconnection(myClient);
 		}
 		printf("msg: %d\n", msg);
-		if(rcvString(myClient->readFD, name)<=0)
+		if(rcvString(myClient->channel, name)<=0)
 		{
 			makeDisconnection(myClient);
 		}
 		printf("name: %s\n", name);
-		if(rcvString(myClient->readFD, password)<=0)
+		if(rcvString(myClient->channel, password)<=0)
 		{
 			makeDisconnection(myClient);
 		}
@@ -59,12 +59,12 @@ void logClient(client_t* myClient)
 			{
 				loged=1;
 			}
-			sndMsg(myClient->writeFD, (void*)&aux, sizeof(int));
+			sndMsg(myClient->channel, (void*)&aux, sizeof(int));
 		}
 		else if(msg==SIGNUP)
 		{
 			aux=signUp(name, password);
-			sndMsg(myClient->writeFD, (void*)&aux, sizeof(int));
+			sndMsg(myClient->channel, (void*)&aux, sizeof(int));
 			if(aux==0)
 			{
 			    loged=1;
@@ -84,57 +84,57 @@ void start(client_t* myClient)
 	while(1)
 	{
 		sleep(2);
-		if(rcvMsg(myClient->readFD,(void*)&msg, sizeof(int))<=0)
+		if(rcvMsg(myClient->channel,(void*)&msg, sizeof(int))<=0)
 		{
 			makeDisconnection(myClient);
 		}
 		switch(msg)
 		{
 			case SEND_LEAGUE:
-				listLeagues(myClient->writeFD);
+				listLeagues(myClient->channel);
 				break;
 			case SEND_TEAM:
-				listTeam(myClient->user ,myClient->writeFD);
+				listTeam(myClient->user ,myClient->channel);
 				break;
 			case SEND_TRADE:
-				listTrades(myClient->user, myClient->writeFD);
+				listTrades(myClient->user, myClient->channel);
 				break; 
 			case LEAGUE_SHOW:
-				rcvMsg(myClient->readFD, (void*)&msg, sizeof(int));
+				rcvMsg(myClient->channel, (void*)&msg, sizeof(int));
 				if(msg<lCant && msg>=0)
 				{
-					leagueShow(leagues[msg], myClient->writeFD, LEAGUE_SHOW, END_LEAGUE_SHOW);
+					leagueShow(leagues[msg], myClient->channel, LEAGUE_SHOW, END_LEAGUE_SHOW);
 				}
 				else
 				{
 					msg=ID_INVALID;
-					sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
+					sndMsg(myClient->channel, (void*)&msg, sizeof(int));
 				}
 				break;
 			case TEAM_SHOW:
-				rcvMsg(myClient->readFD, (void*)&msg, sizeof(int));
+				rcvMsg(myClient->channel, (void*)&msg, sizeof(int));
 				lID=msg/CONVERSION;
 				tID=msg%CONVERSION;
 				if(lID<lCant && lID>=0)
 				{
 					if(tID<leagues[lID]->tCant && tID>=0)
 					{
-						teamShow(leagues[lID]->teams[tID], myClient->writeFD, TEAM_SHOW, END_TEAM_SHOW);
+						teamShow(leagues[lID]->teams[tID], myClient->channel, TEAM_SHOW, END_TEAM_SHOW);
 					}
 					else
 					{
 						msg=ID_INVALID;
-						sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
+						sndMsg(myClient->channel, (void*)&msg, sizeof(int));
 					}
 				}
 				else
 				{
 					msg=ID_INVALID;
-					sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
+					sndMsg(myClient->channel, (void*)&msg, sizeof(int));
 				}
 				break;
 			case TRADE_SHOW:
-				rcvMsg(myClient->readFD, (void*)&msg, sizeof(int));
+				rcvMsg(myClient->channel, (void*)&msg, sizeof(int));
 				lID=msg/CONVERSION;
 				tID=msg%CONVERSION;
  				if(lID<lCant && lID>=0)
@@ -142,49 +142,49 @@ void start(client_t* myClient)
 					trade= getTradeByID(leagues[lID], tID);
 					if(trade!=NULL)
 					{
-						tradeShow(trade, myClient->writeFD);
+						tradeShow(trade, myClient->channel);
 					}
 					else
 					{
 						msg=ID_INVALID;
-						sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
+						sndMsg(myClient->channel, (void*)&msg, sizeof(int));
 					}
 				}
 				else
 				{
 					msg=ID_INVALID;
-					sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
+					sndMsg(myClient->channel, (void*)&msg, sizeof(int));
 				}
 				break;
 			case DRAFT:
-				rcvMsg(myClient->readFD, (void*)&msg, sizeof(int));
+				rcvMsg(myClient->channel, (void*)&msg, sizeof(int));
 				if(msg>=0 && msg<lCant && leagues[msg]->draft!=NULL)
 				{
 					team_t* team= getTeamByClient(leagues[msg], myClient);
 					if(team==NULL)
 					{
 						msg=ID_INVALID;
-						sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
+						sndMsg(myClient->channel, (void*)&msg, sizeof(int));
 					}
 					else
 					{
 						printf("hasta aca llegue\n");
-						leagues[msg]->draft->clients[eagues[msg]->draft->turn++]=myClient;
+						leagues[msg]->draft->clients[leagues[msg]->draft->turn++]=myClient;
 						controlDraft(leagues[msg]->draft);
 						msg=DRAFT_WAIT;
-						sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
+						sndMsg(myClient->channel, (void*)&msg, sizeof(int));
 					}
 				}
 				else
 				{
 					msg=ID_INVALID;
-					sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
+					sndMsg(myClient->channel, (void*)&msg, sizeof(int));
 				}
 				break;
 			case MAKE_TRADE:
-				rcvMsg(myClient->readFD, (void*)&lID, sizeof(int));
-				rcvMsg(myClient->readFD, (void*)&offer, sizeof(int));
-				rcvMsg(myClient->readFD, (void*)&change, sizeof(int));
+				rcvMsg(myClient->channel, (void*)&lID, sizeof(int));
+				rcvMsg(myClient->channel, (void*)&offer, sizeof(int));
+				rcvMsg(myClient->channel, (void*)&change, sizeof(int));
 				if(lID!=-1)
 				{
 					tID=lID%CONVERSION;
@@ -214,7 +214,7 @@ void start(client_t* myClient)
 						{
 							msg=ERROR;
 						}
-						sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
+						sndMsg(myClient->channel, (void*)&msg, sizeof(int));
 					}
 					else
 					{
@@ -226,18 +226,18 @@ void start(client_t* myClient)
 						{
 							msg=ERROR;
 						}
-						sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
+						sndMsg(myClient->channel, (void*)&msg, sizeof(int));
 					}
 				}
 				else
 				{
 					msg=ID_INVALID;
-					sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
+					sndMsg(myClient->channel, (void*)&msg, sizeof(int));
 				}
 
 				break;
 			case TRADE_WD:
-				rcvMsg(myClient->readFD, (void*)&tID, sizeof(int));
+				rcvMsg(myClient->channel, (void*)&tID, sizeof(int));
 				lID=tID/CONVERSION;
 				tID%=CONVERSION;
 				if(lID<lCant && lID>=0 && (team=getTeamByClient(leagues[lID], myClient))!=NULL)
@@ -250,16 +250,16 @@ void start(client_t* myClient)
 					{
 						msg=ERROR;
 					}
-					sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
+					sndMsg(myClient->channel, (void*)&msg, sizeof(int));
 				}
 				else
 				{
 					msg= ID_INVALID;
-					sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
+					sndMsg(myClient->channel, (void*)&msg, sizeof(int));
 				}
 				break;
 			case TRADE_YES:
-				rcvMsg(myClient->readFD, (void*)&tID, sizeof(int));
+				rcvMsg(myClient->channel, (void*)&tID, sizeof(int));
 				lID=tID/CONVERSION;
 				tID%=CONVERSION;
 				if(lID<lCant && lID>=0 && (trade=getTradeByID(leagues[lID], tID))!=NULL)
@@ -271,12 +271,12 @@ void start(client_t* myClient)
 				{
 					msg= ID_INVALID;
 				}
-				sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
+				sndMsg(myClient->channel, (void*)&msg, sizeof(int));
 				break;
 			case TRADE_NEG:
-				rcvMsg(myClient->readFD, (void*)&tID, sizeof(int));
-				rcvMsg(myClient->readFD, (void*)&offer, sizeof(int));
-				rcvMsg(myClient->readFD, (void*)&change, sizeof(int));
+				rcvMsg(myClient->channel, (void*)&tID, sizeof(int));
+				rcvMsg(myClient->channel, (void*)&offer, sizeof(int));
+				rcvMsg(myClient->channel, (void*)&change, sizeof(int));
 				lID=tID/CONVERSION;
 				tID%=CONVERSION;
 				trade=getTradeByID(leagues[lID], tID);
@@ -295,79 +295,79 @@ void start(client_t* myClient)
 					{
 						msg=ERROR;
 					}
-					sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
+					sndMsg(myClient->channel, (void*)&msg, sizeof(int));
 
 				}
 				else
 				{
 					msg= ID_INVALID;
-					sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
+					sndMsg(myClient->channel, (void*)&msg, sizeof(int));
 				}
 				break;
 			case MAKE_LEAGUE:
 				
-				rcvString(myClient->readFD, name);
-				rcvString(myClient->readFD, password);
-				rcvMsg(myClient->readFD, (void*)&msg, sizeof(int));
+				rcvString(myClient->channel, name);
+				rcvString(myClient->channel, password);
+				rcvMsg(myClient->channel, (void*)&msg, sizeof(int));
 				msg=createLeague(name, password, msg);
 				if(msg==0)
 				{
 					msg=MAKE_LEAGUE;
 				}
 				printf("mensage %d\n", msg);
-				sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
+				sndMsg(myClient->channel, (void*)&msg, sizeof(int));
 
 				break;
 			case JOIN_LEAGUE:
-				rcvMsg(myClient->readFD, (void*)&lID, sizeof(int));
+				rcvMsg(myClient->channel, (void*)&lID, sizeof(int));
 				if(lID<lCant && lID>=0)
 				{
 					if(userAlreadyJoined(leagues[lID], myClient->user))
 					{
 						msg=USER_ALREADY_JOINED;
-						sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
+						sndMsg(myClient->channel, (void*)&msg, sizeof(int));
 					}
 					else
 					{
 
 						msg=JOIN_LEAGUE;
-						sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
-						rcvString(myClient->readFD, name);
+						sndMsg(myClient->channel, (void*)&msg, sizeof(int));
+						rcvString(myClient->channel, name);
 						if(teamNameOccupied(leagues[lID], name))
 						{
 							msg=NAME_TAKEN;
-							sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
+							sndMsg(myClient->channel, (void*)&msg, sizeof(int));
 						}
 						else
 						{
 							msg=JOIN_LEAGUE;
-							sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
+							sndMsg(myClient->channel, (void*)&msg, sizeof(int));
 							printf("pass %s\n", leagues[lID]->password);
 							if(leagues[lID]->password[0] == '\0')
 							{
 								msg=NO_PASSWORD;
-								sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
+								sndMsg(myClient->channel, (void*)&msg, sizeof(int));
 								password[0]='\0';
 							}
 							else
 							{
 								msg=SEND_PASSWORD;
-								sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
-								rcvString(myClient->readFD, password);
+								sndMsg(myClient->channel, (void*)&msg, sizeof(int));
+								rcvString(myClient->channel, password);
 							}
 							msg = joinLeague(myClient->user, leagues[lID], name, password);
 							if(msg==0)
 							{
 								msg=JOIN_LEAGUE;
 							}
-							sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
+							sndMsg(myClient->channel, (void*)&msg, sizeof(int));
 						}
 					}
 				}
 				else
 				{
 					msg=ID_INVALID;
-					sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
+					sndMsg(myClient->channel, (void*)&msg, sizeof(int));
 				}
 				break;
 			case LOG_OUT:
@@ -378,8 +378,7 @@ void start(client_t* myClient)
 
 void makeDisconnection(client_t* myClient)
 {
-	disconnect(myClient->readFD);
-	disconnect(myClient->writeFD);
+	disconnect(myClient->channel);
 	printf("cliente desconectado\n");
 	pthread_exit(0);
 }
@@ -389,8 +388,8 @@ void makeConnection(client_t* myClient)
 	int id=myClient->ID;
 	//createChannel(id);
 	//createChannel(id+1);
-	myClient->readFD=connectChannel(id);
-	myClient->writeFD=connectChannel(id+1);
+	myClient->channel=connectChannel(id);
+	//myClient->channel=connectChannel(id+1);
 
 }
 
