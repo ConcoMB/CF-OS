@@ -310,9 +310,6 @@ void start(int msgID)
 
 void sighandler(int sig)
 {
-    reset(clients);
-    client_t * client;
-    while((getNext(clients))!=NULL){
-    	disconnect(client->channel);
-    }
+    disconnect(channel);
+    exit(0);
 }
