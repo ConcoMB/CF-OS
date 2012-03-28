@@ -3,12 +3,13 @@
 #include <stdlib.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <signal.h>
 #include "../msg.h"
 #include "../common.h"
 #include "connection.h"
 #define QUIT 12345
 
-
+void sighandler(int sig);
 void userLog(int msgID);
 void start(int msgID);
 void makeDefConnection(int * msgID);
@@ -17,6 +18,9 @@ void* channel;
 int main()
 {
 	int msgID;
+	signal(SIGABRT, &sighandler);
+	signal(SIGTERM, &sighandler);
+	signal(SIGINT, &sighandler);
 	makeDefConnection(&msgID);
 	connectClient(msgID,&channel);
 	while(1){
@@ -302,4 +306,13 @@ void start(int msgID)
 	command = LOG_OUT;
 	sndMsg(channel, (void*)&command, sizeof(int));
 	return;
+}
+
+void sighandler(int sig)
+{
+    reset(clients);
+    client_t * client;
+    while((getNext(clients))!=NULL){
+    	disconnect(client->channel);
+    }
 }
