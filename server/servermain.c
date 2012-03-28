@@ -89,10 +89,12 @@ void newClient()
 
 void sighandler(int sig)
 {
-    reset(clients);
     client_t * client;
+    reset(clients);
     while((getNext(clients))!=NULL){
-    	disconnect(client->channel);
+    	if(client->channel !=NULL){
+    		disconnect(client->channel);
+    	}
     }
     exit(0);
 }
