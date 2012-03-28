@@ -94,4 +94,5 @@ void sighandler(int sig)
     while((getNext(clients))!=NULL){
     	disconnect(client->channel);
     }
+    exit(0);
 }
