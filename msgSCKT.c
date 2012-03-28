@@ -6,7 +6,7 @@
 #include <sys/un.h>
 #include <errno.h>
 #include <netdb.h>
-#include <errno.h>
+#define MSG_LEN 30
 #include <string.h>
 
 typedef struct 
@@ -27,8 +27,15 @@ int sndMsg(void* fd, void* data, int size)
 int rcvMsg(void* fd, void* data, int size)
 {
 	sckt_t* sock= (sckt_t*)fd;
+	if(sock->id%2==0)
+	{
+
+	}
 	int len = sizeof(struct sockaddr_un);
+	printf("%d   ", len);
 	recvfrom(sock->scktDesc, data, size, 0, (struct sockaddr *)&sock->dest, &len);
+	printf("%d\n", len);
+
 }
 
 void createChannel(int id)
@@ -39,7 +46,7 @@ void createChannel(int id)
 
 void* connectChannel(int id)
 {
-	int sendID;
+	int sendID, opt=1;
 	if(id%2==0) //server
 	{
 		sendID=id+1;
@@ -59,14 +66,18 @@ void* connectChannel(int id)
 		exit(1);
 	}
 	printf("socket %d\n", id);
-	struct sockaddr_un myAddr;
-	myAddr.sun_family=AF_UNIX;
-	sprintf(name, "../sckt%d", id);
-	strcpy(myAddr.sun_path, name);
-	if((bind(sckt->scktDesc, (struct sockaddr *)&myAddr, sizeof(struct sockaddr_un))))
+	if(id%2==0)
 	{
-		printf("Cannot bind socket %d\n", errno);
-		exit(1);
+		struct sockaddr_un myAddr;
+		myAddr.sun_family=AF_UNIX;
+		sprintf(name, "../sckt%d", id);
+		strcpy(myAddr.sun_path, name);
+		setsockopt(sckt->scktDesc, SOL_SOCKET, SO_REUSEADDR,(char*)&opt, sizeof(opt));
+		if((bind(sckt->scktDesc, (struct sockaddr *)&myAddr, sizeof(struct sockaddr_un))))
+		{
+			printf("Cannot bind socket %d\n", errno);
+			exit(1);
+		}
 	}
 	sckt->id=id;
 	return (void*)sckt;
@@ -75,21 +86,11 @@ void* connectChannel(int id)
 int rcvString(void* fd, char* data)
 {
 	sckt_t* sock= (sckt_t*)fd;
-	int i=0;
-	char c;
+	char c[MSG_LEN];
 	int len = sizeof(struct sockaddr_un);
-	recvfrom(sock->scktDesc, &c, sizeof(char), 0, (struct sockaddr *)&sock->dest, &len);
-
-	while(c)
-	{
-		data[i++]=c;
-		if(!(recvfrom(sock->scktDesc, &c, sizeof(char), 0, (struct sockaddr *)&sock->dest, &len)))
-		{
-			return i;
-		}
-	}
-	data[i]='\0';
-	return i;
+	recvfrom(sock->scktDesc, &c, sizeof(char)*MSG_LEN, 0, (struct sockaddr *)&sock->dest, &len);
+	strcpy(data, c);
+	return 12;
 }
 
 int sndString(void* fd, char* string)
