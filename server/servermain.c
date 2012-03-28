@@ -17,6 +17,7 @@
 #include "newMatchesListener.h"
 #include <signal.h>
 
+void sighandler(int sig);
 void * listenClient();
 void newClient();
 league_t** leagues;
@@ -44,11 +45,11 @@ void * listenClient()
 {
 	printf("listening to clients\n");
 	createChannel(DEFAULTID);
-	//createChannel(DEFAULTID+1);
 	channel=connectChannel(DEFAULTID);
-	//writeFD=connectChannel(DEFAULTID+1);
 
-	signal(SIGPIPE, SIG_IGN);
+	signal(SIGABRT, &sighandler);
+	signal(SIGTERM, &sighandler);
+	signal(SIGINT, &sighandler);
 	newClient();
 }
 
@@ -84,4 +85,13 @@ void newClient()
 			}
 		}
 	}
+}
+
+void sighandler(int sig)
+{
+    reset(clients);
+    client_t * client;
+    while((getNext(clients))!=NULL){
+    	disconnect(client->channel);
+    }
 }

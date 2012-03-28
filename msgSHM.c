@@ -23,10 +23,19 @@ typedef struct
 	void* mem;
 } shm_t;
 
+typedef struct
+{
+	shm_t* write;
+	shm_t* read;
+} shmDesc_t;
+
+static shm_t* cChannel(int id);
+
 int sndMsg(void* fd, void* data, int size)
 {
 	int i;
-	shm_t *shm=(shm_t*)fd;
+	shmDesc_t *shmd=(shmDesc_t*)fd;
+	shm_t* shm=shmd->write;
 	enter(shm->sem);
 	int *head=(int*)shm->mem;
 	//printf("Sending at address %p head:%d->",shm->mem,*head);
@@ -48,7 +57,8 @@ int sndMsg(void* fd, void* data, int size)
 int rcvMsg(void* fd, void* data, int size)
 {
 	int i,bytes=0;
-	shm_t *shm=(shm_t*)fd;
+	shmDesc_t *shmd=(shmDesc_t*)fd;
+	shm_t* shm=shmd->read;
 	while(bytes==0)
 	{
 		//printf("Recieving at address %p ",shm->mem);
@@ -106,6 +116,23 @@ void createChannel(int id)
 
 void* connectChannel(int id)
 {
+	int writeID;
+	if(id%2==0)
+	{
+		writeID=id+1;
+	}
+	else
+	{
+		writeID=id-1;
+	}
+	shmDesc_t* shmd=malloc(sizeof(shmDesc_t));
+	shmd->read=cChannel(id);
+	shmd->write=cChannel(writeID);
+	return (void*) shmd;
+}
+
+static shm_t* cChannel(int id)
+{
 	//printf("Trying to connect ...");
 	char semName[10];
 	shm_t* shm=malloc(sizeof(shm_t));
@@ -135,13 +162,14 @@ void* connectChannel(int id)
 		}
 		printf("\n");*/
 	}
-	return (void*)shm;
+	return shm;
 }
 
 int rcvString(void* fd, char* data)
 {
-	int i=0, bytes=0;
-	shm_t *shm=(shm_t*)fd;
+	shmDesc_t *shmd=(shmDesc_t*)fd;
+	shm_t* shm=shmd->read;
+	int i=0, bytes=0;;
 	while(bytes==0)
 	{
 		enter(shm->sem);
