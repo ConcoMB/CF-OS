@@ -30,6 +30,6 @@ int main(int argc, char** args)
      printf("%s", string);
      rcvMsg(channel, (void*)&msg, sizeof(int));
   }
-   
+
  exit(0);
 }
