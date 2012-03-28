@@ -21,7 +21,7 @@ int count=0;
 int sndMsg(void* fd, void* data, int size)
 {
 	sckt_t* sock= (sckt_t*)fd;
-	sendto(sock->scktDesc, data, size, 0, (struct sockaddr *)&sock->dest, sizeof(struct sockaddr_un));
+	sendto(sock->scktDesc, data, size, 0, (struct sockaddr *)&sock->dest, sizeof(struct sockaddr_in));
 }
 
 int rcvMsg(void* fd, void* data, int size)
@@ -31,11 +31,8 @@ int rcvMsg(void* fd, void* data, int size)
 	{
 
 	}
-	int len = sizeof(struct sockaddr_un);
-	printf("%d   ", len);
+	int len = sizeof(struct sockaddr_in);
 	recvfrom(sock->scktDesc, data, size, 0, (struct sockaddr *)&sock->dest, &len);
-	printf("%d\n", len);
-
 }
 
 void createChannel(int id)
@@ -57,7 +54,7 @@ void* connectChannel(int id)
 	}
 	sckt_t * sckt = malloc(sizeof(sckt_t));
 	sckt->dest.sin_family=AF_INET;
-    sckt->dest.sin_port = htons(5000+id);
+    sckt->dest.sin_port = htons(5000+sendID);
     sckt->dest.sin_addr.s_addr = INADDR_ANY;
     bzero(&(sckt->dest.sin_zero),8);
 
@@ -80,7 +77,7 @@ void* connectChannel(int id)
    		myAddr.sin_addr.s_addr = INADDR_ANY;
    		bzero(&(myAddr.sin_zero),8);
 		setsockopt(sckt->scktDesc, SOL_SOCKET, SO_REUSEADDR,(char*)&opt, sizeof(opt));
-		if((bind(sckt->scktDesc, (struct sockaddr *)&myAddr, sizeof(struct sockaddr_un))))
+		if((bind(sckt->scktDesc, (struct sockaddr *)&myAddr, sizeof(struct sockaddr_in))))
 		{
 			printf("Cannot bind socket %d\n", errno);
 			exit(1);
@@ -94,7 +91,7 @@ int rcvString(void* fd, char* data)
 {
 	sckt_t* sock= (sckt_t*)fd;
 	char c[MSG_LEN];
-	int len = sizeof(struct sockaddr_un);
+	int len = sizeof(struct sockaddr_in);
 	recvfrom(sock->scktDesc, &c, sizeof(char)*MSG_LEN, 0, (struct sockaddr *)&sock->dest, &len);
 	strcpy(data, c);
 	return 12;
