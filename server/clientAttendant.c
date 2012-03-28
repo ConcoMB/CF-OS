@@ -98,7 +98,7 @@ void start(client_t* myClient)
 				break;
 			case SEND_TRADE:
 				listTrades(myClient->user, myClient->channel);
-				break; 
+				break;
 			case LEAGUE_SHOW:
 				rcvMsg(myClient->channel, (void*)&msg, sizeof(int));
 				if(msg<lCant && msg>=0)
@@ -198,8 +198,8 @@ void start(client_t* myClient)
 				}
 				offer%=CONVERSION;
 				change%=CONVERSION;
-				if(lID==offer/CONVERSION && lID==change/CONVERSION && lID<lCant && lID>=0 && 
-					(tID==-1 || (tID<leagues[lID]->tCant && tID>=0)) && 
+				if(lID==offer/CONVERSION && lID==change/CONVERSION && lID<lCant && lID>=0 &&
+					(tID==-1 || (tID<leagues[lID]->tCant && tID>=0)) &&
 					(team=getTeamByClient(leagues[lID], myClient))!=NULL && offer>=0 && change>=0 &&
 					offer<CANT_SPORTIST && change<CANT_SPORTIST && (tID==-1 ||
 					team->ID!=leagues[lID]->teams[tID]->ID))
@@ -282,7 +282,7 @@ void start(client_t* myClient)
 				trade=getTradeByID(leagues[lID], tID);
 				if(lID==offer/CONVERSION && lID== change/CONVERSION &&
 					lID<lCant && lID>=0 && trade!=NULL && offer>=0 &&
-					change>=0 && offer<CANT_SPORTIST && change<CANT_SPORTIST && 
+					change>=0 && offer<CANT_SPORTIST && change<CANT_SPORTIST &&
 					trade->to->user->ID==myClient->user->ID)
 				{
 					offer%=CONVERSION;
@@ -305,7 +305,7 @@ void start(client_t* myClient)
 				}
 				break;
 			case MAKE_LEAGUE:
-				
+
 				rcvString(myClient->channel, name);
 				rcvString(myClient->channel, password);
 				rcvMsg(myClient->channel, (void*)&msg, sizeof(int));
@@ -386,11 +386,7 @@ void makeDisconnection(client_t* myClient)
 void makeConnection(client_t* myClient)
 {
 	int id=myClient->ID;
-	//createChannel(id);
-	//createChannel(id+1);
 	myClient->channel=connectChannel(id);
-	//myClient->channel=connectChannel(id+1);
-
 }
 
 void controlDraft(draft_t* draft)
