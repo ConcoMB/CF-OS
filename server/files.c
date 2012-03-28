@@ -145,6 +145,10 @@ static league_t* loadLeague(FILE* leagueFile){
 			league->draft=malloc(sizeof(draft_t));
 			league->draft->league=league;
 		}
+		if(league->password[0]=='0')
+		{
+			league->password[0]='\0';
+		}
 		loadTeams(league);
 		loadSportists(league);
 		league->trades=newList(cmpTrade);

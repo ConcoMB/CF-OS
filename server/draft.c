@@ -17,6 +17,7 @@ void * draftAttendant(void* arg1)
 	time_t start, now;
 	double diff=0;
 	client_t* client;
+	draft->turn=0;
 	for(i=0; i< draft->league->tMax; i++)
 	{
 		msg=DRAFT_BEGUN;

@@ -11,12 +11,12 @@
 
 typedef struct 
 {
-	int sockS, sockC;
-	struct sockaddr_un cliAddr;
-	struct sockaddr_un servAddr;
+	int mySock
+	struct sockaddr_un dest;
 }sckt_t;
 
-sckt_t * sockets[50];
+void* aux;
+int count=0;
 
 int sndMsg(void* fd, void* data, int size)
 {
@@ -50,25 +50,35 @@ void createChannel(int id)
 {
 	if(id%2==0)
 	{
-		sckt_t * sock = malloc(sizeof(sckt_t));
-		sock->cliAddr.sun_family=AF_UNIX;
-		sock->servAddr.sun_family=AF_UNIX;
+		sckt_t * sckt = malloc(sizeof(sckt_t));
+		sock->dest.sun_family=AF_UNIX;
 		char name[10];
-		sprintf(name, "../sckt%dc", id);
-		strcpy(sock->cliAddr.sun_path, name);
-		sprintf(name, "../sckt%ds", id);
-		strcpy(sock->servAddr.sun_path, name);
-		sock->sockS=socket(AF_UNIX, SOCK_DGRAM, 0);
-		sock->sockC=socket(AF_UNIX, SOCK_DGRAM, 0);
-		sockets[id/2]=sock;
-	}
-
+		sprintf(name, "../sckt%d", id+1);
+		strcpy(sckt->dest.sun_path, name);
+		sckt->mySock=socket(AF_UNIX, SOCK_DGRAM, 0);
+		aux= (void*) sckt;
+	}	
 }
 
 void* connectChannel(int id)
 {
-	void* ans = &id;
-	return ans;
+	if(++count!=0 && count%2==0 && id%2==0)
+	{
+		sckt_t * sckt = malloc(sizeof(sckt_t));
+		sock->dest.sun_family=AF_UNIX;
+		char name[10];
+		sprintf(name, "../sckt%d", id);
+		strcpy(sckt->dest.sun_path, name);
+		sckt->mySock=socket(AF_UNIX, SOCK_DGRAM, 0);
+		aux= (void*) sckt;
+		return aux;
+	}
+	if(aux!=NULL)
+	{
+		void* socket = aux;
+		aux= NULL;
+		return socket;
+	}
 }
 
 int rcvString(void* fd, char* data)

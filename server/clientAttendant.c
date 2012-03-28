@@ -168,7 +168,8 @@ void start(client_t* myClient)
 					}
 					else
 					{
-						leagues[msg]->draft->clients[team->ID]=myClient;
+						printf("hasta aca llegue\n");
+						leagues[msg]->draft->clients[eagues[msg]->draft->turn++]=myClient;
 						controlDraft(leagues[msg]->draft);
 						msg=DRAFT_WAIT;
 						sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
@@ -341,10 +342,12 @@ void start(client_t* myClient)
 						{
 							msg=JOIN_LEAGUE;
 							sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
-							if(leagues[lID]->password[0]==0)
+							printf("pass %s\n", leagues[lID]->password);
+							if(leagues[lID]->password[0] == '\0')
 							{
 								msg=NO_PASSWORD;
 								sndMsg(myClient->writeFD, (void*)&msg, sizeof(int));
+								password[0]='\0';
 							}
 							else
 							{
@@ -384,8 +387,8 @@ void makeDisconnection(client_t* myClient)
 void makeConnection(client_t* myClient)
 {
 	int id=myClient->ID;
-	createChannel(id);
-	createChannel(id+1);
+	//createChannel(id);
+	//createChannel(id+1);
 	myClient->readFD=connectChannel(id);
 	myClient->writeFD=connectChannel(id+1);
 
