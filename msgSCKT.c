@@ -32,7 +32,7 @@ int rcvMsg(void* fd, void* data, int size)
 
 	}
 	int len = sizeof(struct sockaddr_un);
-	printf("%d   ", len);
+	printf("%d-->", len);
 	recvfrom(sock->scktDesc, data, size, 0, (struct sockaddr *)&sock->dest, &len);
 	printf("%d\n", len);
 
@@ -60,7 +60,7 @@ void* connectChannel(int id)
 	char name[10];
 	sprintf(name, "../sckt%d", sendID);
 	strcpy(sckt->dest.sun_path, name);
-	if(!(sckt->scktDesc=socket(AF_UNIX, SOCK_DGRAM, 0)))
+	if(!(sckt->scktDesc=socket(AF_UNIX, SOCK_DGRAM, IPPROTO_UDP)))
 	{
 		printf("Cannot create socket\n");
 		exit(1);
