@@ -22,8 +22,7 @@ typedef struct
     int ID;
     user_t* user;
     pthread_t att;
-    void* readFD;
-    void* writeFD;
+    void* channel;
 }client_t;
 
     
@@ -62,6 +61,7 @@ typedef struct league_s
     team_t** teams;
     int tCant;
     int tMax;
+    int nextTradeID;
     listADT trades;
     draft_t* draft;
 }league_t;

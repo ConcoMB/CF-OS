@@ -1,2 +1,0 @@
-0 peps 0 50
-1 concoTeam 2 100 

@@ -1,10 +1,6 @@
 #include "connection.h"
 
-void connectClient(int clientID,void** writeFD, void** readFD)
+void connectClient(int clientID,void** channel)
 {
-	char readChannel[4], writeChannel[4];
-	sprintf(readChannel, "%c%d", 's', clientID);
-	sprintf(writeChannel, "%c%d", 'c', clientID);
-	*readFD=connectChannel(readChannel, O_RDONLY);
-	*writeFD=connectChannel(writeChannel, O_WRONLY);
+	*channel=connectChannel(clientID+1);
 }

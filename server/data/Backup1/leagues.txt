@@ -1,2 +1,1 @@
-0 pass LoL
-1 passW0rd WoW
+0 3 LoL 5 3 0 pass

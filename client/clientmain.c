@@ -3,45 +3,48 @@
 #include <stdlib.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <signal.h>
 #include "../msg.h"
 #include "../common.h"
 #include "connection.h"
 #define QUIT 12345
 
-
+void sighandler(int sig);
 void userLog(int msgID);
 void start(int msgID);
 void makeDefConnection(int * msgID);
-void* readFD, *writeFD;
+void* channel;
 
 int main()
 {
 	int msgID;
+	signal(SIGABRT, &sighandler);
+	signal(SIGTERM, &sighandler);
+	signal(SIGINT, &sighandler);
 	makeDefConnection(&msgID);
+	connectClient(msgID,&channel);
 	while(1){
 		userLog(msgID);
 	}
 }
 
+
 void makeDefConnection(int * msgID)
 {
 	int aux= NEWCLIENT;
-	char defWChannel[3], defRChannel[3];
-	void* defRead, *defWrite;
-	sprintf(defWChannel, "%c%d", 'c', DEFAULTID);
-	sprintf(defRChannel, "%c%d", 's', DEFAULTID);
-	defWrite=connectChannel(defWChannel, O_WRONLY);
-	defRead=connectChannel(defRChannel, O_RDONLY);
-	
-	sndMsg(defWrite, (void*)&aux, sizeof(int));
+	void* defChannel;
+	defChannel=connectChannel(DEFAULTID+1);
+
+	sndMsg(defChannel, (void*)&aux, sizeof(int));
 	printf("mande\n");
-	rcvMsg(defRead, (void*)msgID, sizeof(int));
+	rcvMsg(defChannel, (void*)msgID, sizeof(int));
 	printf("recibi msgid %d\n", *msgID);
+	disconnect(defChannel);
+
 }
 
 void userLog(int msgID)
 {
-	connectClient(msgID,&writeFD,&readFD);
 	int loged=0;
 	while(!loged)
 	{
@@ -52,14 +55,14 @@ void userLog(int msgID)
 		if(strcmp(command, "login")==0)
 		{
 			int aux=LOGIN;
-			sndMsg(writeFD, (void*)&aux, sizeof(int));
+			sndMsg(channel, (void*)&aux, sizeof(int));
 			printf("name:\n");
 			scanf("%s", name);
-			sndString(writeFD, name);
+			sndString(channel, name);
 			printf("password:\n");
 			scanf("%s", password);
-			sndString(writeFD,password);
-			rcvMsg(readFD, (void*)&handshake, sizeof(int));
+			sndString(channel,password);
+			rcvMsg(channel, (void*)&handshake, sizeof(int));
 			switch(handshake)
 			{
 				case INCORRECT_PASSWORD:
@@ -75,15 +78,14 @@ void userLog(int msgID)
 		else if(strcmp(command, "signup")==0)
 		{
 			int aux=SIGNUP;
-			sndMsg(writeFD, (void*)&aux, sizeof(int));
+			sndMsg(channel, (void*)&aux, sizeof(int));
 			printf("Enter new name:\n");
 			scanf("%s", name);
-			sndString(writeFD, name);			
+			sndString(channel, name);
 			printf("password:\n");
 			scanf("%s", password);
-			sndString(writeFD, password);
-			printf("recibiendo handshake\n");
-			rcvMsg(readFD, (void*)&handshake, sizeof(int));
+			sndString(channel, password);
+			rcvMsg(channel, (void*)&handshake, sizeof(int));
 			switch(handshake)
 			{
 				case NAME_OCCUPIED:
@@ -108,7 +110,7 @@ void userLog(int msgID)
 void start(int msgID)
 {
 	int command, auxID, auxOffer, auxChange;
-	char string[20], auxString[10], auxStr2[10], auxStr3[10], auxStr4[10], idStr[5]; 
+	char string[20], auxString[10], auxStr2[10], auxStr3[10], auxStr4[10], idStr[5];
 	sprintf(idStr,"%d",msgID);
 	do
 	{
@@ -152,7 +154,7 @@ void start(int msgID)
 			}
 		}
 		else if(strcmp(string, "leagueshow")==0)
-		{	
+		{
 			scanf("%d", &auxID);
 			sprintf(auxString, "%d",auxID );
 			sprintf(auxStr2, "%d", LEAGUE_SHOW);
@@ -210,12 +212,12 @@ void start(int msgID)
 				execl("./draft", "draft", idStr, auxString, NULL);
 			}
 		}
-		
+
 		else if(strcmp(string, "trade")==0)
 		{
 			scanf("%d", &auxID);
 			sprintf(auxString, "%d",auxID);
-			
+
 			if(fork())
 			{
 				wait((int*)0);
@@ -259,7 +261,7 @@ void start(int msgID)
 		{
 			scanf("%d", &auxID);
 			sprintf(auxString, "%d",auxID);
-			
+
 			if(fork())
 			{
 				wait((int*)0);
@@ -269,7 +271,7 @@ void start(int msgID)
 				execl("tradeNegociate", "tradeNegociate", idStr, auxString, NULL);
 			}
 		}
-		else if(strcmp(string, "createleague"))
+		else if(strcmp(string, "createleague")==0)
 		{
 			if(fork())
 			{
@@ -277,11 +279,11 @@ void start(int msgID)
 			}
 			else
 			{
-				execl("makeLeague.c", "makeLeague", idStr , NULL);
+				execl("makeLeague", "makeLeague", idStr , NULL);
 			}
 
 		}
-		else if(strcmp(string, "joinleague"))
+		else if(strcmp(string, "joinleague")==0)
 		{
 			scanf("%d", &auxID);
 			sprintf(auxString, "%d",auxID);
@@ -291,14 +293,26 @@ void start(int msgID)
 			}
 			else
 			{
-				execl("joinLeague.c", "joinLeague", idStr, auxString, NULL);
+				execl("joinLeague", "joinLeague", idStr, auxString, NULL);
 			}
 
 		}
-		else 
+		else
 		{
-			printf("invalid command, type 'help' for help\n");
+			printf("invalid command\n");
 		}
 	}
 	while(command!=QUIT);
+	command = LOG_OUT;
+	sndMsg(channel, (void*)&command, sizeof(int));
+	return;
+}
+
+void sighandler(int sig)
+{
+    reset(clients);
+    client_t * client;
+    while((getNext(clients))!=NULL){
+    	disconnect(client->channel);
+    }
 }

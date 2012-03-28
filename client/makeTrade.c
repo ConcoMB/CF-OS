@@ -6,24 +6,27 @@
 int main(int argc, char** args)
 {
     int offer, change;
-    printf("entre al fork\n");
     printf("Enter the ID of your offered sportist, followed by the one you want in exchange\n");
     scanf("%d", &offer);
     scanf("%d", &change);
     int msg = MAKE_TRADE;
     int toID, clientID;
-    void* readFD, *writeFD;
+    void* channel;
 	clientID=atoi(args[1]);
-	connectClient(clientID,&writeFD,&readFD);
+	connectClient(clientID,&channel);
 	toID=atoi(args[2]);
-    sndMsg(writeFD, (void*)&msg, sizeof(int));
-    sndMsg(writeFD, (void*)&toID, sizeof(int));
-    sndMsg(writeFD, (void*)&offer, sizeof(int));
-    sndMsg(writeFD, (void*)&change, sizeof(int));
-    rcvMsg(readFD, (void*)&msg, sizeof(int));
-    if(msg==TRADE_MADE)
+    sndMsg(channel, (void*)&msg, sizeof(int));
+    sndMsg(channel, (void*)&toID, sizeof(int));
+    sndMsg(channel, (void*)&offer, sizeof(int));
+    sndMsg(channel, (void*)&change, sizeof(int));
+    rcvMsg(channel, (void*)&msg, sizeof(int));
+    if(msg==TRADE_OFFERED)
     {
     	printf("Trade made, waiting for its acceptance\n");
+    }
+    else if(msg==TRADE_MADE)
+    {
+        printf("Trade made\n");
     }
     else if(msg==ERROR)
     {

@@ -17,19 +17,16 @@
 #include "newMatchesListener.h"
 #include <signal.h>
 
+void sighandler(int sig);
 void * listenClient();
 void newClient();
 league_t** leagues;
 int lCant, uCant;
 user_t** users;
 listADT clients;
-int nextUserID=0;
-char defWChannel[3], defRChannel[3];
 
-int nextLeagueID=0;
-
-int nextClientID=1;
-void* readFD, *writeFD;
+int nextClientID=2;
+void* channel;
 
 int main()
 {
@@ -37,9 +34,9 @@ int main()
 	loadAll();
 	pthread_t clThread,newMatchFilesThread;
 	pthread_create(&clThread, NULL, listenClient, NULL);
-	pthread_create(&newMatchFilesThread, NULL, newMatchesListener, NULL);
+	//pthread_create(&newMatchFilesThread, NULL, newMatchesListener, NULL);
 	pthread_join(clThread, NULL);
-	pthread_join(newMatchFilesThread, NULL);
+	//pthread_join(newMatchFilesThread, NULL);
 	return 0;
 }
 
@@ -47,12 +44,12 @@ int main()
 void * listenClient()
 {
 	printf("listening to clients\n");
-	sprintf(defWChannel, "%c%d", 's', DEFAULTID);
-	sprintf(defRChannel, "%c%d", 'c', DEFAULTID);
-	readFD=connectChannel(defRChannel, O_RDONLY);
-	writeFD=connectChannel(defWChannel, O_WRONLY);
+	createChannel(DEFAULTID);
+	channel=connectChannel(DEFAULTID);
 
-	signal(SIGPIPE, SIG_IGN);
+	signal(SIGABRT, &sighandler);
+	signal(SIGTERM, &sighandler);
+	signal(SIGINT, &sighandler);
 	newClient();
 }
 
@@ -64,15 +61,19 @@ void newClient()
 		sleep(2);
 		int msg;
 		int bytes;
-		bytes=rcvMsg(readFD, (void*)&msg, sizeof(int));
+		bytes=rcvMsg(channel, (void*)&msg, sizeof(int));
 		if(bytes>0){
 			printf("recibi %d\n", msg);
 			if(msg==NEWCLIENT)
 			{
 				printf("sending msgid...");
-				int id= nextClientID++;
-				sndMsg(writeFD, (void*)&id, sizeof(int));
+				int id= nextClientID;
+				nextClientID+=2;
+				createChannel(id);
+				createChannel(id+1);
+				sndMsg(channel, (void*)&id, sizeof(int));
 				printf("OK\n");
+				fflush(stdout);
 				client_t* newClient = malloc(sizeof(client_t));
 				newClient->ID=id;
 				insert(clients, newClient);
@@ -84,4 +85,13 @@ void newClient()
 			}
 		}
 	}
+}
+
+void sighandler(int sig)
+{
+    reset(clients);
+    client_t * client;
+    while((getNext(clients))!=NULL){
+    	disconnect(client->channel);
+    }
 }

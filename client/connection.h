@@ -4,6 +4,6 @@
 #include <unistd.h>
 #include "../msg.h"
 
-void connectClient(int clientID,void** writeFD, void** readFD);
+void connectClient(int clientID,void** channel);
 
 #endif

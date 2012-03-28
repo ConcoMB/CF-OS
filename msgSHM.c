@@ -7,10 +7,15 @@
 #include <errno.h>
 
 #define SIZE 1000
+#define BUFFER_S 50
 
 static sem_t* initMutex(char* id);
 static void enter(sem_t* sem);
 static void leave(sem_t* sem);
+
+int created=0;
+int mapped=0;
+void* startMem=NULL;
 
 typedef struct
 {
@@ -18,34 +23,49 @@ typedef struct
 	void* mem;
 } shm_t;
 
+typedef struct
+{
+	shm_t* write;
+	shm_t* read;
+} shmDesc_t;
+
+static shm_t* cChannel(int id);
+
 int sndMsg(void* fd, void* data, int size)
 {
 	int i;
-	shm_t *shm=(shm_t*)fd;
+	shmDesc_t *shmd=(shmDesc_t*)fd;
+	shm_t* shm=shmd->write;
 	enter(shm->sem);
 	int *head=(int*)shm->mem;
+	//printf("Sending at address %p head:%d->",shm->mem,*head);
 	for(i=0;i<size;i++)
 	{
 		((char*)shm->mem)[*head]=((char*)data)[i];
 		(*head)++;
-		if(*head>=SIZE)
+		if(*head>=BUFFER_S)
 		{
 			*head=sizeof(int)*2;
 		}
 	}
+	//printf("%d\n",*head);
 	leave(shm->sem);
+	fflush(stdout);
 	return size;
 }
 
 int rcvMsg(void* fd, void* data, int size)
 {
 	int i,bytes=0;
-	shm_t *shm=(shm_t*)fd;
+	shmDesc_t *shmd=(shmDesc_t*)fd;
+	shm_t* shm=shmd->read;
 	while(bytes==0)
 	{
+		//printf("Recieving at address %p ",shm->mem);
 		enter(shm->sem);
 		int *head=(int*)shm->mem;
 		int *tail=(int*)(shm->mem+sizeof(int));
+		//printf(" -> head: %d tail: %d\n",*head, *tail);
 		for(i=0;i<size;i++)
 		{
 			//printf("h %d t %d\n",*head, *tail);
@@ -56,42 +76,100 @@ int rcvMsg(void* fd, void* data, int size)
 			((char*)data)[i]=((char*)shm->mem)[*tail];
 			(*tail)++;
 			bytes++;
-			if(*tail>=SIZE)
+			if(*tail>=BUFFER_S)
 			{
 				*tail=sizeof(int)*2;
 			}
 		}
 		leave(shm->sem);
+		sleep(2);
 	}
 	return bytes;
 }
 
-void* connectChannel(char* id, int flag)
+void createChannel(int id)
 {
-	char shmName[10];
-	int fd;
+	if(!created)
+	{
+		int i;
+		created=1;
+		char shmName[10];
+		int fd;
+		sprintf(shmName,"/shm");
+		fd=shm_open(shmName, O_RDWR|O_CREAT, 0666);
+		void* mem=mmap(NULL, SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
+		ftruncate(fd, SIZE);
+		close(fd);
+		memset(mem, 0, SIZE);
+		for(i=0; i<SIZE; i+=BUFFER_S)
+		{
+			((int*)(mem+i))[0]=sizeof(int)*2;
+			((int*)(mem+i))[1]=sizeof(int)*2;
+			//printf("%p:%d %p:%d -",&((int*)(mem+i))[0], ((int*)(mem+i))[0], &((int*)(mem+i))[1], ((int*)(mem+i))[1]);
+		}
+		//munmap(mem, SIZE);
+		startMem=mem;
+		mapped=1;
+		//printf("Created shm\n");
+	}
+}
+
+void* connectChannel(int id)
+{
+	int writeID;
+	if(id%2==0)
+	{
+		writeID=id+1;
+	}
+	else
+	{
+		writeID=id-1;
+	}
+	shmDesc_t* shmd=malloc(sizeof(shmDesc_t));
+	shmd->read=cChannel(id);
+	shmd->write=cChannel(writeID);
+	return (void*) shmd;
+}
+
+static shm_t* cChannel(int id)
+{
+	//printf("Trying to connect ...");
+	char semName[10];
 	shm_t* shm=malloc(sizeof(shm_t));
-	
-	sprintf(shmName,"/shm%s",id);
-	fd=shm_open(shmName, O_RDWR|O_CREAT, 0666);
-	shm->sem=initMutex(id);
-	ftruncate(fd, SIZE);
-	shm->mem=mmap(NULL, SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
-	close(fd);
-	if(shm->mem==MAP_FAILED)
+	if(!mapped)
+	{
+		int fd;
+		fd=shm_open("/shm", O_RDWR, 0666);
+		startMem=mmap(NULL, SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
+		close(fd);
+		mapped=1;
+	}
+	sprintf(semName, "%d", id);
+	shm->sem=initMutex(semName);
+	shm->mem=startMem+id*BUFFER_S;
+	if(startMem==MAP_FAILED)
 	{
 		printf("Mapping failure: %d\n",errno);
 		exit(-1);
 	}
-	((int*)shm->mem)[0]=sizeof(int)*2;
-	((int*)shm->mem)[1]=sizeof(int)*2;
-	return (void*)shm;
+	else
+	{
+		/*printf("Mapped to %p (head:%d tail:%d)\n", shm->mem, ((int*)shm->mem)[0], ((int*)shm->mem)[1]);
+		int j;
+		for(j=0;j<BUFFER_S; j++)
+		{
+			printf("%d ",(int)((char*)shm->mem)[j]);
+		}
+		printf("\n");*/
+	}
+	return shm;
 }
 
 int rcvString(void* fd, char* data)
 {
-	int i=0, bytes=0;
-	shm_t *shm=(shm_t*)fd;
+	shmDesc_t *shmd=(shmDesc_t*)fd;
+	shm_t* shm=shmd->read;
+	int i=0, bytes=0;;
 	while(bytes==0)
 	{
 		enter(shm->sem);
@@ -125,9 +203,9 @@ int sndString(void* fd, char* string)
 
 void disconnect(void* fd)
 {
-	shm_t *shm=(shm_t*)fd;
+/*	shm_t *shm=(shm_t*)fd;
 	munmap(shm->mem,SIZE);
-	sem_close(shm->sem);
+	sem_close(shm->sem);*/
 }
 
 static sem_t* initMutex(char* id)

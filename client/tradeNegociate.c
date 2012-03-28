@@ -12,15 +12,15 @@ int main(int argc, char** args)
     scanf("%d", &change);
     int msg = TRADE_NEG, clientID;
     int tradeID=atoi(args[2]);
-    void* readFD, *writeFD;
+    void* channel;
 	clientID=atoi(args[1]);
-	connectClient(clientID,&writeFD,&readFD);
-    sndMsg(writeFD, (void*)&msg, sizeof(int));
-    sndMsg(writeFD, (void*)&tradeID, sizeof(int));
-    sndMsg(writeFD, (void*)&offer, sizeof(int));
-    sndMsg(writeFD, (void*)&change, sizeof(int));
+	connectClient(clientID,&channel);
+    sndMsg(channel, (void*)&msg, sizeof(int));
+    sndMsg(channel, (void*)&tradeID, sizeof(int));
+    sndMsg(channel, (void*)&offer, sizeof(int));
+    sndMsg(channel, (void*)&change, sizeof(int));
 
-    rcvMsg(readFD, (void*)&msg, sizeof(int));
+    rcvMsg(channel, (void*)&msg, sizeof(int));
     if(msg==TRADE_NEG)
     {
     	printf("Trade negociated, waiting for its acceptance\n");

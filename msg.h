@@ -18,11 +18,10 @@
 #define NEWCLIENT 5
 #define USER_ALREADY_JOINED 12
 
-#include "msg.h"
-
 int sndMsg(void* fd, void* data, int size);
 int rcvMsg(void* fd, void* data, int size);
-void* connectChannel(char* id, int flag);
+void createChannel(int id);
+void* connectChannel(int id);
 int rcvString(void* fd, char* data);
 int sndString(void* fd, char* string);
 void disconnect(void* fd);

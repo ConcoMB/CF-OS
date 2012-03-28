@@ -39,7 +39,15 @@ void printAll()
     for(j=0;j<CANT_SPORTIST&&leagues[i]->sportists[j];j++)
     {
       sportist_t* sportist=leagues[i]->sportists[j];
-      printf("	%d %d %s\n",sportist->ID, sportist->team->ID, sportist->name);
+      if(sportist->team!=NULL)
+      {
+        printf("	%d %d %s\n",sportist->ID, sportist->team->ID, sportist->name);
+      }
+      else 
+      {
+        printf("  %d %s\n",sportist->ID, sportist->name);
+
+      }
     }
     printf("	-- TRADES -- \n");
     trade_t* trade;

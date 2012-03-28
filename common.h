@@ -33,6 +33,8 @@
 #define END_DRAFT 102
 #define DRAFT 103
 #define DRAFT_BEGUN 104
+#define TRADE_OFFERED 105
+#define LOG_OUT 200
 
 
 #endif
