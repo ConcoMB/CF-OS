@@ -29,6 +29,8 @@ typedef struct
 	shm_t* read;
 } shmDesc_t;
 
+static shm_t* cChannel(int id);
+
 int sndMsg(void* fd, void* data, int size)
 {
 	int i;

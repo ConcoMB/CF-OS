@@ -18,6 +18,8 @@ typedef struct
 	char data[MQ_MSGSIZE];
 } msg_t;
 
+int connected=0;;
+
 int sndMsg(void* fd, void* data, int size)
 {
 	int i;
@@ -30,7 +32,7 @@ int sndMsg(void* fd, void* data, int size)
 	{
 		printf("Send Error: errno %d\n", errno);
 	}
-	//printf("Sent with id: %i (%d)\n",(int)msg.fromID,i);
+	printf("Sent with id: %i (%d)\n",(int)msg.fromID,i);
 	return i;
 }
 
@@ -61,10 +63,7 @@ void* connectChannel(int id)
 {
 	mq_t *mq=malloc(sizeof(mq_t));
 	int key;
-	key=ftok("../msg.h",0);
-	mq->mqd=msgget(key, 0666);
 	mq->readID=id+1;
-	int writeID;
 	if(id%2==0)
 	{
 		mq->writeID=id+2;
@@ -72,6 +71,16 @@ void* connectChannel(int id)
 	else
 	{
 		mq->writeID=id;
+	}
+	if(connected)
+	{
+		mq->mqd=connected;
+	}
+	else
+	{
+		key=ftok("../msg.h",0);
+		mq->mqd=msgget(key, 0666);
+		connected=mq->mqd;
 	}
 	if(mq->mqd==-1)
 	{
@@ -108,6 +117,6 @@ int sndString(void* fd, char* string)
 
 void disconnect(void* fd)
 {
-	mq_t* mq=(mq_t*) fd;
-	msgctl(mq->mqd, IPC_RMID, NULL);
+	/*mq_t* mq=(mq_t*) fd;
+	msgctl(mq->mqd, IPC_RMID, NULL);*/
 }

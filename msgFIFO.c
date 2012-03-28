@@ -4,7 +4,7 @@ typedef struct
 {
 	int writeD;
 	int readD;
-} fifo_t
+} fifo_t;
 
 int sndMsg(void* fd, void* data, int size)
 {
@@ -41,10 +41,10 @@ void createChannel(int id)
 void* connectChannel(int id)
 {
 	int writeID;
-  	char fifo[10];
+  	char fifoName[10];
 	fifo_t* fifo=malloc(sizeof(fifo_t));
-	sprintf(fifo, "../fifo%d",id);
-	fifo->readD=open(fifo, O_RONLY);
+	sprintf(fifoName, "../fifo%d",id);
+	fifo->readD=open(fifoName, O_RDWR);
 	if(id%2==0)
 	{
 		writeID=id+1;
@@ -53,8 +53,8 @@ void* connectChannel(int id)
 	{
 		writeID=id-1;
 	}
-	sprintf(fifo, "../fifo%d",writeID);
-	fifo->writeD=open(fifo, O_WRONLY);
+	sprintf(fifoName, "../fifo%d",writeID);
+	fifo->writeD=open(fifoName, O_RDWR);
 	return (void*)fifo;
 }
 
@@ -67,7 +67,7 @@ int rcvString(void* fd, char* data)
 	while(c)
 	{
 		data[i++]=c;
-		if(!read(*(int*)fd, &c, sizeof(char)))
+		if(!read(fifo->readD, &c, sizeof(char)))
 		{
 			return i;
 		}
