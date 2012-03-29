@@ -97,7 +97,6 @@ int joinLeague(user_t* user, league_t* league, char* teamName, char* password)
         insert(user->teams, team);
         return 0;
     }
-    printf("INCORRECT_PASSWORD, me pasaron la pass %s y era \n",  password, league->password);
     return INCORRECT_PASSWORD;
     
     
