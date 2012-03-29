@@ -18,7 +18,7 @@ void makeConnection();
 void start();
 void logClient();
 void makeDisconnection();
-void controlDraft(draft_t* draft);
+int controlDraft(draft_t* draft);
 
 
 void* clientAtt(void* arg)
@@ -158,6 +158,10 @@ void start(client_t* myClient)
 				break;
 			case DRAFT:
 				rcvMsg(myClient->channel, (void*)&msg, sizeof(int));
+				printf("liga %d y tengo %d ligas\n", msg, lCant);
+				printf("liga del draft %s\n", leagues[msg]->draft->league->name);
+					  fflush(stdout);
+
 				if(msg>=0 && msg<lCant && leagues[msg]->draft!=NULL)
 				{
 					team_t* team= getTeamByClient(leagues[msg], myClient);
@@ -169,9 +173,14 @@ void start(client_t* myClient)
 					else
 					{
 						leagues[msg]->draft->clients[leagues[msg]->draft->turn++]=myClient;
-						controlDraft(leagues[msg]->draft);
 						msg=DRAFT_WAIT;
 						sndMsg(myClient->channel, (void*)&msg, sizeof(int));
+						if(controlDraft(leagues[msg]->draft))
+						{
+							pthread_t draftT;
+							pthread_create(&draftT, NULL, draftAttendant, (void*) draft);
+							pthread_join(draftT);
+						}
 					}
 				}
 				else
@@ -386,17 +395,16 @@ void makeConnection(client_t* myClient)
 	myClient->channel=connectChannel(id);
 }
 
-void controlDraft(draft_t* draft)
+int controlDraft(draft_t* draft)
 {
 	int i;
 	for(i=0; i< (draft->league->tMax) ;i++)
 	{
 		if(!draft->clients[i])
 		{
-			return;
+			return 0;
 		}
 	}
-	pthread_t draftT;
-	pthread_create(&draftT, NULL, draftAttendant, (void*) draft);
+	return 1;
 }
 

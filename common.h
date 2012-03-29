@@ -1,6 +1,8 @@
 #ifndef __COMMON__
 #define __COMMON__
 
+#define SEND_SPORTIST 26
+#define END_SEND_SPORTIST 25
 #define LEAGUE_FULL 27
 #define SPORT_NAME_L 30
 #define NAME_TAKEN 4
@@ -35,6 +37,7 @@
 #define DRAFT_BEGUN 104
 #define TRADE_OFFERED 105
 #define LOG_OUT 200
+#define DRAFT_OK 106
 
 
 #endif

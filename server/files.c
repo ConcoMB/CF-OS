@@ -151,8 +151,15 @@ static league_t* loadLeague(FILE* leagueFile){
 	if(fscanf(leagueFile, "%d %d %s %d %d %d %s\n", &league->ID , &league->nextTeamID, league->name, &league->tMax, &league->nextTradeID, &draft, league->password)!=EOF){
 		if(draft)
 		{
+			int i;
 			league->draft=malloc(sizeof(draft_t));
 			league->draft->league=league;
+			league->draft->clients=malloc(sizeof(client_t*)*league->tMax);
+		    league->draft->turn=0;
+		    for(i=0; i<league->tMax; i++)
+		    {
+		        league->draft->clients[i]=NULL;
+		    }
 		}
 		if(league->password[0]=='0')
 		{
