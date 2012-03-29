@@ -19,7 +19,8 @@ void* startMem=NULL;
 
 typedef struct
 {
-	sem_t* sem;
+	sem_t* sem; //semaforo para leer/escribir
+	sem_t* changes; //semaforo para indicar cambios
 	void* mem;
 } shm_t;
 
@@ -48,38 +49,35 @@ int sndMsg(void* fd, void* data, int size)
 		}
 	}
 	leave(shm->sem);
-	fflush(stdout);
+	sem_post(shm->changes);
 	return size;
 }
 
 int rcvMsg(void* fd, void* data, int size)
 {
-	int i,bytes=0;
+	int i;
 	shmDesc_t *shmd=(shmDesc_t*)fd;
 	shm_t* shm=shmd->read;
 	int *head=(int*)shm->mem;
 	int *tail=(int*)(shm->mem+sizeof(int));
-	while(bytes==0)
+	sem_wait(shm->changes);
+	enter(shm->sem);
+	for(i=0;i<size;i++)
 	{
-		enter(shm->sem);
-		for(i=0;i<size;i++)
+		if(*tail==*head)
 		{
-			if(*tail==*head)
-			{
-				break;
-			}
-			((char*)data)[i]=((char*)shm->mem)[*tail];
-			(*tail)++;
-			bytes++;
-			if(*tail>=BUFFER_S)
-			{
-				*tail=sizeof(int)*2;
-			}
+			break;
 		}
-		leave(shm->sem);
-		//sleep(1);
+		((char*)data)[i]=((char*)shm->mem)[*tail];
+		(*tail)++;
+		if(*tail>=BUFFER_S)
+		{
+			*tail=sizeof(int)*2;
+		}
 	}
-	return bytes;
+	leave(shm->sem);
+	//sleep(1);
+	return i;
 }
 
 void createChannel(int id)
@@ -92,7 +90,7 @@ void createChannel(int id)
 		int fd;
 		sprintf(shmName,"/shm");
 		fd=shm_open(shmName, O_RDWR|O_CREAT, 0666);
-		void* mem=mmap(NULL, SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
+		void* mem=mmap(NULL, BUFFER_S, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
 		ftruncate(fd, SIZE);
 		close(fd);
 		memset(mem, 0, SIZE);
@@ -139,8 +137,10 @@ static shm_t* cChannel(int id)
 		close(fd);
 		mapped=1;
 	}
-	sprintf(semName, "%d", id);
-	shm->sem=initMutex(semName);
+	sprintf(semName,"/mutex%d",id);
+	shm->sem=sem_open(semName, O_RDWR|O_CREAT, 0666, 1);
+	sprintf(semName,"/mutexCh%d",id);
+	shm->changes=sem_open(semName, O_RDWR|O_CREAT, 0666, 0);
 	shm->mem=startMem+id*BUFFER_S;
 	if(startMem==MAP_FAILED)
 	{
@@ -164,31 +164,28 @@ int rcvString(void* fd, char* data)
 {
 	shmDesc_t *shmd=(shmDesc_t*)fd;
 	shm_t* shm=shmd->read;
-	int i=0, bytes=0;;
-	while(bytes==0)
+	int i=0;
+	sem_wait(shm->changes);
+	enter(shm->sem);
+	int *head=(int*)shm->mem;
+	int *tail=(int*)(shm->mem+sizeof(int));
+	while(*head!=*tail)
 	{
-		enter(shm->sem);
-		int *head=(int*)shm->mem;
-		int *tail=(int*)(shm->mem+sizeof(int));
-		while(*head!=*tail)
+		data[i]=((char*)shm->mem)[*tail];
+		(*tail)++;
+		if(data[i]==0)
 		{
-			data[i]=((char*)shm->mem)[*tail];
-			(*tail)++;
-			bytes++;
-			if(data[i]==0)
-			{
-				leave(shm->sem);
-				return i+1;
-			}
-			if(*tail>=SIZE)
-			{
-				*tail=sizeof(int)*2;
-			}
-			i++;
+			leave(shm->sem);
+			return i+1;
 		}
-		leave(shm->sem);
+		if(*tail>=SIZE)
+		{
+			*tail=sizeof(int)*2;
+		}
+		i++;
 	}
-	return bytes;
+	leave(shm->sem);
+	return i;
 }
 
 int sndString(void* fd, char* string)
@@ -198,16 +195,9 @@ int sndString(void* fd, char* string)
 
 void disconnect(void* fd)
 {
-/*	shm_t *shm=(shm_t*)fd;
-	munmap(shm->mem,SIZE);
-	sem_close(shm->sem);*/
-}
-
-static sem_t* initMutex(char* id)
-{
-	char semName[10];
-	sprintf(semName,"/mutex%s",id);
-	return sem_open(semName, O_RDWR|O_CREAT, 0666, 1);
+	shm_t *shm=(shm_t*)fd;
+	munmap(shm->mem,BUFFER_S);
+	sem_close(shm->sem);
 }
 
 static void enter(sem_t* sem)

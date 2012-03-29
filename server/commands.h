@@ -2,6 +2,7 @@
 #define __COMMANDS__
 #include "league.h"
 #include "../common.h"
+#include "../msg.h"
 
 #define CMD_START SEND_LEAGUE
 

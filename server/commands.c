@@ -1,5 +1,6 @@
 #include "commands.h"
 #include "externvars.h"
+#include "getter.h"
 
 void (*cmds[])(client_t*)=
 {
@@ -130,7 +131,8 @@ void cmdDraft(client_t* myClient)
 
 void cmdMakeTrade(client_t* myClient)
 {
-	int lID, offer;
+	int lID, offer, change, tID, msg; 
+	team_t* team;
 	rcvMsg(myClient->channel, (void*)&lID, sizeof(int));
 	rcvMsg(myClient->channel, (void*)&offer, sizeof(int));
 	rcvMsg(myClient->channel, (void*)&change, sizeof(int));
@@ -187,6 +189,7 @@ void cmdMakeTrade(client_t* myClient)
 void cmdTradeWD(client_t* myClient)
 {
 	int msg, lID, tID;
+	team_t* team;
 	rcvMsg(myClient->channel, (void*)&tID, sizeof(int));
 	lID=tID/CONVERSION;
 	tID%=CONVERSION;
@@ -211,7 +214,8 @@ void cmdTradeWD(client_t* myClient)
 
 void cmdTradeYes(client_t* myClient)
 {
-	int msg, tID;
+	int msg, tID, lID;
+	trade_t* trade;
 	rcvMsg(myClient->channel, (void*)&tID, sizeof(int));
 	lID=tID/CONVERSION;
 	tID%=CONVERSION;
@@ -229,6 +233,8 @@ void cmdTradeYes(client_t* myClient)
 
 void cmdTradeNeg(client_t* myClient)
 {
+	int tID, lID, offer, change, msg;
+	trade_t* trade;
 	rcvMsg(myClient->channel, (void*)&tID, sizeof(int));
 	rcvMsg(myClient->channel, (void*)&offer, sizeof(int));
 	rcvMsg(myClient->channel, (void*)&change, sizeof(int));
@@ -261,6 +267,8 @@ void cmdTradeNeg(client_t* myClient)
 
 void cmdMakeLeague(client_t* myClient)
 {
+	int msg;
+	char name[NAME_LENGTH], password[NAME_LENGTH];
 	rcvString(myClient->channel, name);
 	rcvString(myClient->channel, password);
 	rcvMsg(myClient->channel, (void*)&msg, sizeof(int));
@@ -274,6 +282,8 @@ void cmdMakeLeague(client_t* myClient)
 
 void cmdJoinLeague(client_t* myClient)
 {
+	char name[NAME_LENGTH], password[NAME_LENGTH];
+	int msg, lID;
 	rcvMsg(myClient->channel, (void*)&lID, sizeof(int));
 	if(lID<lCant && lID>=0)
 	{
