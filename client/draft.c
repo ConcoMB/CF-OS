@@ -54,10 +54,10 @@ int main(int argc, char** args)
 	  			pthread_create(&spChooserT, channel, spChooser, NULL);
 	  			while(diff<=5||!flag)
 				{
-					pthread_cancel(tReader);
+					//pthread_cancel(tReader);
 					now=time(NULL);
 					diff=difftime(now, start);
-					printf("%f\n", diff);
+					printf("%f\n", (double)diff);
 				}
 				if(!flag) //NO SE ELIGIO
 				{

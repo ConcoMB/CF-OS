@@ -151,8 +151,8 @@ static sendSporist(league_t* league, int spID, void* channel, int code)
 	char string[200];
 	sprintf(string, "%s, %d points, ID %d, %s team\n", league->sportists[spID]->name,
 		league->sportists[spID]-> score, league->sportists[spID]->ID + CONVERSION* league->ID, teamName);
-	sndMsg(writeChannel, (void*) &code, sizeof(int));
-	sndString(writeChannel, string);
+	sndMsg(channel, (void*) &code, sizeof(int));
+	sndString(channel, string);
 }
 
 void teamShow(team_t* team, void* writeChannel, int code, int end) 
