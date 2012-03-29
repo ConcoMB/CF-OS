@@ -1,8 +1,8 @@
 CC=gcc
 CFLAGS=-g -lpthread -lrt
-OBJ= clientmain.o listteams.o listleagues.o connection.o ../msgFIFO.o
+OBJ= clientmain.o listteams.o listleagues.o connection.o shell.o ../msg$(IPC).o
 make:
-	$(CC) clientmain.c -o client connection.c ../msg$(IPC).c $(CFLAGS)
+	$(CC) clientmain.c -o client connection.c shell.c ../msg$(IPC).c $(CFLAGS)
 	$(CC) listteams.c -o listteams connection.c ../msg$(IPC).c $(CFLAGS)
 	$(CC) listleagues.c -o listleagues connection.c ../msg$(IPC).c $(CFLAGS)
 	$(CC) listtrades.c -o listtrades connection.c ../msg$(IPC).c $(CFLAGS)
