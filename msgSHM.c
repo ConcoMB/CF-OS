@@ -6,8 +6,8 @@
 #include <stdlib.h>
 #include <errno.h>
 
-#define SIZE 1000
-#define BUFFER_S 50
+#define SIZE 4000
+#define BUFFER_S 200
 
 static sem_t* initMutex(char* id);
 static void enter(sem_t* sem);
@@ -38,7 +38,6 @@ int sndMsg(void* fd, void* data, int size)
 	shm_t* shm=shmd->write;
 	enter(shm->sem);
 	int *head=(int*)shm->mem;
-	//printf("Sending at address %p head:%d->",shm->mem,*head);
 	for(i=0;i<size;i++)
 	{
 		((char*)shm->mem)[*head]=((char*)data)[i];
@@ -48,7 +47,6 @@ int sndMsg(void* fd, void* data, int size)
 			*head=sizeof(int)*2;
 		}
 	}
-	//printf("%d\n",*head);
 	leave(shm->sem);
 	fflush(stdout);
 	return size;
@@ -59,16 +57,13 @@ int rcvMsg(void* fd, void* data, int size)
 	int i,bytes=0;
 	shmDesc_t *shmd=(shmDesc_t*)fd;
 	shm_t* shm=shmd->read;
+	int *head=(int*)shm->mem;
+	int *tail=(int*)(shm->mem+sizeof(int));
 	while(bytes==0)
 	{
-		//printf("Recieving at address %p ",shm->mem);
 		enter(shm->sem);
-		int *head=(int*)shm->mem;
-		int *tail=(int*)(shm->mem+sizeof(int));
-		//printf(" -> head: %d tail: %d\n",*head, *tail);
 		for(i=0;i<size;i++)
 		{
-			//printf("h %d t %d\n",*head, *tail);
 			if(*tail==*head)
 			{
 				break;
@@ -82,7 +77,7 @@ int rcvMsg(void* fd, void* data, int size)
 			}
 		}
 		leave(shm->sem);
-		sleep(2);
+		//sleep(1);
 	}
 	return bytes;
 }
