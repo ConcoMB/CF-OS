@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-g -lpthread 
+CFLAGS=-g -lpthread -lrt
 OBJ= clientmain.o listteams.o listleagues.o connection.o shell.o ../msg$(IPC).o
 make:
 	$(CC) clientmain.c -o client connection.c shell.c ../msg$(IPC).c $(CFLAGS)
