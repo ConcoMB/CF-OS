@@ -78,10 +78,7 @@ void logClient(client_t* myClient)
 
 void start(client_t* myClient)
 {
-	int msg, lID, tID, offer, change;
-	char name[NAME_LENGTH], password[NAME_LENGTH];
-	team_t * team;
-	trade_t* trade;
+	int msg;
 	while(1)
 	{
 		sleep(2);
