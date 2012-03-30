@@ -86,6 +86,8 @@ void start(client_t* myClient)
 		{
 			makeDisconnection(myClient);
 		}
+		if(msg==LOG_OUT)
+			return;
 		cmds[msg-CMD_START](myClient);
 	}
 }

@@ -17,7 +17,6 @@ void (*cmds[])(client_t*)=
 	cmdTradeNeg,
 	cmdMakeLeague,
 	cmdJoinLeague,
-	cmdLogout
 };
 
 void cmdSendLeague(client_t* myClient)
@@ -332,9 +331,4 @@ void cmdJoinLeague(client_t* myClient)
 		msg=ID_INVALID;
 		sndMsg(myClient->channel, (void*)&msg, sizeof(int));
 	}
-}
-
-void cmdLogout(client_t* myClient)
-{
-	return;
 }
