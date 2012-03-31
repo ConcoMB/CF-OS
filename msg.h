@@ -25,5 +25,6 @@ void* connectChannel(int id);
 int rcvString(void* fd, char* data);
 int sndString(void* fd, char* string);
 void disconnect(void* fd);
+void destroyChannel(int id);
 
 #endif

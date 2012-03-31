@@ -86,4 +86,14 @@ void disconnect(void* fd)
 	fifo_t* fifo=(fifo_t*)fd;
 	close(fifo->writeD);
 	close(fifo->readD);
+	free(fd);
+}
+
+void destroyChannel(int id)
+{
+	char fifoName[10];
+	sprintf(fifoName, "../fifo%d",id);
+	unlink(fifoName);
+	sprintf(fifoName, "../fifo%d",id+1);
+	unlink(fifoName);
 }

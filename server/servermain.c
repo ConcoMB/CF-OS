@@ -20,6 +20,7 @@
 void sighandler(int sig);
 void * listenClient();
 void newClient();
+void* save();
 league_t** leagues;
 int lCant, uCant;
 user_t** users;
@@ -30,26 +31,37 @@ void* channel;
 
 int main()
 {
+	signal(SIGABRT, sighandler);
+	signal(SIGTERM, sighandler);
+	signal(SIGINT, sighandler);
 	clients=newList(cmpClient);
 	loadAll();
-	pthread_t clThread,newMatchFilesThread;
+	pthread_t saveThread,clThread,newMatchFilesThread;
 	pthread_create(&clThread, NULL, listenClient, NULL);
+	pthread_create(&saveThread, NULL, save, NULL);
 	//pthread_create(&newMatchFilesThread, NULL, newMatchesListener, NULL);
 	pthread_join(clThread, NULL);
+	pthread_join(saveThread, NULL);
 	//pthread_join(newMatchFilesThread, NULL);
 	return 0;
 }
 
+void * save()
+{
+	while(1)
+	{
+		printf("Saving...");
+		saveAll();
+		printf("OK\n");
+		sleep(30);
+	}
+}
 
 void * listenClient()
 {
 	printf("listening to clients\n");
 	createChannel(DEFAULTID);
 	channel=connectChannel(DEFAULTID);
-
-	signal(SIGABRT, &sighandler);
-	signal(SIGTERM, &sighandler);
-	signal(SIGINT, &sighandler);
 	newClient();
 }
 
@@ -91,9 +103,12 @@ void sighandler(int sig)
 {
     client_t * client;
     reset(clients);
-    while((getNext(clients))!=NULL){
+    disconnect(DEFAULTID);
+    destroyChannel(DEFAULTID);
+    while(((client=getNext(clients)))!=NULL){
     	if(client->channel !=NULL){
     		disconnect(client->channel);
+    		destroyChannel(client->ID);
     	}
     }
     exit(0);

@@ -117,10 +117,10 @@ int sndString(void* fd, char* string)
 
 void disconnect(void* fd)
 {
-	char name[10];
-	sprintf(name, "../sckt%d", ((sckt_t*)fd)->id);
 	close(((sckt_t*)fd)->scktDesc);
-	unlink(name);
 }
 
-
+void destroyChannel(int id)
+{
+	/**/
+}

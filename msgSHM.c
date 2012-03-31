@@ -198,6 +198,16 @@ void disconnect(void* fd)
 	shm_t *shm=(shm_t*)fd;
 	munmap(shm->mem,BUFFER_S);
 	sem_close(shm->sem);
+	sem_close(shm->changes);
+}
+
+void destroyChannel(int id)
+{
+	if(created)
+	{
+		shm_unlink("/shm");
+		created=0;
+	}
 }
 
 static void enter(sem_t* sem)
