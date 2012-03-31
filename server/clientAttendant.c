@@ -7,12 +7,9 @@
 #include "list.h"
 #include <pthread.h>
 #include "join.h"
-#include "display.h"
 #include "league.h"
-#include "trade.h"
 #include <sys/shm.h>
 #include <signal.h>
-#include "draft.c"
 #include "commands.h"
 
 void makeConnection(client_t* myClient);
@@ -109,18 +106,6 @@ void makeConnection(client_t* myClient)
 	myClient->channel=connectChannel(id);
 }
 
-int controlDraft(draft_t* draft)
-{
-	int i;
-	for(i=0; i< (draft->league->tMax) ;i++)
-	{
-		if(!draft->clients[i])
-		{
-			return 0;
-		}
-	}
-	return 1;
-}
 
 void* keepAlive(void* arg)
 {

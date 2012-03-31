@@ -65,6 +65,7 @@ void * listenClient()
 	createChannel(DEFAULTID);
 	channel=connectChannel(DEFAULTID);
 	newClient();
+	return NULL;
 }
 
 

@@ -1,4 +1,8 @@
 #include "commands.h"
+#include "draft.c"
+#include "trade.h"
+#include "display.h"
+#include "join.h"
 #include "externvars.h"
 #include "getter.h"
 
@@ -18,6 +22,20 @@ void (*cmds[])(client_t*)=
 	cmdMakeLeague,
 	cmdJoinLeague,
 };
+
+int controlDraft(draft_t* draft)
+{
+	int i;
+	for(i=0; i< (draft->league->tMax) ;i++)
+	{
+		if(draft->clients[i]==NULL)
+		{
+			return 0;
+		}
+	}
+	return 1;
+}
+
 
 void cmdSendLeague(client_t* myClient)
 {
@@ -103,11 +121,12 @@ void cmdTradeShow(client_t* myClient)
 
 void cmdDraft(client_t* myClient)
 {
-	int msg;
-	rcvMsg(myClient->channel, (void*)&msg, sizeof(int));
-	if(msg>=0 && msg<lCant && leagues[msg]->draft!=NULL)
+	int msg, auxID;
+	rcvMsg(myClient->channel, (void*)&auxID, sizeof(int));
+	printf("aux id %d\n", auxID);
+	if(auxID>=0 && auxID<lCant && leagues[auxID]->draft!=NULL)
 	{
-		team_t* team= getTeamByClient(leagues[msg], myClient);
+		team_t* team= getTeamByClient(leagues[auxID], myClient);
 		if(team==NULL)
 		{
 			msg=ID_INVALID;
@@ -115,10 +134,16 @@ void cmdDraft(client_t* myClient)
 		}
 		else
 		{
-			leagues[msg]->draft->clients[leagues[msg]->draft->turn++]=myClient;
-			controlDraft(leagues[msg]->draft);
+			printf("meti el %d al draft \n", leagues[auxID]->draft->turn);
+			leagues[auxID]->draft->clients[leagues[auxID]->draft->turn++]=myClient;
 			msg=DRAFT_WAIT;
 			sndMsg(myClient->channel, (void*)&msg, sizeof(int));
+			if(controlDraft(leagues[auxID]->draft))
+			{
+				pthread_t draftThr;
+				pthread_create(&draftThr, NULL, draftAttendant, (void*)(leagues[auxID]->draft));
+				pthread_join(draftThr, NULL);
+			}
 		}
 	}
 	else

@@ -44,6 +44,7 @@ newList( int (*fComp) (void *, void *) )
 	l->first = NULL;
 	l->current = NULL;
 	l->size = 0;
+	return l;
 }
 
 

@@ -28,7 +28,7 @@ int withdrawTrade(team_t* team, int tradeID, league_t* league)
     reset(league->trades);
     while((trade=getNext(league->trades))!=NULL)
     {
-        if(trade->ID=tradeID)
+        if(trade->ID==tradeID)
         {
             if(trade->from->ID==team->ID)
             {

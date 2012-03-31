@@ -14,7 +14,7 @@ void listLeagues(void* writeChannel)
 	sndMsg(writeChannel, (void*) &msg, sizeof(int));
 }
 
-static void sendTrade(trade_t* trade, void* writeChannel) 
+void sendTrade(trade_t* trade, void* writeChannel) 
 {
 	int code = SEND_TRADE;
 	sndMsg(writeChannel, (void*) &code, sizeof(int));
@@ -28,7 +28,7 @@ static void sendTrade(trade_t* trade, void* writeChannel)
 	sndString(writeChannel, string);
 }
 
-static int involved(trade_t* trade, user_t* user) 
+int involved(trade_t* trade, user_t* user) 
 {
 	if (trade->from->user->ID == user->ID || trade->to->user->ID == user->ID) 
 	{
@@ -84,7 +84,7 @@ void listTeam(user_t* user, void* writeChannel)
 	}
 }
 
-static void createOrderedList(listADT list, league_t* league) 
+void createOrderedList(listADT list, league_t* league) 
 {
 	int i;
 	for (i = 0; i < league->tCant; i++) {
@@ -93,7 +93,7 @@ static void createOrderedList(listADT list, league_t* league)
 	return;
 }
 
-static void sendTeam(team_t* team, void* writeChannel, int code) 
+void sendTeam(team_t* team, void* writeChannel, int code) 
 {
 	char msg[100];
 	sprintf(msg, "Team %s, ID %d , from user %s  ->  %d points\n", team->name,
@@ -102,7 +102,7 @@ static void sendTeam(team_t* team, void* writeChannel, int code)
 	sndMsg(writeChannel, (void*) &code, sizeof(int));
 	sndString(writeChannel, msg);
 }
-static void sendTeams(listADT teams, void* writeChannel, int code) 
+void sendTeams(listADT teams, void* writeChannel, int code) 
 {
 	team_t* team;
 	reset(teams);
@@ -114,7 +114,6 @@ static void sendTeams(listADT teams, void* writeChannel, int code)
 
 void leagueShow(league_t* league, void* writeChannel, int code, int end) 
 {
-	team_t * team;
 	listADT list = newList(cmpTeam);
 	createOrderedList(list, league);
 	sendTeams(list, writeChannel, code);
@@ -137,7 +136,7 @@ void sendSportists(league_t* league, int teamID, void* writeChannel, int code)
 	}
 }
 
-static sendSporist(league_t* league, int spID, void* channel, int code)
+void sendSporist(league_t* league, int spID, void* channel, int code)
 {
 	char teamName[NAME_LENGTH];
 	if(league->sportists[spID]->team==NULL)
