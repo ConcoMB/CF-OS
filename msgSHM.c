@@ -9,6 +9,7 @@
 #define SIZE 4000
 #define BUFFER_S 200
 
+static shm_t* cChannel(int id);
 static sem_t* initMutex(char* id);
 static void enter(sem_t* sem);
 static void leave(sem_t* sem);
@@ -30,7 +31,8 @@ typedef struct
 	shm_t* read;
 } shmDesc_t;
 
-static shm_t* cChannel(int id);
+
+
 
 int sndMsg(void* fd, void* data, int size)
 {

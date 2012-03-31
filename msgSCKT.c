@@ -27,16 +27,7 @@ int sndMsg(void* fd, void* data, int size)
 int rcvMsg(void* fd, void* data, int size)
 {
 	sckt_t* sock= (sckt_t*)fd;
-	if(sock->id%2==0)
-	{
-
-	}
-<<<<<<< HEAD
-	int len = sizeof(struct sockaddr_un);
-	printf("%d-->", len);
-=======
 	int len = sizeof(struct sockaddr_in);
->>>>>>> 0beab6356d041d66890828c318aa8daf98a4dfb4
 	recvfrom(sock->scktDesc, data, size, 0, (struct sockaddr *)&sock->dest, &len);
 }
 
@@ -58,23 +49,12 @@ void* connectChannel(int id)
 		sendID=id-1;
 	}
 	sckt_t * sckt = malloc(sizeof(sckt_t));
-<<<<<<< HEAD
-	sckt->dest.sun_family=AF_UNIX;
-	char name[10];
-	sprintf(name, "../sckt%d", sendID);
-	strcpy(sckt->dest.sun_path, name);
-	if(!(sckt->scktDesc=socket(AF_UNIX, SOCK_DGRAM, IPPROTO_UDP)))
-=======
 	sckt->dest.sin_family=AF_INET;
     sckt->dest.sin_port = htons(5000+sendID);
     sckt->dest.sin_addr.s_addr = INADDR_ANY;
     bzero(&(sckt->dest.sin_zero),8);
 
-	//char name[10];
-	//sprintf(name, "../sckt%d", sendID);
-	//strcpy(sckt->dest.sun_path, name);
 	if(!(sckt->scktDesc=socket(AF_INET, SOCK_DGRAM, 0)))
->>>>>>> 0beab6356d041d66890828c318aa8daf98a4dfb4
 	{
 		printf("Cannot create socket\n");
 		exit(1);

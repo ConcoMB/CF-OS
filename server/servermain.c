@@ -51,6 +51,7 @@ void * listenClient()
 	signal(SIGTERM, &sighandler);
 	signal(SIGINT, &sighandler);
 	newClient();
+	return NULL;
 }
 
 
