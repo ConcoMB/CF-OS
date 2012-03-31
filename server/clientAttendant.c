@@ -16,7 +16,6 @@ void makeConnection();
 void start();
 void logClient();
 void makeDisconnection();
-int controlDraft(draft_t* draft);
 
 
 void* clientAtt(void* arg)

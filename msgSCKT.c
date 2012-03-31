@@ -5,6 +5,8 @@
 #include <netinet/in.h>
 #include <sys/un.h>
 #include <errno.h>
+#include "connection.h"
+
 #include <netdb.h>
 #define MSG_LEN 30
 #include <string.h>
@@ -21,14 +23,14 @@ int count=0;
 int sndMsg(void* fd, void* data, int size)
 {
 	sckt_t* sock= (sckt_t*)fd;
-	sendto(sock->scktDesc, data, size, 0, (struct sockaddr *)&sock->dest, sizeof(struct sockaddr_in));
+	return sendto(sock->scktDesc, data, size, 0, (struct sockaddr *)&sock->dest, sizeof(struct sockaddr_in));
 }
 
 int rcvMsg(void* fd, void* data, int size)
 {
 	sckt_t* sock= (sckt_t*)fd;
-	int len = sizeof(struct sockaddr_in);
-	recvfrom(sock->scktDesc, data, size, 0, (struct sockaddr *)&sock->dest, &len);
+	unsigned int len = sizeof(struct sockaddr_in);
+	return recvfrom(sock->scktDesc, data, size, 0, (struct sockaddr *)&sock->dest, &len);
 }
 
 void createChannel(int id)
@@ -84,7 +86,7 @@ int rcvString(void* fd, char* data)
 {
 	sckt_t* sock= (sckt_t*)fd;
 	char c[MSG_LEN];
-	int len = sizeof(struct sockaddr_in);
+	unsigned int len = sizeof(struct sockaddr_in);
 	recvfrom(sock->scktDesc, &c, sizeof(char)*MSG_LEN, 0, (struct sockaddr *)&sock->dest, &len);
 	strcpy(data, c);
 	return 12;

@@ -144,6 +144,13 @@ void cmdDraft(client_t* myClient)
 				pthread_create(&draftThr, NULL, draftAttendant, (void*)(leagues[auxID]->draft));
 				pthread_join(draftThr, NULL);
 			}
+			else
+			{
+				while(leagues[auxID]->draft!=NULL)
+				{
+					//esperar
+				}
+			}
 		}
 	}
 	else

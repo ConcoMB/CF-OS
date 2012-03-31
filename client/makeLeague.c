@@ -1,5 +1,7 @@
 #include "../common.h"
 #include "../msg.h"
+#include "connection.h"
+
 #include <stdlib.h>
 #include <stdio.h>
 

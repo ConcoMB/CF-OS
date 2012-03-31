@@ -263,6 +263,7 @@ sportist_t* loadSportist(FILE* sportistFile, league_t* league){
 	sportist=malloc(sizeof(sportist_t));
 	if(fscanf(sportistFile,"%d %d %d %s\n", &sportist->ID, &sportist->score, &teamID, sportist->name)!=EOF){
 		/* Link Team */
+		
 		if(teamID>=0)
 		{
 			sportist->team=league->teams[teamID];	

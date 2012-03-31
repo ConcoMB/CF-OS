@@ -6,8 +6,8 @@
 
 void shell(int msgID)
 {
-	int command, auxID, auxOffer, auxChange;
-	char string[20], auxString[10], auxStr2[10], auxStr3[10], auxStr4[10], idStr[5];
+	int command, auxID;
+	char string[20], auxString[10], auxStr2[10], auxStr3[10], idStr[5];
 	sprintf(idStr,"%d",msgID);
 	char* args[6];
 	char* path;

@@ -127,7 +127,7 @@ void sendSportists(league_t* league, int teamID, void* writeChannel, int code)
 	int i;
 	for (i = 0; i < CANT_SPORTIST; i++) 
 	{
-		if (teamID == NO_TEAM || league->sportists[i]->team->ID == teamID) 
+		if (teamID == NO_TEAM || (league->sportists[i]->team!=NULL && league->sportists[i]->team->ID == teamID) )
 		{
 			
 			sendSporist(league, i, writeChannel, code);

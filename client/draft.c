@@ -2,6 +2,7 @@
 #include "../msg.h"
 #include <stdio.h>
 #include <pthread.h>
+#include "connection.h"
 #include <time.h>
 #include <stdlib.h>
 
@@ -11,7 +12,7 @@ void* spChooser(void* channel);
 
 int main(int argc, char** args)
 {
-  time_t start, now, diff;
+  time_t start, now, diff=0;
   int clientID;
   void* channel;
   clientID=atoi(args[1]);
@@ -39,6 +40,7 @@ int main(int argc, char** args)
 	  	{
 	  		if(msg==YOUR_TURN)
 	  		{
+	  			diff=0;
 	  			printf("Its your turn to pick!!\n");
 	  			int i;
 	  			char string[200];
@@ -50,22 +52,21 @@ int main(int argc, char** args)
 	  			}
 	  			flag=0;
 	  			pthread_t sportThrd;
-	  			int spID;
 	  			pthread_create(&sportThrd, NULL, spChooser, channel);
-	  			/*while(diff<=5.0||!flag)
+	  			start=time(NULL);
+	  			while(diff<=DRAFT_TIME && !flag)
 				{
 					now=time(NULL);
 					diff=difftime(now, start);
-					//printf("%f\n", (double)diff);
-				}*/
-				//BORRAR DSP
-					pthread_join(sportThrd, NULL);
-				/*if(!flag) //NO SE ELIGIO
+				}
+					//pthread_join(sportThrd, NULL);
+				if(!flag) //NO SE ELIGIO
 				{
+					printf("me mori\n");
 					pthread_cancel(sportThrd);
 		 			rcvMsg(channel, (void*)&msg, sizeof(int));
 					printf("Time ellapsed, you have a random sportist, ID %d\n",msg);
-				}*/
+				}
 	  		}
 	  		else if(msg==DRAFT_WAIT)
 	  		{
@@ -78,17 +79,18 @@ int main(int argc, char** args)
 	  	printf("Draft ended\n");
 	  }
   }
+  exit(0);
 }
 
 void* spChooser(void* channel)
 {
-	int spID, msg;
+	int msg;
 	while(1)
 	{
 		printf("Please choose your sportist: type its ID\n");	
-		scanf("%d", &spID);
-		printf("lei %d\n", spID);
-		sndMsg(channel, (void*)&spID, sizeof(int));
+		scanf("%d", &msg);
+		printf("lei %d\n", msg);
+		sndMsg(channel, (void*)&msg, sizeof(int));
 		rcvMsg(channel, (void*)&msg, sizeof(int));
 		if(msg==ID_INVALID)
 		{
@@ -101,4 +103,5 @@ void* spChooser(void* channel)
 			pthread_exit(0);
 		}
 	}
+	return NULL;
 }

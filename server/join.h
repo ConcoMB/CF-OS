@@ -10,10 +10,9 @@
 #include "cmp.h"
 #include "list.h"
 
+int teamNameOccupied(league_t* league, char name[NAME_LENGTH]);
 
 int userNameOccupied(char* name);
-
-int teamNameOccupied(league_t* league, char name[NAME_LENGTH]);
 
 int signUp(char* name, char* password);
 

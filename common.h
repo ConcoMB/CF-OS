@@ -1,6 +1,7 @@
 #ifndef __COMMON__
 #define __COMMON__
 
+#define DRAFT_TIME 10.0
 #define CANT_SPORTIST 55
 
 #define SEND_SPORTIST 26

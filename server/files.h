@@ -28,7 +28,7 @@ void loadUsers();
 user_t* loadUser(FILE* userFile);
 void loadLeagues();
 league_t* loadLeague(FILE* leagueFile);
-void loadNewSportists(league_t* league){
+void loadNewSportists(league_t* league);
 void loadTeams(league_t* league);
 team_t* loadTeam(FILE* teamFile, league_t* league);
 void loadTrades(league_t* league);

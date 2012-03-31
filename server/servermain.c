@@ -38,10 +38,10 @@ int main()
 	loadAll();
 	pthread_t saveThread,clThread,newMatchFilesThread;
 	pthread_create(&clThread, NULL, listenClient, NULL);
-	pthread_create(&saveThread, NULL, save, NULL);
+	//pthread_create(&saveThread, NULL, save, NULL);
 	//pthread_create(&newMatchFilesThread, NULL, newMatchesListener, NULL);
 	pthread_join(clThread, NULL);
-	pthread_join(saveThread, NULL);
+	//pthread_join(saveThread, NULL);
 	//pthread_join(newMatchFilesThread, NULL);
 	return 0;
 }
