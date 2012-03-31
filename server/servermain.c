@@ -107,7 +107,7 @@ void newClient()
 					}
 					else
 					{
-						printf("Wrong CMD\n", msg);
+						printf("Wrong CMD\n");
 					}
 					break;
 			}

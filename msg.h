@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <fcntl.h>
+#include <unistd.h>
 
 #define INCORRECT_PASSWORD 1
 #define USER_NOT_FOUND 2
