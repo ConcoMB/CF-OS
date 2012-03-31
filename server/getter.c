@@ -27,6 +27,20 @@ team_t* getTeamByClient(league_t* league, client_t* client)
   return NULL;
 }
 
+client_t* getClientByID(int id)
+{
+	client_t* client;
+	reset(clients);
+	while((client=getNext(clients))!=NULL)
+	{
+		if(client->ID==id)
+		{
+			return client;
+		}
+	}
+	return NULL;
+}
+
 /*
 sportist_t* getSportistByID(league_t* league, int sportistID)
 {

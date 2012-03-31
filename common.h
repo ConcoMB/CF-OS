@@ -52,5 +52,7 @@
 
 #define DRAFT_OK 106
 
+#define CLIENT_ALIVE 2000
+
 
 #endif

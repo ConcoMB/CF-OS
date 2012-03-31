@@ -21,7 +21,9 @@ typedef struct
     int ID;
     user_t* user;
     pthread_t att;
+    pthread_t keepAliveThread;
     void* channel;
+    time_t time;
 }client_t;
 
     
