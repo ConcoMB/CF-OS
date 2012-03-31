@@ -16,6 +16,8 @@
 #include "cmp.h"
 #include "newMatchesListener.h"
 #include <signal.h>
+#include <time.h>
+#include "getter.h"
 
 void sighandler(int sig);
 void * listenClient();
@@ -38,11 +40,19 @@ int main()
 	loadAll();
 	pthread_t saveThread,clThread,newMatchFilesThread;
 	pthread_create(&clThread, NULL, listenClient, NULL);
+<<<<<<< HEAD
 	//pthread_create(&saveThread, NULL, save, NULL);
 	//pthread_create(&newMatchFilesThread, NULL, newMatchesListener, NULL);
 	pthread_join(clThread, NULL);
 	//pthread_join(saveThread, NULL);
 	//pthread_join(newMatchFilesThread, NULL);
+=======
+	pthread_create(&saveThread, NULL, save, NULL);
+	pthread_create(&newMatchFilesThread, NULL, newMatchesListener, NULL);
+	pthread_join(clThread, NULL);
+	pthread_join(saveThread, NULL);
+	pthread_join(newMatchFilesThread, NULL);
+>>>>>>> 7940fc29970905ce6c29b1157deaf035b3e0c4d3
 	return 0;
 }
 
@@ -75,26 +85,39 @@ void newClient()
 		int msg;
 		int bytes;
 		bytes=rcvMsg(channel, (void*)&msg, sizeof(int));
-		if(bytes>0){
+		if(bytes>0)
+		{
 			printf("recibi %d\n", msg);
-			if(msg==NEWCLIENT)
+			switch(msg)
 			{
-				printf("sending msgid...");
-				int id= nextClientID;
-				nextClientID+=2;
-				createChannel(id);
-				createChannel(id+1);
-				sndMsg(channel, (void*)&id, sizeof(int));
-				printf("OK\n");
-				fflush(stdout);
-				client_t* newClient = malloc(sizeof(client_t));
-				newClient->ID=id;
-				insert(clients, newClient);
-				pthread_create(&(newClient->att), NULL, clientAtt, (void*) newClient);
-			}
-			else
-			{
-				printf("wrong cmd\n");
+				case NEWCLIENT:
+					printf("sending msgid...");
+					int id= nextClientID;
+					nextClientID+=2;
+					createChannel(id);
+					createChannel(id+1);
+					sndMsg(channel, (void*)&id, sizeof(int));
+					printf("OK\n");
+					fflush(stdout);
+					client_t* newClient = malloc(sizeof(client_t));
+					newClient->ID=id;
+					newClient->time=time(NULL);
+					insert(clients, newClient);
+					pthread_create(&(newClient->att), NULL, clientAtt, (void*) newClient);
+					break;
+				default:
+					if(msg>CLIENT_ALIVE)
+					{
+						int clientID=msg-CLIENT_ALIVE;
+						client_t* client;
+						client=getClientByID(clientID);
+						client->time=time(NULL);
+					}
+					else
+					{
+						printf("Wrong CMD\n");
+					}
+					break;
 			}
 		}
 	}
@@ -104,7 +127,7 @@ void sighandler(int sig)
 {
     client_t * client;
     reset(clients);
-    disconnect(DEFAULTID);
+    disconnect(channel);
     destroyChannel(DEFAULTID);
     while(((client=getNext(clients)))!=NULL){
     	if(client->channel !=NULL){

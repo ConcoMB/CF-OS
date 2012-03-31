@@ -7,7 +7,7 @@
 #include "display.h"
 
 
-int setRandomSportist(league_t* league, team_t* team);
+int setForcedSportist(league_t* league, team_t* team);
 void* sportistReader(void* arg1);
 
 
@@ -58,7 +58,7 @@ void * draftAttendant(void* arg1)
 			printf("se te paso el tiempo\n");
 			pthread_cancel(tReader);
 			team_t* team=getTeamByClient(draft->league, client );
-			msg=setRandomSportist(draft->league, team);
+			msg=setForcedSportist(draft->league, team);
 			sndMsg(client->channel, (void*)&msg, sizeof(int));
 		}
 			//pthread_join(tReader, NULL);
@@ -88,7 +88,7 @@ void * draftAttendant(void* arg1)
 	pthread_exit(0);
 }
 
-int setRandomSportist(league_t* league, team_t* team)
+int setForcedSportist(league_t* league, team_t* team)
 {
 	int i=0;
 	for(i=0; i<CANT_SPORTIST; i++)
@@ -96,7 +96,7 @@ int setRandomSportist(league_t* league, team_t* team)
 		if(league->sportists[i]->team==NULL)
 		{
 			league->sportists[i]->team=team;
-			return i;
+			return i+league->ID*CONVERSION;
 		}
 	}
 	return -1;

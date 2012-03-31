@@ -10,40 +10,41 @@
 #include "shell.h"
 
 void sighandler(int sig);
-void userLog(int msgID);
-void start(int msgID);
-void makeDefConnection(int * msgID);
+void userLog();
+void start();
+void makeDefConnection();
 void* channel;
+void* defChannel;
+int msgID;
+void* keepAlive(void* arg);
 
 int main()
 {
-	int msgID;
 	signal(SIGABRT, &sighandler);
 	signal(SIGTERM, &sighandler);
 	signal(SIGINT, &sighandler);
 	makeDefConnection(&msgID);
 	connectClient(msgID,&channel);
-	while(1){
-		userLog(msgID);
+	pthread_t keepAliveThread;
+	pthread_create(&keepAliveThread, NULL, keepAlive, NULL);
+	while(1)
+	{
+		userLog();
 	}
 }
 
 
-void makeDefConnection(int * msgID)
+void makeDefConnection()
 {
 	int aux= NEWCLIENT;
-	void* defChannel;
 	defChannel=connectChannel(DEFAULTID+1);
-
 	sndMsg(defChannel, (void*)&aux, sizeof(int));
 	printf("mande\n");
-	rcvMsg(defChannel, (void*)msgID, sizeof(int));
-	printf("recibi msgid %d\n", *msgID);
-	disconnect(defChannel);
-
+	rcvMsg(defChannel, (void*)&msgID, sizeof(int));
+	printf("recibi msgid %d\n", msgID);
 }
 
-void userLog(int msgID)
+void userLog()
 {
 	int loged=0;
 	while(!loged)
@@ -109,6 +110,17 @@ void userLog(int msgID)
 
 void sighandler(int sig)
 {
+	disconnect(defChannel);
     disconnect(channel);
     exit(0);
+}
+
+void* keepAlive(void* arg)
+{
+	while(1)
+	{
+		int msg=CLIENT_ALIVE+msgID;
+		sndMsg(defChannel,&msg,sizeof(int));
+		sleep(5);
+	}
 }

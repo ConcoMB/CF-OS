@@ -12,17 +12,27 @@
 #include <signal.h>
 #include "commands.h"
 
+<<<<<<< HEAD
 void makeConnection();
 void start();
 void logClient();
 void makeDisconnection();
 
+=======
+void makeConnection(client_t* myClient);
+void start(client_t* myClient);
+void logClient(client_t* myClient);
+void makeDisconnection(client_t* myClient);
+int controlDraft(draft_t* draft);
+void* keepAlive(void* arg);
+>>>>>>> 7940fc29970905ce6c29b1157deaf035b3e0c4d3
 
 void* clientAtt(void* arg)
 {
 	client_t* myClient;
 	myClient=(client_t*)arg;
 	makeConnection(myClient);
+	pthread_create(&myClient->keepAliveThread, NULL, keepAlive, (void*)myClient);
 	while(1)
 	{
 		logClient(myClient);
@@ -91,7 +101,10 @@ void start(client_t* myClient)
 void makeDisconnection(client_t* myClient)
 {
 	disconnect(myClient->channel);
+	destroyChannel(myClient->ID);
 	printf("cliente desconectado\n");
+	fflush(stdout);
+	pthread_cancel(myClient->keepAliveThread);
 	pthread_exit(0);
 }
 
@@ -101,4 +114,18 @@ void makeConnection(client_t* myClient)
 	myClient->channel=connectChannel(id);
 }
 
+
+void* keepAlive(void* arg)
+{
+	client_t* myClient;
+	myClient=(client_t*)arg;
+	while(1)
+	{
+		if(difftime(time(NULL), myClient->time)>15)
+		{
+			makeDisconnection(myClient);
+		}
+		sleep(5);
+	}
+}
 
