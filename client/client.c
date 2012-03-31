@@ -96,7 +96,6 @@ void userLog()
 					printf("The length of the user name and the password must be lower than 15 characters\n");
 					break;
 				default:
-					printf("te incribiste piibeee\n");
 					loged=1;
 			}
 		}

@@ -9,9 +9,7 @@ typedef struct
 int sndMsg(void* fd, void* data, int size)
 {
 	fifo_t* fifo=(fifo_t*)fd;
-	int i=write(fifo->writeD, data, size);
-	printf("sent %d:%d\n",*(int*)fd,i);
-	return i;
+	return write(fifo->writeD, data, size);
 }
 
 int rcvMsg(void* fd, void* data, int size)

@@ -80,7 +80,6 @@ void newClient()
 		bytes=rcvMsg(channel, (void*)&msg, sizeof(int));
 		if(bytes>0)
 		{
-			printf("recibi %d\n", msg);
 			switch(msg)
 			{
 				case NEWCLIENT:
