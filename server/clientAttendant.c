@@ -12,20 +12,12 @@
 #include <signal.h>
 #include "commands.h"
 
-<<<<<<< HEAD
-void makeConnection();
-void start();
-void logClient();
-void makeDisconnection();
-
-=======
 void makeConnection(client_t* myClient);
 void start(client_t* myClient);
 void logClient(client_t* myClient);
 void makeDisconnection(client_t* myClient);
 int controlDraft(draft_t* draft);
 void* keepAlive(void* arg);
->>>>>>> 7940fc29970905ce6c29b1157deaf035b3e0c4d3
 
 void* clientAtt(void* arg)
 {

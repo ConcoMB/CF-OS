@@ -40,19 +40,12 @@ int main()
 	loadAll();
 	pthread_t saveThread,clThread,newMatchFilesThread;
 	pthread_create(&clThread, NULL, listenClient, NULL);
-<<<<<<< HEAD
+
 	//pthread_create(&saveThread, NULL, save, NULL);
-	//pthread_create(&newMatchFilesThread, NULL, newMatchesListener, NULL);
-	pthread_join(clThread, NULL);
-	//pthread_join(saveThread, NULL);
-	//pthread_join(newMatchFilesThread, NULL);
-=======
-	pthread_create(&saveThread, NULL, save, NULL);
 	pthread_create(&newMatchFilesThread, NULL, newMatchesListener, NULL);
 	pthread_join(clThread, NULL);
-	pthread_join(saveThread, NULL);
+	//pthread_join(saveThread, NULL);
 	pthread_join(newMatchFilesThread, NULL);
->>>>>>> 7940fc29970905ce6c29b1157deaf035b3e0c4d3
 	return 0;
 }
 
