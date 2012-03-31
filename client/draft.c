@@ -1,18 +1,25 @@
 #include "../common.h"
 #include "../msg.h"
 #include <stdio.h>
+#include <pthread.h>
+#include "connection.h"
+#include <time.h>
 #include <stdlib.h>
 
+int flag;
+
+void* spChooser(void* channel);
 
 int main(int argc, char** args)
 {
-  printf("entre\n");
+  time_t start, now, diff=0;
   int clientID;
   void* channel;
   clientID=atoi(args[1]);
   connectClient(clientID,&channel);
   int ID=atoi(args[2]);
   int msg=DRAFT;
+  printf("%d\n", ID);
   sndMsg(channel, (void*)&msg, sizeof(int));
   sndMsg(channel, (void*)&ID, sizeof(int));
   rcvMsg(channel, (void*)&msg, sizeof(int));
@@ -33,28 +40,68 @@ int main(int argc, char** args)
 	  	{
 	  		if(msg==YOUR_TURN)
 	  		{
-	  			int spID;
-	  			printf("Please choose your sportist: type its ID\n");
-	  			scanf("%d", &spID);
-	 			sndMsg(channel, (void*)&spID, sizeof(int));
-	 			rcvMsg(channel, (void*)&msg, sizeof(int));
-	 			if(msg==ID_INVALID)
-	 			{
-	 				printf("Invalid ID\n");
-	 				msg=YOUR_TURN;
-	 			}
-	 			else if(msg==DRAFT_WAIT)
-	 			{
-	 				printf("You now have your desired sportist\n");
-	 				rcvMsg(channel, (void*)&msg, sizeof(int));
-	 			}
+	  			diff=0;
+	  			printf("Its your turn to pick!!\n");
+	  			int i;
+	  			char string[200];
+	  			for(i=0; i<CANT_SPORTIST; i++)
+	  			{
+		 			rcvMsg(channel, (void*)&msg, sizeof(int));
+		 			rcvString(channel, string);
+		 			printf("%s", string);
+	  			}
+	  			flag=0;
+	  			pthread_t sportThrd;
+	  			pthread_create(&sportThrd, NULL, spChooser, channel);
+	  			start=time(NULL);
+	  			while(diff<=DRAFT_TIME && !flag)
+				{
+					now=time(NULL);
+					diff=difftime(now, start);
+				}
+					//pthread_join(sportThrd, NULL);
+				if(!flag) //NO SE ELIGIO
+				{
+					printf("me mori\n");
+					pthread_cancel(sportThrd);
+		 			rcvMsg(channel, (void*)&msg, sizeof(int));
+					printf("Time ellapsed, you have a random sportist, ID %d\n",msg);
+				}
 	  		}
-	  		else
+	  		else if(msg==DRAFT_WAIT)
 	  		{
-	  			rcvMsg(channel, (void*)&msg, sizeof(int));
+	  			printf("The other players are picking teams, please wait.\n");
 	  		}
+
+	  		rcvMsg(channel, (void*)&msg, sizeof(int));
+
 	  	}
+	  	printf("Draft ended\n");
 	  }
   }
+  exit(0);
 }
 
+void* spChooser(void* channel)
+{
+	int msg;
+	while(1)
+	{
+		printf("Please choose your sportist: type its ID\n");	
+		scanf("%d", &msg);
+		printf("lei %d\n", msg);
+		sndMsg(channel, (void*)&msg, sizeof(int));
+		rcvMsg(channel, (void*)&msg, sizeof(int));
+		if(msg==ID_INVALID)
+		{
+			printf("Invalid sportists ID\n");
+		}
+		else if(msg==DRAFT_OK)
+		{
+			printf("You now have your desired sportist\n");
+			flag=1;
+			pthread_exit(0);
+		}
+	}
+	return NULL;
+}

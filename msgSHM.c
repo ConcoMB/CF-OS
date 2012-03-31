@@ -6,9 +6,10 @@
 #include <stdlib.h>
 #include <errno.h>
 
-#define SIZE 1000
-#define BUFFER_S 50
+#define SIZE 4000
+#define BUFFER_S 200
 
+static shm_t* cChannel(int id);
 static sem_t* initMutex(char* id);
 static void enter(sem_t* sem);
 static void leave(sem_t* sem);
@@ -19,7 +20,8 @@ void* startMem=NULL;
 
 typedef struct
 {
-	sem_t* sem;
+	sem_t* sem; //semaforo para leer/escribir
+	sem_t* changes; //semaforo para indicar cambios
 	void* mem;
 } shm_t;
 
@@ -29,7 +31,8 @@ typedef struct
 	shm_t* read;
 } shmDesc_t;
 
-static shm_t* cChannel(int id);
+
+
 
 int sndMsg(void* fd, void* data, int size)
 {
@@ -38,7 +41,6 @@ int sndMsg(void* fd, void* data, int size)
 	shm_t* shm=shmd->write;
 	enter(shm->sem);
 	int *head=(int*)shm->mem;
-	//printf("Sending at address %p head:%d->",shm->mem,*head);
 	for(i=0;i<size;i++)
 	{
 		((char*)shm->mem)[*head]=((char*)data)[i];
@@ -48,43 +50,36 @@ int sndMsg(void* fd, void* data, int size)
 			*head=sizeof(int)*2;
 		}
 	}
-	//printf("%d\n",*head);
 	leave(shm->sem);
-	fflush(stdout);
+	sem_post(shm->changes);
 	return size;
 }
 
 int rcvMsg(void* fd, void* data, int size)
 {
-	int i,bytes=0;
+	int i;
 	shmDesc_t *shmd=(shmDesc_t*)fd;
 	shm_t* shm=shmd->read;
-	while(bytes==0)
+	int *head=(int*)shm->mem;
+	int *tail=(int*)(shm->mem+sizeof(int));
+	sem_wait(shm->changes);
+	enter(shm->sem);
+	for(i=0;i<size;i++)
 	{
-		//printf("Recieving at address %p ",shm->mem);
-		enter(shm->sem);
-		int *head=(int*)shm->mem;
-		int *tail=(int*)(shm->mem+sizeof(int));
-		//printf(" -> head: %d tail: %d\n",*head, *tail);
-		for(i=0;i<size;i++)
+		if(*tail==*head)
 		{
-			//printf("h %d t %d\n",*head, *tail);
-			if(*tail==*head)
-			{
-				break;
-			}
-			((char*)data)[i]=((char*)shm->mem)[*tail];
-			(*tail)++;
-			bytes++;
-			if(*tail>=BUFFER_S)
-			{
-				*tail=sizeof(int)*2;
-			}
+			break;
 		}
-		leave(shm->sem);
-		sleep(2);
+		((char*)data)[i]=((char*)shm->mem)[*tail];
+		(*tail)++;
+		if(*tail>=BUFFER_S)
+		{
+			*tail=sizeof(int)*2;
+		}
 	}
-	return bytes;
+	leave(shm->sem);
+	//sleep(1);
+	return i;
 }
 
 void createChannel(int id)
@@ -97,7 +92,7 @@ void createChannel(int id)
 		int fd;
 		sprintf(shmName,"/shm");
 		fd=shm_open(shmName, O_RDWR|O_CREAT, 0666);
-		void* mem=mmap(NULL, SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
+		void* mem=mmap(NULL, BUFFER_S, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
 		ftruncate(fd, SIZE);
 		close(fd);
 		memset(mem, 0, SIZE);
@@ -144,8 +139,10 @@ static shm_t* cChannel(int id)
 		close(fd);
 		mapped=1;
 	}
-	sprintf(semName, "%d", id);
-	shm->sem=initMutex(semName);
+	sprintf(semName,"/mutex%d",id);
+	shm->sem=sem_open(semName, O_RDWR|O_CREAT, 0666, 1);
+	sprintf(semName,"/mutexCh%d",id);
+	shm->changes=sem_open(semName, O_RDWR|O_CREAT, 0666, 0);
 	shm->mem=startMem+id*BUFFER_S;
 	if(startMem==MAP_FAILED)
 	{
@@ -169,31 +166,28 @@ int rcvString(void* fd, char* data)
 {
 	shmDesc_t *shmd=(shmDesc_t*)fd;
 	shm_t* shm=shmd->read;
-	int i=0, bytes=0;;
-	while(bytes==0)
+	int i=0;
+	sem_wait(shm->changes);
+	enter(shm->sem);
+	int *head=(int*)shm->mem;
+	int *tail=(int*)(shm->mem+sizeof(int));
+	while(*head!=*tail)
 	{
-		enter(shm->sem);
-		int *head=(int*)shm->mem;
-		int *tail=(int*)(shm->mem+sizeof(int));
-		while(*head!=*tail)
+		data[i]=((char*)shm->mem)[*tail];
+		(*tail)++;
+		if(data[i]==0)
 		{
-			data[i]=((char*)shm->mem)[*tail];
-			(*tail)++;
-			bytes++;
-			if(data[i]==0)
-			{
-				leave(shm->sem);
-				return i+1;
-			}
-			if(*tail>=SIZE)
-			{
-				*tail=sizeof(int)*2;
-			}
-			i++;
+			leave(shm->sem);
+			return i+1;
 		}
-		leave(shm->sem);
+		if(*tail>=SIZE)
+		{
+			*tail=sizeof(int)*2;
+		}
+		i++;
 	}
-	return bytes;
+	leave(shm->sem);
+	return i;
 }
 
 int sndString(void* fd, char* string)
@@ -203,16 +197,19 @@ int sndString(void* fd, char* string)
 
 void disconnect(void* fd)
 {
-/*	shm_t *shm=(shm_t*)fd;
-	munmap(shm->mem,SIZE);
-	sem_close(shm->sem);*/
+	shm_t *shm=(shm_t*)fd;
+	munmap(shm->mem,BUFFER_S);
+	sem_close(shm->sem);
+	sem_close(shm->changes);
 }
 
-static sem_t* initMutex(char* id)
+void destroyChannel(int id)
 {
-	char semName[10];
-	sprintf(semName,"/mutex%s",id);
-	return sem_open(semName, O_RDWR|O_CREAT, 0666, 1);
+	if(created)
+	{
+		shm_unlink("/shm");
+		created=0;
+	}
 }
 
 static void enter(sem_t* sem)

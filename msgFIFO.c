@@ -9,9 +9,7 @@ typedef struct
 int sndMsg(void* fd, void* data, int size)
 {
 	fifo_t* fifo=(fifo_t*)fd;
-	int i=write(fifo->writeD, data, size);
-	printf("sent %d:%d\n",*(int*)fd,i);
-	return i;
+	return write(fifo->writeD, data, size);
 }
 
 int rcvMsg(void* fd, void* data, int size)
@@ -86,4 +84,14 @@ void disconnect(void* fd)
 	fifo_t* fifo=(fifo_t*)fd;
 	close(fifo->writeD);
 	close(fifo->readD);
+	free(fd);
+}
+
+void destroyChannel(int id)
+{
+	char fifoName[10];
+	sprintf(fifoName, "../fifo%d",id);
+	unlink(fifoName);
+	sprintf(fifoName, "../fifo%d",id+1);
+	unlink(fifoName);
 }

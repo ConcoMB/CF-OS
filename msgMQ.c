@@ -18,7 +18,7 @@ typedef struct
 	char data[MQ_MSGSIZE];
 } msg_t;
 
-int connected=0;;
+int connected=0;
 
 int sndMsg(void* fd, void* data, int size)
 {
@@ -117,6 +117,14 @@ int sndString(void* fd, char* string)
 
 void disconnect(void* fd)
 {
-	/*mq_t* mq=(mq_t*) fd;
-	msgctl(mq->mqd, IPC_RMID, NULL);*/
+	free(fd);
+}
+
+void destroyChannel(int id)
+{
+	if(connected)
+	{
+		msgctl(connected, IPC_RMID, NULL);
+		connected=0;
+	}
 }

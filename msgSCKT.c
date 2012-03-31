@@ -5,6 +5,8 @@
 #include <netinet/in.h>
 #include <sys/un.h>
 #include <errno.h>
+#include "connection.h"
+
 #include <netdb.h>
 #define MSG_LEN 30
 #include <string.h>
@@ -12,7 +14,7 @@
 typedef struct 
 {
 	int scktDesc, id;
-	struct sockaddr_un dest;
+	struct sockaddr_in dest;
 }sckt_t;
 
 void* aux;
@@ -21,21 +23,14 @@ int count=0;
 int sndMsg(void* fd, void* data, int size)
 {
 	sckt_t* sock= (sckt_t*)fd;
-	sendto(sock->scktDesc, data, size, 0, (struct sockaddr *)&sock->dest, sizeof(struct sockaddr_un));
+	return sendto(sock->scktDesc, data, size, 0, (struct sockaddr *)&sock->dest, sizeof(struct sockaddr_in));
 }
 
 int rcvMsg(void* fd, void* data, int size)
 {
 	sckt_t* sock= (sckt_t*)fd;
-	if(sock->id%2==0)
-	{
-
-	}
-	int len = sizeof(struct sockaddr_un);
-	printf("%d   ", len);
-	recvfrom(sock->scktDesc, data, size, 0, (struct sockaddr *)&sock->dest, &len);
-	printf("%d\n", len);
-
+	unsigned int len = sizeof(struct sockaddr_in);
+	return recvfrom(sock->scktDesc, data, size, 0, (struct sockaddr *)&sock->dest, &len);
 }
 
 void createChannel(int id)
@@ -56,11 +51,12 @@ void* connectChannel(int id)
 		sendID=id-1;
 	}
 	sckt_t * sckt = malloc(sizeof(sckt_t));
-	sckt->dest.sun_family=AF_UNIX;
-	char name[10];
-	sprintf(name, "../sckt%d", sendID);
-	strcpy(sckt->dest.sun_path, name);
-	if(!(sckt->scktDesc=socket(AF_UNIX, SOCK_DGRAM, 0)))
+	sckt->dest.sin_family=AF_INET;
+    sckt->dest.sin_port = htons(5000+sendID);
+    sckt->dest.sin_addr.s_addr = INADDR_ANY;
+    bzero(&(sckt->dest.sin_zero),8);
+
+	if(!(sckt->scktDesc=socket(AF_INET, SOCK_DGRAM, 0)))
 	{
 		printf("Cannot create socket\n");
 		exit(1);
@@ -68,12 +64,15 @@ void* connectChannel(int id)
 	printf("socket %d\n", id);
 	if(id%2==0)
 	{
-		struct sockaddr_un myAddr;
-		myAddr.sun_family=AF_UNIX;
-		sprintf(name, "../sckt%d", id);
-		strcpy(myAddr.sun_path, name);
+		struct sockaddr_in myAddr;
+		myAddr.sin_family=AF_INET;
+		//sprintf(name, "../sckt%d", id);
+		//strcpy(myAddr.sun_path, name);
+   		myAddr.sin_port = htons(5000+id);
+   		myAddr.sin_addr.s_addr = INADDR_ANY;
+   		bzero(&(myAddr.sin_zero),8);
 		setsockopt(sckt->scktDesc, SOL_SOCKET, SO_REUSEADDR,(char*)&opt, sizeof(opt));
-		if((bind(sckt->scktDesc, (struct sockaddr *)&myAddr, sizeof(struct sockaddr_un))))
+		if((bind(sckt->scktDesc, (struct sockaddr *)&myAddr, sizeof(struct sockaddr_in))))
 		{
 			printf("Cannot bind socket %d\n", errno);
 			exit(1);
@@ -87,7 +86,7 @@ int rcvString(void* fd, char* data)
 {
 	sckt_t* sock= (sckt_t*)fd;
 	char c[MSG_LEN];
-	int len = sizeof(struct sockaddr_un);
+	unsigned int len = sizeof(struct sockaddr_in);
 	recvfrom(sock->scktDesc, &c, sizeof(char)*MSG_LEN, 0, (struct sockaddr *)&sock->dest, &len);
 	strcpy(data, c);
 	return 12;
@@ -100,10 +99,10 @@ int sndString(void* fd, char* string)
 
 void disconnect(void* fd)
 {
-	char name[10];
-	sprintf(name, "../sckt%d", ((sckt_t*)fd)->id);
 	close(((sckt_t*)fd)->scktDesc);
-	unlink(name);
 }
 
-
+void destroyChannel(int id)
+{
+	/**/
+}

@@ -14,7 +14,7 @@ int teamNameOccupied(league_t* league, char name[NAME_LENGTH])
     return 0;
 }
 
-static int userNameOccupied(char* name)
+int userNameOccupied(char* name)
 {
     int i;
     for( i=0; i<uCant; i++)
@@ -97,14 +97,13 @@ int joinLeague(user_t* user, league_t* league, char* teamName, char* password)
         insert(user->teams, team);
         return 0;
     }
-    printf("INCORRECT_PASSWORD, me pasaron la pass %s y era \n",  password, league->password);
     return INCORRECT_PASSWORD;
     
     
 }
 
 
-static int leagueNameOccupied(char* name)
+int leagueNameOccupied(char* name)
 {
     int i;
     for(i =0; i<lCant; i++)

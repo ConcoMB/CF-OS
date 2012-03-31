@@ -1,3 +1,4 @@
+#include "connection.h"
 #include "../common.h"
 #include "../msg.h"
 #include <stdio.h>

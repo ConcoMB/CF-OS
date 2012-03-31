@@ -4,7 +4,6 @@
 #include "../common.h"
 #include <pthread.h>
 #define USERS_SHM 120
-#define CANT_SPORTIST 55
 #define TEAM_SIZE 5
 
 struct league_s;
@@ -22,7 +21,9 @@ typedef struct
     int ID;
     user_t* user;
     pthread_t att;
+    pthread_t keepAliveThread;
     void* channel;
+    time_t time;
 }client_t;
 
     

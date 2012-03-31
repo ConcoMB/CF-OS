@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <fcntl.h>
+#include <unistd.h>
 
 #define INCORRECT_PASSWORD 1
 #define USER_NOT_FOUND 2
@@ -25,5 +26,6 @@ void* connectChannel(int id);
 int rcvString(void* fd, char* data);
 int sndString(void* fd, char* string);
 void disconnect(void* fd);
+void destroyChannel(int id);
 
 #endif
