@@ -1,10 +1,12 @@
 #include <curses.h>
 #include <stdlib.h>
+#include "strQueue.h"
 
 int r, c, nrow, ncol;
 WINDOW * window;
+extern strQueue_t queue;
 
-void initWind()
+void initWindow()
 {
 	window = initscr();
 	getmaxyx(window, nrow, ncol);
@@ -17,7 +19,22 @@ void initWind()
 "|  |`  |  | |  ||  | `   |   |  |  |  | |  |.-'    |  |  |       |  '--.|  `---.|  | |  |'  '--'  |'  '-'  '|  `---.\n"
 "`--'   `--' `--'`--'  `--'   `--'  `--' `--'`-----'   `--'       `-----'`------'`--' `--' `------'  `-----' `------' \n");
 	refresh();
-	sleep(10);
+}
+
+void* printThread(void* arg1)
+{
+	initWindow();
+	echo();
+	cbreak();
+	char * string;
+	while(1)
+	{
+		if(!isEmpty(queue))
+		{
+			printw("%s", dequeueStr(queue));
+			refresh();
+		}
+	}
 	endwin();
-	return 0;
+	pthread_exit(0);
 }

@@ -26,7 +26,7 @@ strQueue_t newQueue()
 	return q;
 }
 
-int queue(strQueue_t q, char* str)
+int queueStr(strQueue_t q, char* str)
 {
 	elem_t * newElem = malloc(sizeof(elem_t));
 	newElem->string=malloc(strlen(str)+1);
@@ -46,7 +46,7 @@ int queue(strQueue_t q, char* str)
 	return 0;
 }
 
-char * dequeue(strQueue_t q)
+char * dequeueStr(strQueue_t q)
 {
 	if(isEmpty(q))
 	{
