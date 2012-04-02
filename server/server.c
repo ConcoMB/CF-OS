@@ -23,10 +23,12 @@ void sighandler(int sig);
 void * listenClient();
 void newClient();
 void* save();
+void* print();
 league_t** leagues;
 int lCant, uCant;
 user_t** users;
 listADT clients;
+strQueue_t printQueue;
 
 int nextClientID=2;
 void* channel;
@@ -38,12 +40,14 @@ int main()
 	signal(SIGINT, sighandler);
 	clients=newList(cmpClient);
 	loadAll();
-	pthread_t saveThread,clThread,newMatchFilesThread;
+	printQueue=newQueue();
+	pthread_t saveThread,clThread,newMatchFilesThread, printThread;
 	pthread_create(&clThread, NULL, listenClient, NULL);
-
+	pthread_create(&printThread, NULL, print, NULL);
 	//pthread_create(&saveThread, NULL, save, NULL);
 	pthread_create(&newMatchFilesThread, NULL, newMatchesListener, NULL);
 	pthread_join(clThread, NULL);
+	pthread_join(printThread, NULL);
 	//pthread_join(saveThread, NULL);
 	pthread_join(newMatchFilesThread, NULL);
 	return 0;
@@ -53,16 +57,16 @@ void * save()
 {
 	while(1)
 	{
-		printf("Saving...");
+		queueStr(printQueue,"Saving...");
 		saveAll();
-		printf("OK\n");
+		queueStr(printQueue,"OK\n");
 		sleep(30);
 	}
 }
 
 void * listenClient()
 {
-	printf("listening to clients\n");
+	queueStr(printQueue,"Listening to clients\n");
 	createChannel(DEFAULTID);
 	channel=connectChannel(DEFAULTID);
 	newClient();
@@ -83,13 +87,13 @@ void newClient()
 			switch(msg)
 			{
 				case NEWCLIENT:
-					printf("sending msgid...");
+					queueStr(printQueue,"Sending msgid...");
 					int id= nextClientID;
 					nextClientID+=2;
 					createChannel(id);
 					createChannel(id+1);
 					sndMsg(channel, (void*)&id, sizeof(int));
-					printf("OK\n");
+					queueStr(printQueue,"OK\n");
 					fflush(stdout);
 					client_t* newClient = malloc(sizeof(client_t));
 					newClient->ID=id;
@@ -107,7 +111,11 @@ void newClient()
 					}
 					else
 					{
+<<<<<<< HEAD
+						queueStr(printQueue,"Wrong CMD\n");
+=======
 						printf("Wrong CMD %d\n", msg);
+>>>>>>> c8c09fadf8f4726cf9ab761a4663facd7f159a94
 					}
 					break;
 			}
@@ -128,4 +136,12 @@ void sighandler(int sig)
     	}
     }
     exit(0);
+}
+
+void* print()
+{
+	while(1)
+	{
+		printf("%s",dequeueStr(printQueue));
+	}
 }

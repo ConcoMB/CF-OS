@@ -11,6 +11,7 @@
 #include <sys/shm.h>
 #include <signal.h>
 #include "commands.h"
+#include "externvars.h"
 
 void makeConnection(client_t* myClient);
 void start(client_t* myClient);
@@ -45,17 +46,17 @@ void logClient(client_t* myClient)
 		{
 			makeDisconnection(myClient);
 		}
-		printf("msg: %d\n", msg);
+		queueStr(printQueue,"msg: %d\n", msg);
 		if(rcvString(myClient->channel, name)<=0)
 		{
 			makeDisconnection(myClient);
 		}
-		printf("name: %s\n", name);
+		queueStr(printQueue,"name: %s\n", name);
 		if(rcvString(myClient->channel, password)<=0)
 		{
 			makeDisconnection(myClient);
 		}
-		printf("psswd: %s\n", password);
+		queueStr(printQueue,"psswd: %s\n", password);
 		if(msg==LOGIN)
 		{
 			if((aux=logIn(name,password, myClient))==0)
@@ -134,7 +135,7 @@ void makeDisconnection(client_t* myClient)
 	setNullIfDraft(myClient);
 	disconnect(myClient->channel);
 	destroyChannel(myClient->ID);
-	printf("cliente desconectado\n");
+	queueStr(printQueue,"cliente desconectado\n");
 	fflush(stdout);
 	pthread_cancel(myClient->keepAliveThread);
 	delete(clients, myClient);

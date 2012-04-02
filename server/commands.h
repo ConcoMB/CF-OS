@@ -3,6 +3,12 @@
 #include "league.h"
 #include "../common.h"
 #include "../msg.h"
+#include "trade.h"
+#include "display.h"
+#include "join.h"
+#include "externvars.h"
+#include "getter.h"
+#include "strQueue.h"
 
 #define CMD_START SEND_LEAGUE
 
