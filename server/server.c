@@ -111,11 +111,7 @@ void newClient()
 					}
 					else
 					{
-<<<<<<< HEAD
 						queueStr(printQueue,"Wrong CMD\n");
-=======
-						printf("Wrong CMD %d\n", msg);
->>>>>>> c8c09fadf8f4726cf9ab761a4663facd7f159a94
 					}
 					break;
 			}

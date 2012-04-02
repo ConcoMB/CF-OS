@@ -23,7 +23,7 @@ void leagueShow(league_t* league, void* writeChannel, int code, int end);
 void sendSportists(league_t* league, int teamID, void* writeChannel, int code);
 void teamShow(team_t* team, void* writeChannel, int code, int end);
 void tradeShow(trade_t* trade, void* writeChannel);
-void sendSporist(league_t* league, int spID, void* channel, int code);
+void sendSporist(league_t* league, int spID, void* channel, int code, int mode);
 void sendAllSportists(league_t* league, void* channel, int code);
 
 #endif
