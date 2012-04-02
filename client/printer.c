@@ -1,10 +1,7 @@
-#include <curses.h>
-#include <stdlib.h>
-#include "strQueue.h"
+#include "printer.h"
 
 int r, c, nrow, ncol;
 WINDOW * window;
-extern strQueue_t queue;
 
 void printTitle()
 {
@@ -16,8 +13,6 @@ void printTitle()
 "|  |`  |  | |  ||  | `   |   |  |  |  | |  |.-'    |  |  |       |  '--.|  `---.|  | |  |'  '--'  |'  '-'  '|  `---.\n"
 "`--'   `--' `--'`--'  `--'   `--'  `--' `--'`-----'   `--'       `-----'`------'`--' `--' `------'  `-----' `------' \n"
 "=====================================================================================================================\n");
-	//move(nrow-4, 0);
-	//printw("=====================================================================================================================\n");
 	refresh();
 }
 
@@ -27,47 +22,68 @@ void initWindow()
 	getmaxyx(window, nrow, ncol);
 	clear();
 	printTitle();
+	printCommandLine();
 	scrollok(window, 1);
-
-	
+	echo();
+	r=6;
+	move(6,0);
 }
 
-void scrollDown()
+void printCommandLine()
+{
+	move(nrow-5,0);
+	clrtobot();
+	move(nrow-4, 0);
+	printw("=====================================================================================================================");
+	refresh();
+}
+
+void scrollUp()
 {
 	scroll(window);
 	printTitle();
-	move(nrow-4, 0);
-	printw("=====================================================================================================================\n");
-	move(nrow-5, 0);
+	printCommandLine();
+	refresh();
+	move(nrow-5,0);
 }
 
-void* printThread(void* arg1)
+void scanInt(int *i)
 {
-	initWindow();
-	int i=0;
-	move(nrow-4, 0);
-	printw("=====================================================================================================================\n");
-	refresh();
-	char * string;
+	int rAux=r;
 	move(nrow-3, 0);
-	echo();
-	scanw("&d" ,&i);
+	scanw("%d", i);
 	getyx(window, r, c);
 	move(r-1, c);
-	deleteln();
+	clrtobot();
+	refresh();
+	r=rAux;
+	move(r, 0);
+}
 
-	move(6,0);
-	while(1)
+void scanString(char * s)
+{
+	int rAux=r;	
+	move(nrow-3, 0);
+	scanw("%s", s);	
+	getyx(window, r, c);
+	move(r-1, c);
+	insertln();
+	clrtobot();
+	refresh();
+	r=rAux;
+	move(r, 0);
+}
+
+void printString(char* string)
+{
+	if(r==nrow-4)
 	{
-		sleep(1);
-		wprintw(window,"aaaaaaaaaaaaaa%d\n", i);
-		getyx(window, r,c);
-		i++;
-		if(r==nrow-3){
-			scrollDown();
-		}
-		refresh();
+		scrollUp();
 	}
-	endwin();
-	pthread_exit(0);
+	else
+	{
+		r++;
+	}
+	printw("%s", string);
+	
 }
