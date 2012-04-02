@@ -7,25 +7,24 @@ void printTitle()
 {
 	int i;
 	move(0,0);
-	alinement();
+	alignement();
 	printw(",------. ,---.  ,--.  ,--.,--------. ,---.   ,---.,--.   ,--.    ,--.   ,------.  ,---.   ,----.   ,--. ,--.,------. \n");
-	alinement();
+	alignement();
 	printw("|  .---'/  O  \\ |  ,'.|  |'--.  .--'/  O  \\ '   .-'\\  `.'  /     |  |   |  .---' /  O  \\ '  .-./   |  | |  ||  .---' \n");
-	alinement();
+	alignement();
 	printw("|  `--,|  .-.  ||  |' '  |   |  |  |  .-.  |`.  `-. '.    /      |  |   |  `--, |  .-.  ||  | .---.|  | |  ||  `--,  \n");
-	alinement();
+	alignement();
 	printw("|  |`  |  | |  ||  | `   |   |  |  |  | |  |.-'    |  |  |       |  '--.|  `---.|  | |  |'  '--'  |'  '-'  '|  `---.\n");
-	alinement();
+	alignement();
 	printw("`--'   `--' `--'`--'  `--'   `--'  `--' `--'`-----'   `--'       `-----'`------'`--' `--' `------'  `-----' `------' \n");
 	for(i=0; i<ncol; i++)
 	{
 		printw("=");
 	}
-	printw("\n");
 	refresh();
 }
 
-void alinement()
+void alignement()
 {
 	int i;
 	for(i=0; i<(ncol-118)/2; i++)
@@ -43,13 +42,14 @@ void initWindow()
 	printCommandLine();
 	scrollok(window, 1);
 	echo();
+	cbreak();
 	r=6;
-	move(6,0);
+	move(nrow-3,0);
 }
 
 void printCommandLine()
 {
-	move(nrow-5,0);
+	move(nrow-4,0);
 	clrtobot();
 	move(nrow-4, 0);
 	int i;
@@ -62,50 +62,46 @@ void printCommandLine()
 
 void scrollUp()
 {
+	move(nrow-4,0);
+	clrtobot();
 	scroll(window);
 	printTitle();
-	printCommandLine();
 	refresh();
 	move(nrow-5,0);
 }
 
-void scanInt(int *i)
+/*void scan(char* fmt, ...)
 {
+	va_list ap;
 	int rAux=r;
-	move(nrow-3, 0);
-	scanw("%d", i);
+	
+	scanw(fmt, string);
 	getyx(window, r, c);
 	move(r-1, c);
 	clrtobot();
 	refresh();
 	r=rAux;
-	move(r, 0);
-}
+	
+}*/
 
-void scanString(char * s)
+void printString(char* fmt, ...)
 {
-	int rAux=r;	
-	move(nrow-3, 0);
-	scanw("%s", s);	
-	getyx(window, r, c);
-	move(r-1, c);
-	insertln();
-	clrtobot();
-	refresh();
-	r=rAux;
+	va_list ap;
+	char string[300];
+	va_start(ap, fmt);
 	move(r, 0);
-}
-
-void printString(char* string)
-{
+	//printw("r: %d",r);
 	if(r==nrow-4)
 	{
 		scrollUp();
+		//getyx(window,r,c);
 	}
 	else
 	{
 		r++;
 	}
+	vsprintf(string, fmt, ap);
 	printw("%s", string);
-	
+	printCommandLine();
+	move(nrow-3, 0);
 }

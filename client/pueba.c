@@ -4,12 +4,14 @@
 int main()
 {
 	int i;
-	char* s;
+	int m, u, v ,t;
+	char s[100];
 	initWindow();
 	while(1)
 	{
-		scanString(s);
-		printString(s);
+		scanw("%d %d %d %d %s",&m, &u, &v, &t, s);
+		//scanw("%d",&m);
+		printString("hola %d %d %d %d %s",m, u, v, t, s);
 	}
 	return 0;
 }
