@@ -1,10 +1,6 @@
 #include "commands.h"
 #include "draft.c"
-#include "trade.h"
-#include "display.h"
-#include "join.h"
-#include "externvars.h"
-#include "getter.h"
+
 
 void (*cmds[])(client_t*)=
 {

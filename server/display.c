@@ -6,7 +6,7 @@ void listLeagues(void* writeChannel)
 	for (i = 0; i < lCant; i++)
 	{
 		sndMsg(writeChannel, (void*) &msg, sizeof(int));
-		printf("%s\n", leagues[i]->name);
+		queueStr(printQueue,"%s\n", leagues[i]->name);
 		sndString(writeChannel, leagues[i]->name);
 		sndMsg(writeChannel, (void*) &(leagues[i]->ID), sizeof(int));
 	}
@@ -24,7 +24,7 @@ void sendTrade(trade_t* trade, void* writeChannel)
 			trade->league->name, trade->from->name, trade->to->name,
 			trade->offer->name, trade->change->name, trade->league->ID
 					* CONVERSION + trade->ID);
-	printf("%s\n", string);
+	queueStr(printQueue,"%s\n", string);
 	sndString(writeChannel, string);
 }
 

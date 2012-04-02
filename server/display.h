@@ -7,6 +7,7 @@
 #include "cmp.h"
 #include "../msg.h"
 #include <stdio.h>
+#include "strQueue.h"
 
 #define NO_TEAM -1
 
