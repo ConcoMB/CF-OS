@@ -3,7 +3,9 @@
 
 #include <curses.h>
 #include <stdlib.h>
+#include <stdarg.h>
 
+void alignement();
 
 void printTitle();
 
@@ -15,10 +17,8 @@ void alinement();
 
 void scrollUp();
 
-void scanInt(int *i);
+void scan(char* fmt, ...);
 
-void scanString(char * s);
-
-void printString(char* string);
+void printString(char* fmt, ...);
 
 #endif
