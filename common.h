@@ -10,6 +10,7 @@
 #define SPORT_NAME_L 30
 #define NAME_TAKEN 4
 #define NAME_LENGTH 15
+#define USER_DRAFTING 1010
 
 #define SEND_LEAGUE 400
 #define END_SEND_LEAGUE 61

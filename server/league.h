@@ -14,6 +14,7 @@ typedef struct
     listADT teams;
     char name[NAME_LENGTH];
     char password[NAME_LENGTH];
+    int draftLeague;
 }user_t;
 
 typedef struct

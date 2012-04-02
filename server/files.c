@@ -126,8 +126,10 @@ void loadUsers(){
 user_t* loadUser(FILE* userFile){
 	user_t* user;
 	user=malloc(sizeof(user_t));
-	if(fscanf(userFile, "%d %s %s\n", &user->ID, user->name, user->password)!=EOF){
+	if(fscanf(userFile, "%d %s %s\n", &user->ID, user->name, user->password)!=EOF)
+	{
 		user->teams=newList(cmpTeam);
+		user->draftLeague=-1;
 		return user;
 	}
 	free(user);

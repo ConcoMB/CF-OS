@@ -4,7 +4,7 @@
 int main()
 {
 	int i;
-	char* s;
+	char s[23];
 	initWindow();
 	while(1)
 	{

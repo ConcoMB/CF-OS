@@ -18,6 +18,10 @@ void logClient(client_t* myClient);
 void makeDisconnection(client_t* myClient);
 int controlDraft(draft_t* draft);
 void* keepAlive(void* arg);
+void putIntoDraft(client_t* myClient);
+void setNullIfDraft(client_t* myClient);
+
+
 
 void* clientAtt(void* arg)
 {
@@ -77,6 +81,15 @@ void logClient(client_t* myClient)
 void start(client_t* myClient)
 {
 	int msg;
+	if(myClient->user->draftLeague!=-1)
+	{
+		putIntoDraft(myClient);
+	}
+	else
+	{
+		msg=!USER_DRAFTING;
+		sndMsg(myClient->channel, (void*)&msg, sizeof(int));
+	}	
 	while(1)
 	{
 		sleep(2);
@@ -90,14 +103,62 @@ void start(client_t* myClient)
 	}
 }
 
+void putIntoDraft(client_t* myClient)
+{
+	printf("lo pongo al draft\n");
+	int msg=USER_DRAFTING;
+	sndMsg(myClient->channel,(void*)&msg, sizeof(int));
+	msg=myClient->user->draftLeague;
+	sndMsg(myClient->channel,(void*)&msg, sizeof(int));
+	//ignoramos estos dos
+	rcvMsg(myClient->channel,(void*)&msg, sizeof(int));
+	rcvMsg(myClient->channel,(void*)&msg, sizeof(int));
+
+	msg=DRAFT_WAIT;
+	sndMsg(myClient->channel,(void*)&msg, sizeof(int));
+	msg=DRAFT_BEGUN;
+	sndMsg(myClient->channel,(void*)&msg, sizeof(int));
+
+	team_t* team= getTeamByClient(leagues[myClient->user->draftLeague], myClient);
+
+
+	leagues[myClient->user->draftLeague]->draft->clients[team->ID]=myClient;
+	while(myClient->user->draftLeague!=-1)
+	{
+		//mientras siga el draft espera;
+	}
+}
+
 void makeDisconnection(client_t* myClient)
 {
+	setNullIfDraft(myClient);
 	disconnect(myClient->channel);
 	destroyChannel(myClient->ID);
 	printf("cliente desconectado\n");
 	fflush(stdout);
 	pthread_cancel(myClient->keepAliveThread);
+	delete(clients, myClient);
+	free(myClient);
 	pthread_exit(0);
+}
+
+void setNullIfDraft(client_t* myClient)
+{
+	printf("lo pongo en null\n");
+	int aux;
+	if((aux=myClient->user->draftLeague)!=-1)
+	{
+		client_t ** dClients=leagues[aux]->draft->clients;
+		int i;
+		for(i=0; i<leagues[aux]->tMax; i++)
+		{
+			if(dClients[i]->user->ID==myClient->user->ID)
+			{
+				dClients[i]=NULL;
+				return;
+			}
+		}
+	}
 }
 
 void makeConnection(client_t* myClient)

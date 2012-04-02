@@ -37,6 +37,7 @@ int signUp(char* name, char* password)
     }
     user_t* user=malloc(sizeof(user_t));
     user->ID=uCant;
+    user->draftLeague=-1;
     user->teams=newList(cmpTeam);
     strcpy(user->name, name);
     strcpy(user->password, password);

@@ -5,10 +5,9 @@
 #include <netinet/in.h>
 #include <sys/un.h>
 #include <errno.h>
-#include "connection.h"
 
 #include <netdb.h>
-#define MSG_LEN 30
+#define MSG_LEN 200
 #include <string.h>
 
 typedef struct 
@@ -61,7 +60,6 @@ void* connectChannel(int id)
 		printf("Cannot create socket\n");
 		exit(1);
 	}
-	printf("socket %d\n", id);
 	if(id%2==0)
 	{
 		struct sockaddr_in myAddr;

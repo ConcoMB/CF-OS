@@ -12,7 +12,8 @@ void* spChooser(void* channel);
 
 int main(int argc, char** args)
 {
-  time_t start, now, diff=0;
+  time_t start, now;
+  double diff=0, end;
   int clientID;
   void* channel;
   clientID=atoi(args[1]);
@@ -52,6 +53,7 @@ int main(int argc, char** args)
 	  			}
 	  			flag=0;
 	  			pthread_t sportThrd;
+	  		  	//rcvMsg(channel,(void*)&end, sizeof(double));
 	  			pthread_create(&sportThrd, NULL, spChooser, channel);
 	  			start=time(NULL);
 	  			while(diff<=DRAFT_TIME && !flag)
@@ -90,6 +92,7 @@ void* spChooser(void* channel)
 		printf("Please choose your sportist: type its ID\n");	
 		scanf("%d", &msg);
 		printf("lei %d\n", msg);
+		fflush(stdout);
 		sndMsg(channel, (void*)&msg, sizeof(int));
 		rcvMsg(channel, (void*)&msg, sizeof(int));
 		if(msg==ID_INVALID)

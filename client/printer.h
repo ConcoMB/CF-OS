@@ -11,6 +11,8 @@ void initWindow();
 
 void printCommandLine();
 
+void alinement();
+
 void scrollUp();
 
 void scanInt(int *i);

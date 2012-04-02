@@ -134,8 +134,7 @@ void cmdDraft(client_t* myClient)
 		}
 		else
 		{
-			printf("meti el %d al draft \n", leagues[auxID]->draft->turn);
-			leagues[auxID]->draft->clients[leagues[auxID]->draft->turn++]=myClient;
+			leagues[auxID]->draft->clients[team->ID]=myClient;
 			msg=DRAFT_WAIT;
 			sndMsg(myClient->channel, (void*)&msg, sizeof(int));
 			if(controlDraft(leagues[auxID]->draft))
