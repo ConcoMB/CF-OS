@@ -4,6 +4,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <signal.h>
+#include <pthread.h>
 #include "../msg.h"
 #include "../common.h"
 #include "connection.h"
@@ -12,6 +13,7 @@
 void sighandler(int sig);
 void userLog();
 void start();
+void rejoinDraft(int msgID);
 void makeDefConnection();
 void* channel;
 void* defChannel;
@@ -46,10 +48,10 @@ void makeDefConnection()
 
 void userLog()
 {
+	int handshake;
 	int loged=0;
 	while(!loged)
 	{
-		int handshake;
 		char command[10], name[NAME_LENGTH], password[NAME_LENGTH];
 		printf("Type login or signup\n");
 		scanf("%s", command);
@@ -104,8 +106,35 @@ void userLog()
 			printf("invalid command\n");
 		}
 	}
+	rcvMsg(channel, (void*)&handshake, sizeof(int));
+	if(handshake==USER_DRAFTING)
+	{
+		rejoinDraft(msgID);
+	}
 	shell(msgID);
 }
+
+void rejoinDraft(msgID)
+{
+	int aux;
+	char auxString[NAME_LENGTH], idStr[5], *args[4], *path;
+	rcvMsg(channel, (void*)&aux, sizeof(int));
+	sprintf(auxString, "%d",aux);
+	sprintf(idStr,"%d",msgID);
+	path="./draft.e";
+	args[0]="draft.e";
+	args[1]=idStr;
+	args[2]=auxString;
+	args[3]=NULL;
+	if(fork())
+	{
+		wait((int*) 0);
+	}
+	else
+	{
+		execv(path, args);
+	}
+}	
 
 void sighandler(int sig)
 {

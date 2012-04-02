@@ -4,8 +4,12 @@
 int main()
 {
 	int i;
+<<<<<<< HEAD
+	char s[23];
+=======
 	int m, u, v ,t;
 	char s[100];
+>>>>>>> 2d494bed509f90b6f32a46332d25b4fcc69566a1
 	initWindow();
 	while(1)
 	{

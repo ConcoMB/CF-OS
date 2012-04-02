@@ -130,26 +130,34 @@ void sendSportists(league_t* league, int teamID, void* writeChannel, int code)
 		if (teamID == NO_TEAM || (league->sportists[i]->team!=NULL && league->sportists[i]->team->ID == teamID) )
 		{
 			
-			sendSporist(league, i, writeChannel, code);
+			sendSporist(league, i, writeChannel, code, POINTS);
 		}
 		
 	}
 }
 
-void sendSporist(league_t* league, int spID, void* channel, int code)
+void sendSporist(league_t* league, int spID, void* channel, int code, int mode)
 {
-	char teamName[NAME_LENGTH];
+	char teamName[NAME_LENGTH +5];
 	if(league->sportists[spID]->team==NULL)
 	{
-		strcpy(teamName, "no");
+		strcpy(teamName, "no team");
 	}
 	else
 	{
 		strcpy(teamName, league->sportists[spID]->team->name);
 	}
 	char string[200];
-	sprintf(string, "%s, %d points, ID %d, %s team\n", league->sportists[spID]->name,
-		league->sportists[spID]-> score, league->sportists[spID]->ID + CONVERSION* league->ID, teamName);
+	if(mode==POINTS)
+	{
+		sprintf(string, "%s, %d points, ID %d, %s\n", league->sportists[spID]->name,
+			league->sportists[spID]-> score, league->sportists[spID]->ID + CONVERSION* league->ID, teamName);
+	}
+	else
+	{
+		sprintf(string, "%s, ID %d, %s\n", league->sportists[spID]->name,
+			league->sportists[spID]->ID + CONVERSION* league->ID, teamName);
+	}
 	sndMsg(channel, (void*) &code, sizeof(int));
 	sndString(channel, string);
 }
@@ -176,6 +184,6 @@ void sendAllSportists(league_t* league, void* channel, int code)
 	int i;
 	for(i=0; i<CANT_SPORTIST; i++)
 	{
-		sendSporist(league, i, channel, code);
+		sendSporist(league, i, channel, code, NO_POINTS);
 	}
 }

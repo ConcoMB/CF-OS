@@ -11,8 +11,10 @@ void shell(int msgID)
 	sprintf(idStr,"%d",msgID);
 	char* args[6];
 	char* path;
+	int invalid;
 	do
 	{
+		invalid=0;
 		printf("type your command \n");
 		scanf("%s", string);
 		if(strcmp(string, "quit")==0)
@@ -154,9 +156,10 @@ void shell(int msgID)
 		}
 		else
 		{
+			invalid=1;
 			printf("invalid command\n");
 		}
-		if(command!=QUIT)
+		if(!invalid && command!=QUIT)
 		{
 			if(fork())
 			{

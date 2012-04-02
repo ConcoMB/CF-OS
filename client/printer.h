@@ -13,6 +13,8 @@ void initWindow();
 
 void printCommandLine();
 
+void alinement();
+
 void scrollUp();
 
 void scan(char* fmt, ...);

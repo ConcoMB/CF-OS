@@ -9,7 +9,23 @@
 
 int setForcedSportist(league_t* league, team_t* team);
 void* sportistReader(void* arg1);
+int sendToClient(client_t* client, int msg);
+void draftEnd(draft_t* draft);
+void draftBegin(draft_t* draft);
 
+
+int sendToClient(client_t* client, int msg)
+{
+	if(client!=NULL)
+	{
+		return sndMsg(client->channel, (void*)&msg, sizeof(int));
+	}
+	else
+	{
+		printf("es null no le mando\n");
+	}
+	return -1;
+}
 
 void * draftAttendant(void* arg1)
 {
@@ -17,13 +33,13 @@ void * draftAttendant(void* arg1)
 	draft_t* draft=(draft_t*) arg1;
 	int way=1, step=0, msg, i, leagueSize=draft->league->tMax;
 	time_t start, now;
-	double diff=0;
-	client_t* client;
+	double diff=0, end;
 	draft->turn=0;
+	draftBegin(draft);
 	for(i=0; i< draft->league->tMax; i++)
 	{
 		msg=DRAFT_BEGUN;
-		sndMsg(draft->clients[i]->channel, (void*)&msg, sizeof(int));
+		sendToClient(draft->clients[i], msg);
 	}
 	while(step!=leagueSize*TEAM_SIZE)
 	{
@@ -31,19 +47,21 @@ void * draftAttendant(void* arg1)
 		pthread_t tReader;
 		draft->flag=0;
 		diff=0;
-		client=draft->clients[draft->turn];
 		msg=YOUR_TURN;
-		sndMsg(client->channel, (void*)&msg, sizeof(int));
+		sendToClient(draft->clients[draft->turn], msg);
 		msg=DRAFT_WAIT;
 		for(i=0; i<leagueSize; i++)
 		{
 			if(i!=draft->turn)
 			{
-				sndMsg(draft->clients[i]->channel, (void*)&msg, sizeof(int));
+				sendToClient(draft->clients[i], msg);
 			}
-			else
+			else if(draft->clients[draft->turn]!=NULL)
 			{
-				sendAllSportists(draft->league,  client->channel, SEND_SPORTIST);
+				printf("le mando los deportistas al %d\n", draft->turn);
+				sendAllSportists(draft->league,  draft->clients[draft->turn]->channel, SEND_SPORTIST);
+				end=DRAFT_TIME;
+				//sndMsg(draft->clients[i], (void*)&end, sizeof(double));
 			}
 		}
 		pthread_create(&tReader, NULL, sportistReader, (void*) draft);
@@ -53,13 +71,13 @@ void * draftAttendant(void* arg1)
 			now=time(NULL);
 			diff=difftime(now, start);
 		}
-		if(!draft->flag) //TIME ELLAPSED
+		if(draft->flag!=1) //TIME ELLAPSED
 		{
 			printf("se te paso el tiempo\n");
 			pthread_cancel(tReader);
-			team_t* team=getTeamByClient(draft->league, client );
+			team_t* team=draft->league->teams[draft->turn];
 			msg=setForcedSportist(draft->league, team);
-			sndMsg(client->channel, (void*)&msg, sizeof(int));
+			sendToClient(draft->clients[draft->turn], msg);
 		}
 			//pthread_join(tReader, NULL);
 		
@@ -80,12 +98,32 @@ void * draftAttendant(void* arg1)
 	msg=END_DRAFT;
 	for(i=0; i<leagueSize; i++)
 	{
-		sndMsg(draft->clients[i]->channel, (void*)&msg, sizeof(int));
+		sendToClient(draft->clients[i], msg);
 	}
+	draftEnd(draft);
 	draft->league->draft=NULL;
 	free(draft->clients);
 	free(draft);
 	pthread_exit(0);
+}
+
+void draftBegin(draft_t* draft)
+{
+	int i;
+	for(i=0; i<draft->league->tMax; i++)
+	{
+		draft->league->teams[i]->user->draftLeague=draft->league->ID;
+	}
+}
+
+
+void draftEnd(draft_t* draft)
+{
+	int i;
+	for(i=0; i<draft->league->tMax; i++)
+	{
+		draft->league->teams[i]->user->draftLeague=-1;
+	}
 }
 
 int setForcedSportist(league_t* league, team_t* team)
@@ -108,40 +146,31 @@ void* sportistReader(void* arg1)
 	draft_t* draft=(draft_t*) arg1;
 	int id, lID;
 	printf("turno %d\n", draft->turn);
-	fflush(stdout);
-	client_t* client = draft->clients[draft->turn];
-
 	do
 	{
-		printf("do while\n");
-		fflush(stdout);
-		printf("antes del rcvmsg draft.c\n");
-		fflush(stdout);
+		if(draft->clients[draft->turn]==NULL)
+		{
+			draft->flag=2;
+			pthread_exit(0);
+		}
 		rcvMsg(draft->clients[draft->turn]->channel, (void*)&id, sizeof(int));
-		printf("dsps del rcvmsg draft.c\n");
-		fflush(stdout);
 		lID=id/CONVERSION;
 		id%=CONVERSION;
 
 		if(lID==draft->league->ID && id>=0 && id<CANT_SPORTIST && draft->league->sportists[id]->team==NULL)
 		{
-			printf("entre\n");
-							fflush(stdout);
-
+			printf("elije\n");
 			draft->flag=1;
 			team_t* team=getTeamByClient(draft->league, draft->clients[draft->turn]);
 			draft->league->sportists[id]->team=team;
 			msg=DRAFT_OK;
-			sndMsg(client->channel, (void*)&msg, sizeof(int));
+			sendToClient(draft->clients[draft->turn], msg);
 			pthread_exit(0);
 		}
 		else
 		{
-			printf("else\n");
-							fflush(stdout);
-
 			msg=ID_INVALID;
-			sndMsg(client->channel, (void*)&msg, sizeof(int));
+			sendToClient(draft->clients[draft->turn], msg);
 		}	
 	}while(1);
 }
