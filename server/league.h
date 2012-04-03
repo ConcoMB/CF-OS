@@ -3,6 +3,7 @@
 #include "list.h"
 #include "../common.h"
 #include <pthread.h>
+#include <time.h>
 #define USERS_SHM 120
 #define TEAM_SIZE 5
 
@@ -51,6 +52,9 @@ typedef struct
     client_t ** clients;
     int flag;
     int turn;
+    time_t start, now;
+    double diff, end;
+
 }draft_t;
 
 typedef struct league_s

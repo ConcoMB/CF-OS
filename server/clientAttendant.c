@@ -83,7 +83,7 @@ void logClient(client_t* myClient)
 void start(client_t* myClient)
 {
 	int msg;
-	if(myClient->user->draftLeague!=-1)
+	/*if(myClient->user->draftLeague!=-1)
 	{
 		putIntoDraft(myClient);
 	}
@@ -91,7 +91,7 @@ void start(client_t* myClient)
 	{
 		msg=!USER_DRAFTING;
 		sndMsg(myClient->channel, (void*)&msg, sizeof(int));
-	}	
+	}	*/
 	while(1)
 	{
 		sleep(2);
@@ -122,6 +122,16 @@ void putIntoDraft(client_t* myClient)
 	sndMsg(myClient->channel,(void*)&msg, sizeof(int));
 
 	team_t* team= getTeamByClient(leagues[myClient->user->draftLeague], myClient);
+
+	draft_t* myDraft=leagues[myClient->user->draftLeague]->draft;
+
+	if(myDraft->turn==getTeamByClient(myDraft->league, myClient)->ID)
+	{
+		msg=YOUR_TURN;
+		sndMsg(myClient->channel,(void*)&msg, sizeof(int));
+		double remain=myDraft->(DRAFT_TIME-diff);
+		sndMsg(myClient->channel,(void*)&remain, sizeof(double));
+	}
 
 
 	leagues[myClient->user->draftLeague]->draft->clients[team->ID]=myClient;

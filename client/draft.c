@@ -7,23 +7,27 @@
 #include <stdlib.h>
 
 int flag;
+int clientID;
+
 
 void* spChooser(void* channel);
 
 int main(int argc, char** args)
 {
+	pthread_t quitT;
   time_t start, now;
   double diff=0, end;
-  int clientID;
-  void* channel;
+  void* channel, quitChannel;
   clientID=atoi(args[1]);
+  defCliID=aroi(args[3]);
   connectClient(clientID,&channel);
+  connectClient(defCliID, &quitChannel);
   int ID=atoi(args[2]);
   int msg=DRAFT;
-  printf("%d\n", ID);
   sndMsg(channel, (void*)&msg, sizeof(int));
   sndMsg(channel, (void*)&ID, sizeof(int));
   rcvMsg(channel, (void*)&msg, sizeof(int));
+  pthread_create(&quitT, NULL, quitThread, quitChannel);
   if(msg==ID_INVALID)
   {
   	printf("INVALID ID\n");
@@ -55,6 +59,7 @@ int main(int argc, char** args)
 	  			flag=0;
 	  			pthread_t sportThrd;
 	  		  	//rcvMsg(channel,(void*)&end, sizeof(double));
+	  		  	pthread_cancel(quitT);
 	  			pthread_create(&sportThrd, NULL, spChooser, channel);
 	  			start=time(NULL);
 	  			while(diff<=DRAFT_TIME && !flag)
@@ -69,6 +74,8 @@ int main(int argc, char** args)
 		 			rcvMsg(channel, (void*)&msg, sizeof(int));
 					printf("Time ellapsed, you have a random sportist, ID %d\n",msg);
 				}
+				pthread_create(&quitT, NULL, quitThread, quitChannel);
+
 	  		}
 	  		else if(msg==DRAFT_WAIT)
 	  		{
@@ -102,6 +109,24 @@ void* spChooser(void* channel)
 			printf("You now have your desired sportist\n");
 			flag=1;
 			pthread_exit(0);
+		}
+	}
+	return NULL;
+}
+
+void * quitThread(void* channel)
+{
+	char [10] string;
+	int msg;
+	while(1)
+	{
+		scanf("%s", string);
+		if(strcmp(string,"quit")==0)
+		{
+			printf("exiting draft\n");
+			msg=QUIT_DRAFT+clientID;
+			sndMsg(channel, (void*)&msg, sizeof(int))
+			exit(0):
 		}
 	}
 	return NULL;

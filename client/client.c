@@ -107,11 +107,11 @@ void userLog()
 			printf("invalid command\n");
 		}
 	}
-	rcvMsg(channel, (void*)&handshake, sizeof(int));
+	/*rcvMsg(channel, (void*)&handshake, sizeof(int));
 	if(handshake==USER_DRAFTING)
 	{
 		rejoinDraft(msgID);
-	}
+	}*/
 	shell(msgID);
 }
 

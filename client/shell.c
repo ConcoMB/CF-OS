@@ -84,11 +84,13 @@ void shell(int msgID)
 		{
 			scanf("%d", &auxID);
 			sprintf(auxString, "%d",auxID);
+			sprintf(auxStr2, "%d", DEFAULTID+1);
 			path="./draft.e";
 			args[0]="draft.e";
 			args[1]=idStr;
 			args[2]=auxString;
-			args[3]=NULL;
+			args[3]=auxStr2;
+			args[4]=NULL;
 		}
 
 		else if(strcmp(string, "trade")==0)

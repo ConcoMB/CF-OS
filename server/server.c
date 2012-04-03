@@ -101,19 +101,26 @@ void newClient()
 					pthread_create(&(newClient->att), NULL, clientAtt, (void*) newClient);
 					break;
 				default:
-					if(msg>CLIENT_ALIVE)
+					if(msg>CLIENT_ALIVE && msg<QUIT_DRAFT)
 					{
 						int clientID=msg-CLIENT_ALIVE;
 						client_t* client;
 						client=getClientByID(clientID);
 						client->time=time(NULL);
 					}
-					else if(msg<CLIENT_DISCONNECT)
+					else if(msg<CLIENT_DISCONNECT )
 					{
 						int clientID=-msg+CLIENT_DISCONNECT;
 						client_t* client;
 						client=getClientByID(clientID);
 						makeDisconnection(client);
+					}
+					else if(msg>QUIT_DRAFT)
+					{
+						int clientID=msg-QUIT_DRAFT;
+						client_t* clitentQ=getClientByID(clientID);
+						team_t* team = getTeamByClient(leagues[clientQ->user->draftLeague], clientQ);
+						leagues[clientQ->user->draftLeague]->draft->clients[team->ID]=NULL;
 					}
 					else
 					{
