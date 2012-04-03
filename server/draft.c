@@ -150,7 +150,7 @@ void* sportistReader(void* arg1)
 	{
 		if(draft->clients[draft->turn]==NULL)
 		{
-			draft->flag=2;
+			//draft->flag=2;
 			pthread_exit(0);
 		}
 		rcvMsg(draft->clients[draft->turn]->channel, (void*)&id, sizeof(int));

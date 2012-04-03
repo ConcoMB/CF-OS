@@ -146,11 +146,7 @@ void makeDisconnection(client_t* myClient)
 void setNullIfDraft(client_t* myClient)
 {
 	int aux;
-<<<<<<< HEAD
 	if(myClient->user!=NULL && (aux=myClient->user->draftLeague)!=-1)
-=======
-	if(myClient->user&&(aux=myClient->user->draftLeague)!=-1)
->>>>>>> 92a5b3877bcf2d7ce2b9778d1aaf32377a983b81
 	{
 		printf("lo pongo en null\n");
 		client_t ** dClients=leagues[aux]->draft->clients;
