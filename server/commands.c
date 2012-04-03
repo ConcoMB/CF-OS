@@ -146,6 +146,7 @@ void cmdDraft(client_t* myClient)
 				}
 			}
 		}
+		printf("Draft cmd ended\n");
 	}
 	else
 	{

@@ -94,16 +94,20 @@ void * draftAttendant(void* arg1)
 		}
 		step++;
 	}
-	draft->league->draft=NULL;
 	msg=END_DRAFT;
 	for(i=0; i<leagueSize; i++)
 	{
+		printf("le mando end al %d\n",i);
 		sendToClient(draft->clients[i], msg);
 	}
 	draftEnd(draft);
+	printf("1\n");
 	draft->league->draft=NULL;
+	printf("2\n");
 	free(draft->clients);
+	printf("3\n");
 	free(draft);
+	printf("4\n");
 	pthread_exit(0);
 }
 
@@ -159,7 +163,7 @@ void* sportistReader(void* arg1)
 
 		if(lID==draft->league->ID && id>=0 && id<CANT_SPORTIST && draft->league->sportists[id]->team==NULL)
 		{
-			printf("elije\n");
+			printf("elije %d\n", id);
 			draft->flag=1;
 			team_t* team=getTeamByClient(draft->league, draft->clients[draft->turn]);
 			draft->league->sportists[id]->team=team;
