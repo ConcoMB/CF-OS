@@ -56,5 +56,7 @@
 
 #define CLIENT_ALIVE 2000
 
+#define POINTS 303
+#define NO_POINTS 304
 
 #endif
