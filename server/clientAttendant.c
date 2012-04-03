@@ -12,6 +12,7 @@
 #include <signal.h>
 #include "commands.h"
 #include "externvars.h"
+#include "../colors.h"
 
 void makeConnection(client_t* myClient);
 void start(client_t* myClient);
@@ -135,19 +136,17 @@ void makeDisconnection(client_t* myClient)
 	setNullIfDraft(myClient);
 	disconnect(myClient->channel);
 	destroyChannel(myClient->ID);
-	queueStr(printQueue,"cliente desconectado\n");
-	fflush(stdout);
+	queueStr(printQueue,RED"Client %d disconnected\n"WHITE,myClient->ID);
 	pthread_cancel(myClient->keepAliveThread);
 	delete(clients, myClient);
 	free(myClient);
-	pthread_exit(0);
+	pthread_cancel(myClient->att);
 }
 
 void setNullIfDraft(client_t* myClient)
 {
-	printf("lo pongo en null\n");
 	int aux;
-	if((aux=myClient->user->draftLeague)!=-1)
+	if(myClient->user&&(aux=myClient->user->draftLeague)!=-1)
 	{
 		client_t ** dClients=leagues[aux]->draft->clients;
 		int i;
@@ -156,6 +155,7 @@ void setNullIfDraft(client_t* myClient)
 			if(dClients[i]->user->ID==myClient->user->ID)
 			{
 				dClients[i]=NULL;
+				queueStr(printQueue,"Client %d taken out from Draft\n", myClient->ID);
 				return;
 			}
 		}
@@ -175,11 +175,12 @@ void* keepAlive(void* arg)
 	myClient=(client_t*)arg;
 	while(1)
 	{
-		if(difftime(time(NULL), myClient->time)>15)
+		double diff=difftime(time(NULL), myClient->time);
+		if(diff>12)
 		{
 			makeDisconnection(myClient);
 		}
-		sleep(5);
+		sleep(9);
 	}
 }
 

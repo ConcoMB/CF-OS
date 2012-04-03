@@ -55,6 +55,7 @@
 #define DRAFT_OK 106
 
 #define CLIENT_ALIVE 2000
+#define CLIENT_DISCONNECT -2000
 
 #define POINTS 303
 #define NO_POINTS 304

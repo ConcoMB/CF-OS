@@ -9,6 +9,7 @@
 #include "../common.h"
 #include "connection.h"
 #include "shell.h"
+#include "../colors.h"
 
 void sighandler(int sig);
 void userLog();
@@ -41,9 +42,9 @@ void makeDefConnection()
 	int aux= NEWCLIENT;
 	defChannel=connectChannel(DEFAULTID+1);
 	sndMsg(defChannel, (void*)&aux, sizeof(int));
-	printf("mande\n");
+	printf(GREEN "Connecting to server...");
 	rcvMsg(defChannel, (void*)&msgID, sizeof(int));
-	printf("recibi msgid %d\n", msgID);
+	printf("OK\n" WHITE);
 }
 
 void userLog()
@@ -138,6 +139,8 @@ void rejoinDraft(msgID)
 
 void sighandler(int sig)
 {
+	int msg=CLIENT_DISCONNECT-msgID;
+	sndMsg(defChannel,&msg,sizeof(int));
 	disconnect(defChannel);
     disconnect(channel);
     exit(0);
@@ -149,6 +152,6 @@ void* keepAlive(void* arg)
 	{
 		int msg=CLIENT_ALIVE+msgID;
 		sndMsg(defChannel,&msg,sizeof(int));
-		sleep(5);
+		sleep(10);
 	}
 }
