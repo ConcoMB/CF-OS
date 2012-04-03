@@ -18,6 +18,7 @@
 #include <signal.h>
 #include <time.h>
 #include "getter.h"
+#include "../colors.h"
 
 void sighandler(int sig);
 void * listenClient();
@@ -57,16 +58,15 @@ void * save()
 {
 	while(1)
 	{
-		queueStr(printQueue,"Saving...");
 		saveAll();
-		queueStr(printQueue,"OK\n");
+		queueStr(printQueue,"Auto saved\n");
 		sleep(30);
 	}
 }
 
 void * listenClient()
 {
-	queueStr(printQueue,"Listening to clients\n");
+	queueStr(printQueue,GREEN"Listening to clients...\n"WHITE);
 	createChannel(DEFAULTID);
 	channel=connectChannel(DEFAULTID);
 	newClient();
@@ -78,26 +78,25 @@ void newClient()
 {
 	while(1)
 	{
-		sleep(2);
 		int msg;
 		int bytes;
 		bytes=rcvMsg(channel, (void*)&msg, sizeof(int));
 		if(bytes>0)
 		{
+			int id;
 			switch(msg)
 			{
 				case NEWCLIENT:
-					queueStr(printQueue,"Sending msgid...");
-					int id= nextClientID;
+					id= nextClientID;
 					nextClientID+=2;
 					createChannel(id);
 					createChannel(id+1);
 					sndMsg(channel, (void*)&id, sizeof(int));
-					queueStr(printQueue,"OK\n");
-					fflush(stdout);
+					queueStr(printQueue,GREEN"New client connected. Asigned ID %d\n"WHITE,id);
 					client_t* newClient = malloc(sizeof(client_t));
 					newClient->ID=id;
 					newClient->time=time(NULL);
+					newClient->user=NULL;
 					insert(clients, newClient);
 					pthread_create(&(newClient->att), NULL, clientAtt, (void*) newClient);
 					break;
@@ -109,9 +108,16 @@ void newClient()
 						client=getClientByID(clientID);
 						client->time=time(NULL);
 					}
+					else if(msg<CLIENT_DISCONNECT)
+					{
+						int clientID=-msg+CLIENT_DISCONNECT;
+						client_t* client;
+						client=getClientByID(clientID);
+						makeDisconnection(client);
+					}
 					else
 					{
-						queueStr(printQueue,"Wrong CMD\n");
+						queueStr(printQueue,RED"Wrong CMD\n"WHITE);
 					}
 					break;
 			}

@@ -58,6 +58,9 @@
 #define NO_POINTS 124
 
 #define CLIENT_ALIVE 2000
+#define CLIENT_DISCONNECT -2000
 
+#define POINTS 303
+#define NO_POINTS 304
 
 #endif
