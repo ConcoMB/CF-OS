@@ -30,21 +30,37 @@ int main(int argc, char** args)
     	{
     		printf("Enter your team name\n");
     		scanf("%s", name);
-    		sndString(channel, name);
-   			rcvMsg(channel, (void*)&msg, sizeof(int));
-   			if(msg==NAME_TAKEN)
-   			{
-   				printf("Name taken, try an other one\n");
-   			}
+        if(strlen(name)>=NAME_LENGTH)
+        {
+          printf("Name too long\n");
+        }
+        else
+        {
+    		  sndString(channel, name);
+   			  rcvMsg(channel, (void*)&msg, sizeof(int));
+   			  if(msg==NAME_TAKEN)
+   			  {
+   				 printf("Name taken, try an other one\n");
+   			  }
+        }
    		}
    		while(msg!=JOIN_LEAGUE);
    		rcvMsg(channel, (void*)&msg, sizeof(int));
    		if(msg==SEND_PASSWORD)
    		{
-   			printf("Enter password\n");
-   			scanf("%s", name);
-    		sndString(channel, name);
-    	}
+        do
+        {
+          int flag=0;
+          printf("Enter password\n");
+          scanf("%s", name);
+          if(strlen(name>=NAME_LENGTH))
+          {
+            flag=1;
+            printf("Password too long\n");
+          }
+        }while(flag);
+      sndString(channel, name);
+   		}
    		rcvMsg(channel, (void*)&msg, sizeof(int));
    		if(msg==INCORRECT_PASSWORD)
    		{

@@ -7,7 +7,6 @@
 int main(int argc, char** args)
 {
     int offer, change;
-    printf("entre al fork\n");
     printf("please enter the ID of the sportists you want to change (first, your offer, then the one you want\n");
     scanf("%d", &offer);
     scanf("%d", &change);

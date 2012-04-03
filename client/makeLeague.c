@@ -9,13 +9,22 @@ int main(int argc, char** args)
 {
 	char lName[NAME_LENGTH], pass[NAME_LENGTH];
 	int msg = MAKE_LEAGUE;
-	int cantT, clientID;
+	int cantT, clientID,flag;
     void* channel;
 	clientID=atoi(args[1]);
 	connectClient(clientID,&channel);
     char c[3];
-	printf("Enter the league name\n");
-	scanf("%s", lName);
+    do
+    {	
+    	flag=0;
+		printf("Enter the league name\n");
+		scanf("%s", lName);
+		if(strlen(lName)>=NAME_LENGTH)
+		{
+			printf("Name too long\n");
+			flag=1;
+		}
+	}while(flag);
 	do
 	{
 		printf("Do you want it to be private? (y/n)\n");
@@ -25,18 +34,25 @@ int main(int argc, char** args)
 
 	if(c[0]=='y')
 	{
-		printf("Enter the password\n");
-		scanf("%s", pass);
+		do
+		{
+			printf("Enter the password\n");
+			scanf("%s", pass);
+			if(strlen(pass)>=NAME_LENGTH)
+			{
+				flag=1;
+				printf("Password too long\n");
+			}
+		}while(flag);	
 	}
 	else
 	{
 		pass[0]=0;
 	}
-	printf("How many teams do you want in your league (3-10)\n");
 	do
 	{
+		printf("How many teams do you want in your league (3-10)\n");
 		scanf("%d",&cantT);
-		printf("lei %d\n", cantT);
 	}while(!(cantT<=10 && cantT>=3));
 
 	sndMsg(channel, (void*)&msg, sizeof(int));
