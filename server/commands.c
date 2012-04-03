@@ -119,7 +119,6 @@ void cmdDraft(client_t* myClient)
 {
 	int msg, auxID;
 	rcvMsg(myClient->channel, (void*)&auxID, sizeof(int));
-	printf("aux id %d\n", auxID);
 	if(auxID>=0 && auxID<lCant && leagues[auxID]->draft!=NULL)
 	{
 		team_t* team= getTeamByClient(leagues[auxID], myClient);

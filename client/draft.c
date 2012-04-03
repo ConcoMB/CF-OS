@@ -43,6 +43,7 @@ int main(int argc, char** args)
 	  		{
 	  			diff=0;
 	  			printf("Its your turn to pick!!\n");
+	  			sleep(1);
 	  			int i;
 	  			char string[200];
 	  			for(i=0; i<CANT_SPORTIST; i++)
@@ -64,7 +65,6 @@ int main(int argc, char** args)
 					//pthread_join(sportThrd, NULL);
 				if(!flag) //NO SE ELIGIO
 				{
-					printf("me mori\n");
 					pthread_cancel(sportThrd);
 		 			rcvMsg(channel, (void*)&msg, sizeof(int));
 					printf("Time ellapsed, you have a random sportist, ID %d\n",msg);
@@ -74,9 +74,7 @@ int main(int argc, char** args)
 	  		{
 	  			printf("The other players are picking teams, please wait.\n");
 	  		}
-
 	  		rcvMsg(channel, (void*)&msg, sizeof(int));
-
 	  	}
 	  	printf("Draft ended\n");
 	  }

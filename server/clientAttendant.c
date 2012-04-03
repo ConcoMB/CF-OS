@@ -111,7 +111,7 @@ void putIntoDraft(client_t* myClient)
 	sndMsg(myClient->channel,(void*)&msg, sizeof(int));
 	msg=myClient->user->draftLeague;
 	sndMsg(myClient->channel,(void*)&msg, sizeof(int));
-	//ignoramos estos dos
+	//ignoramos estos dos msjs
 	rcvMsg(myClient->channel,(void*)&msg, sizeof(int));
 	rcvMsg(myClient->channel,(void*)&msg, sizeof(int));
 
@@ -145,10 +145,10 @@ void makeDisconnection(client_t* myClient)
 
 void setNullIfDraft(client_t* myClient)
 {
-	printf("lo pongo en null\n");
 	int aux;
-	if((aux=myClient->user->draftLeague)!=-1)
+	if(myClient->user!=NULL && (aux=myClient->user->draftLeague)!=-1)
 	{
+		printf("lo pongo en null\n");
 		client_t ** dClients=leagues[aux]->draft->clients;
 		int i;
 		for(i=0; i<leagues[aux]->tMax; i++)
