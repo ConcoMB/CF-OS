@@ -7,7 +7,6 @@
 
 int main(int argc, char** args)
 {
-  printf("entre\n");
   void* channel;
   clientID=atoi(args[1]);
   connectClient(clientID,&channel);

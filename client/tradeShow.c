@@ -7,7 +7,6 @@
 
 int main(int argc, char** args)
 {
-  printf("entre\n");
   int msg, clientID;
   void* channel;
   clientID=atoi(args[1]);

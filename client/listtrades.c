@@ -7,7 +7,6 @@
 
 int main(int argc, char** args)
 {
-    printf("entre a listrtades\n");
 	int msg = SEND_TRADE, clientID;
 	char string[50];
 	void* channel;

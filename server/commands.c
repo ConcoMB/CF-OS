@@ -172,11 +172,9 @@ void cmdMakeTrade(client_t* myClient)
 		lID=offer/CONVERSION;
 		tID=-1;
 	}
-	offer%=CONVERSION;
-	change%=CONVERSION;
 	if(lID==offer/CONVERSION && lID==change/CONVERSION && lID<lCant && lID>=0 &&
 		(tID==-1 || (tID<leagues[lID]->tCant && tID>=0)) &&
-		(team=getTeamByClient(leagues[lID], myClient))!=NULL && offer>=0 && change>=0 &&
+		(team=getTeamByClient(leagues[lID], myClient))!=NULL && (offer%=COVERSION)>=0 && (change%=CONVERSION)>=0 &&
 		offer<CANT_SPORTIST && change<CANT_SPORTIST && (tID==-1 ||
 		team->ID!=leagues[lID]->teams[tID]->ID))
 	{
