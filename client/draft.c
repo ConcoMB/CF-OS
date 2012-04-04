@@ -23,9 +23,11 @@ int main(int argc, char** args)
   quitChannel=connectChannel(DEFAULTID+1);
   int ID=atoi(args[2]);
   int msg=DRAFT;
+  printf("Entre a draft fork\n");
   sndMsg(channel, (void*)&msg, sizeof(int));
   sndMsg(channel, (void*)&ID, sizeof(int));
   rcvMsg(channel, (void*)&msg, sizeof(int));
+  printf("Recibi mensajes\n");
   pthread_create(&quitT, NULL, quitThread, quitChannel);
   if(msg==ID_INVALID)
   {
@@ -67,7 +69,7 @@ int main(int argc, char** args)
 					now=time(NULL);
 					diff=difftime(now, start);
 				}
-				pthread_join(sportThrd, NULL);
+				//pthread_join(sportThrd, NULL);
 				pthread_cancel(sportThrd);
 				if(!flag) //NO SE ELIGIO
 				{	

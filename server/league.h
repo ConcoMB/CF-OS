@@ -52,6 +52,7 @@ typedef struct
     client_t ** clients;
     int flag;
     int turn;
+    int sent;
     time_t start, now;
     double diff, end;
 }draft_t;

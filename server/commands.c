@@ -118,19 +118,25 @@ void cmdTradeShow(client_t* myClient)
 void cmdDraft(client_t* myClient)
 {
 	int msg, auxID;
+	printf("Comando Draft\n");
 	rcvMsg(myClient->channel, (void*)&auxID, sizeof(int));
+	printf("recibiaakaka\n");
 	if(auxID>=0 && auxID<lCant && leagues[auxID]->draft!=NULL)
 	{
+		printf("lala1\n");
 		team_t* team= getTeamByClient(leagues[auxID], myClient);
 		if(team==NULL)
 		{
+			printf("lala2\n");
 			msg=ID_INVALID;
 			sndMsg(myClient->channel, (void*)&msg, sizeof(int));
 		}
 		else
 		{
+			printf("lalal3\n");
 			if(team->user->draftLeague==-1 || leagues[auxID]->draft->flag == -1)
 			{
+				printf("lalal4\n");
 				//no quiteo
 				team->user->draftLeague=leagues[auxID]->ID;
 				leagues[auxID]->draft->clients[team->ID]=myClient;
@@ -138,20 +144,24 @@ void cmdDraft(client_t* myClient)
 				sndMsg(myClient->channel, (void*)&msg, sizeof(int));
 				if(controlDraft(leagues[auxID]->draft))
 				{
+					printf("lala5\n");
 					pthread_t draftThr;
 					pthread_create(&draftThr, NULL, draftAttendant, (void*)(leagues[auxID]->draft));
 					pthread_join(draftThr, NULL);
 				}
 				else
 				{
+					printf("lala6\n");
 					while(leagues[auxID]->draft->clients[team->ID]!=NULL)
 					{
 						//esperar
 					}
+					printf("Quit en ca\n");
 				}
 			}
 			else 	//YA ESTABA DRAFTEANDO Y SALIO
 			{
+				printf("lalal7\n");
 				printf("salio pq dl es %d y flag es %d\n", team->user->draftLeague, leagues[auxID]->draft->flag);
 				putIntoDraft(myClient);
 			}
@@ -180,21 +190,22 @@ void putIntoDraft(client_t* myClient)
 
 	draft_t* myDraft=leagues[myClient->user->draftLeague]->draft;
 
-	if(myDraft->turn==getTeamByClient(myDraft->league, myClient)->ID)
-	{
-		//ES TU TURNO
-		sendAllSportists(myDraft->league,  myClient->channel, SEND_SPORTIST);
+	if(myDraft->turn==getTeamByClient(myDraft->league, myClient)->ID&&myDraft->sent==0)
+	{		//ES TU TURNO
+		printf("sent\n");
 		msg=YOUR_TURN;
 		sndMsg(myClient->channel,(void*)&msg, sizeof(int));
+		sendAllSportists(myDraft->league,  myClient->channel, SEND_SPORTIST);
 		double remain=DRAFT_TIME - myDraft->diff;
 		sndMsg(myClient->channel,(void*)&remain, sizeof(double));
 	}
 	//LO REINSERTO AL VECTOR PARA QUE SIGA DRAFT
 	leagues[myClient->user->draftLeague]->draft->clients[team->ID]=myClient;
-	while(myClient->user->draftLeague!=-1)
+	while(myDraft->clients[team->ID]!=NULL)
 	{
 		//mientras siga el draft espera;
 	}
+	printf("quit ca\n");
 }
 
 void cmdMakeTrade(client_t* myClient)

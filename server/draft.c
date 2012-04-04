@@ -48,9 +48,7 @@ void * draftAttendant(void* arg1)
 		pthread_t tReader;
 		draft->flag=0;
 		draft->diff=0;
-
-		msg=YOUR_TURN;
-		sendToClient(draft->clients[draft->turn], msg);
+		draft->sent=0;
 		msg=DRAFT_WAIT;
 		for(i=0; i<leagueSize; i++)
 		{
@@ -58,31 +56,35 @@ void * draftAttendant(void* arg1)
 			{
 				sendToClient(draft->clients[i], msg);
 			}
-			else if(draft->clients[draft->turn]!=NULL)
-			{
-				printf("le mando los deportistas al %d\n", draft->turn);
-				sendAllSportists(draft->league,  draft->clients[draft->turn]->channel, SEND_SPORTIST);
-				draft->end=DRAFT_TIME;
-				sndMsg(draft->clients[draft->turn]->channel, (void*)&(draft->end), sizeof(double));
-
-				pthread_create(&tReader, NULL, sportistReader, (void*) draft);
-			}
 		}
+		if(draft->clients[draft->turn]!=NULL)
+		{
+			draft->sent=1;
+			msg=YOUR_TURN;
+			if(draft->clients[draft->turn]!=NULL)
+				printf("le mando tu turno al %d\n", draft->turn);
+			sendToClient(draft->clients[draft->turn], msg);
+			printf("le mando los deportistas al %d\n", draft->turn);
+			sendAllSportists(draft->league,  draft->clients[draft->turn]->channel, SEND_SPORTIST);
+			draft->end=DRAFT_TIME;
+			printf("le mando tiempo al %d\n", draft->turn);
+			sndMsg(draft->clients[draft->turn]->channel, (void*)&(draft->end), sizeof(double));
+		}
+		pthread_create(&tReader, NULL, sportistReader, (void*) draft);
 		draft->start=time(NULL);
 		while(draft->diff<=DRAFT_TIME && !draft->flag)
 		{
 			draft->now=time(NULL);
 			draft->diff=difftime(draft->now, draft->start);
 		}
+		pthread_cancel(tReader);
 		if(draft->flag!=1) //TIME ELLAPSED
 		{
 			printf("se te paso el tiempo\n");
-			pthread_cancel(tReader);
 			team_t* team=draft->league->teams[draft->turn];
 			msg=setForcedSportist(draft->league, team);
 			sendToClient(draft->clients[draft->turn], msg);
 		}
-			pthread_join(tReader, NULL);
 		
 		draft->turn+=way;
 		if(draft->turn==leagueSize)
@@ -155,10 +157,10 @@ void* sportistReader(void* arg1)
 	printf("turno %d\n", draft->turn);
 	do
 	{
-		if(draft->clients[draft->turn]==NULL)
+		while(draft->clients[draft->turn]==NULL)
 		{
 			//draft->flag=2;
-			pthread_exit(0);
+			//pthread_exit(0);
 		}
 		rcvMsg(draft->clients[draft->turn]->channel, (void*)&id, sizeof(int));
 		lID=id/CONVERSION;

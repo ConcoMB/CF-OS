@@ -93,13 +93,13 @@ void start(client_t* myClient)
 	}	*/
 	while(1)
 	{
-		sleep(2);
 		if(rcvMsg(myClient->channel,(void*)&msg, sizeof(int))<=0)
 		{
 			makeDisconnection(myClient);
 		}
 		if(msg==LOG_OUT)
 			return;
+		printf("message: %d\n",msg);
 		cmds[msg-CMD_START](myClient);
 	}
 }
