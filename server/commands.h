@@ -25,6 +25,7 @@ void cmdMakeTrade(client_t* myClient);
 void cmdTradeWD(client_t* myClient);
 void cmdTradeYes(client_t* myClient);
 void cmdTradeNeg(client_t* myClient);
+void putIntoDraft(client_t* myClient);
 void cmdMakeLeague(client_t* myClient);
 void cmdJoinLeague(client_t* myClient);
 void cmdLogout(client_t* myClient);

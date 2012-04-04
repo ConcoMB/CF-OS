@@ -129,28 +129,67 @@ void cmdDraft(client_t* myClient)
 		}
 		else
 		{
-			leagues[auxID]->draft->clients[team->ID]=myClient;
-			msg=DRAFT_WAIT;
-			sndMsg(myClient->channel, (void*)&msg, sizeof(int));
-			if(controlDraft(leagues[auxID]->draft))
+			if(team->user->draftLeague==-1)
 			{
-				pthread_t draftThr;
-				pthread_create(&draftThr, NULL, draftAttendant, (void*)(leagues[auxID]->draft));
-				pthread_join(draftThr, NULL);
-			}
-			else
-			{
-				while(leagues[auxID]->draft!=NULL)
+				leagues[auxID]->draft->clients[team->ID]=myClient;
+				msg=DRAFT_WAIT;
+				sndMsg(myClient->channel, (void*)&msg, sizeof(int));
+				if(controlDraft(leagues[auxID]->draft))
 				{
-					//esperar
+					pthread_t draftThr;
+					pthread_create(&draftThr, NULL, draftAttendant, (void*)(leagues[auxID]->draft));
+					pthread_join(draftThr, NULL);
+				}
+				else
+				{
+					while(leagues[auxID]->draft!=NULL)
+					{
+						//esperar
+					}
 				}
 			}
+			else 	//YA ESTABA DRAFTEANDO Y SALIO
+			{
+				putIntoDraft(myClient);
+			}
+			
 		}
 	}
 	else
 	{
 		msg=ID_INVALID;
 		sndMsg(myClient->channel, (void*)&msg, sizeof(int));
+	}
+}
+
+void putIntoDraft(client_t* myClient)
+{
+	printf("lo pongo al draft\n");
+
+	int msg;
+	msg=DRAFT_WAIT;
+	sndMsg(myClient->channel, (void*)&msg, sizeof(int));
+	msg=DRAFT_BEGUN;
+	sndMsg(myClient->channel,(void*)&msg, sizeof(int));
+
+	team_t* team= getTeamByClient(leagues[myClient->user->draftLeague], myClient);
+
+	draft_t* myDraft=leagues[myClient->user->draftLeague]->draft;
+
+	if(myDraft->turn==getTeamByClient(myDraft->league, myClient)->ID)
+	{
+		//ES TU TURNO
+		sendAllSportists(myDraft->league,  myClient->channel, SEND_SPORTIST);
+		msg=YOUR_TURN;
+		sndMsg(myClient->channel,(void*)&msg, sizeof(int));
+		double remain=DRAFT_TIME - myDraft->diff;
+		sndMsg(myClient->channel,(void*)&remain, sizeof(double));
+	}
+	//LO REINSERTO AL VECTOR PARA QUE SIGA DRAFT
+	leagues[myClient->user->draftLeague]->draft->clients[team->ID]=myClient;
+	while(myClient->user->draftLeague!=-1)
+	{
+		//mientras siga el draft espera;
 	}
 }
 

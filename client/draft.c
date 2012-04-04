@@ -9,7 +9,7 @@
 int flag;
 int clientID;
 
-
+void * quitThread(void* channel);
 void* spChooser(void* channel);
 
 int main(int argc, char** args)
@@ -17,11 +17,10 @@ int main(int argc, char** args)
 	pthread_t quitT;
   time_t start, now;
   double diff=0, end;
-  void* channel, quitChannel;
+  void* channel, *quitChannel;
   clientID=atoi(args[1]);
-  defCliID=aroi(args[3]);
   connectClient(clientID,&channel);
-  connectClient(defCliID, &quitChannel);
+  quitChannel=connectChannel(DEFAULTID+1);
   int ID=atoi(args[2]);
   int msg=DRAFT;
   sndMsg(channel, (void*)&msg, sizeof(int));
@@ -50,6 +49,7 @@ int main(int argc, char** args)
 	  			sleep(1);
 	  			int i;
 	  			char string[200];
+	  			pthread_cancel(quitT);
 	  			for(i=0; i<CANT_SPORTIST; i++)
 	  			{
 		 			rcvMsg(channel, (void*)&msg, sizeof(int));
@@ -59,22 +59,23 @@ int main(int argc, char** args)
 	  			flag=0;
 	  			pthread_t sportThrd;
 	  		  	//rcvMsg(channel,(void*)&end, sizeof(double));
-	  		  	pthread_cancel(quitT);
-	  			pthread_create(&sportThrd, NULL, spChooser, channel);
 	  			start=time(NULL);
+	  			//rcvMsg(channel, (void*)&end, sizeof(double));
+	  			//printf("%f tiempo \n", end);
+	  			pthread_create(&sportThrd, NULL, spChooser, channel);
 	  			while(diff<=DRAFT_TIME && !flag)
 				{
 					now=time(NULL);
 					diff=difftime(now, start);
 				}
-					//pthread_join(sportThrd, NULL);
+				pthread_join(sportThrd, NULL);
 				if(!flag) //NO SE ELIGIO
 				{
 					pthread_cancel(sportThrd);
 		 			rcvMsg(channel, (void*)&msg, sizeof(int));
 					printf("Time ellapsed, you have a random sportist, ID %d\n",msg);
 				}
-				pthread_create(&quitT, NULL, quitThread, quitChannel);
+				//pthread_create(&quitT, NULL, quitThread, quitChannel);
 
 	  		}
 	  		else if(msg==DRAFT_WAIT)
@@ -116,7 +117,7 @@ void* spChooser(void* channel)
 
 void * quitThread(void* channel)
 {
-	char [10] string;
+	char  string[10];
 	int msg;
 	while(1)
 	{
@@ -125,8 +126,8 @@ void * quitThread(void* channel)
 		{
 			printf("exiting draft\n");
 			msg=QUIT_DRAFT+clientID;
-			sndMsg(channel, (void*)&msg, sizeof(int))
-			exit(0):
+			sndMsg(channel, (void*)&msg, sizeof(int));
+			exit(0);
 		}
 	}
 	return NULL;

@@ -46,8 +46,8 @@ void * draftAttendant(void* arg1)
 		int i;
 		pthread_t tReader;
 		draft->flag=0;
-		diff=0;
-		
+		draft->diff=0;
+
 		msg=YOUR_TURN;
 		sendToClient(draft->clients[draft->turn], msg);
 		msg=DRAFT_WAIT;
@@ -61,8 +61,11 @@ void * draftAttendant(void* arg1)
 			{
 				printf("le mando los deportistas al %d\n", draft->turn);
 				sendAllSportists(draft->league,  draft->clients[draft->turn]->channel, SEND_SPORTIST);
-				end=DRAFT_TIME;
-				//sndMsg(draft->clients[i], (void*)&end, sizeof(double));
+				/*draft->end=DRAFT_TIME;
+				printf("tiempo %f.....", draft->end);
+				sndMsg(draft->clients[draft->turn], (void*)&(draft->end), sizeof(double));
+								printf("enviado\n");*/
+
 				pthread_create(&tReader, NULL, sportistReader, (void*) draft);
 			}
 		}
@@ -70,7 +73,7 @@ void * draftAttendant(void* arg1)
 		while(draft->diff<=DRAFT_TIME && !draft->flag)
 		{
 			draft->now=time(NULL);
-			draft->diff=difftime(now, start);
+			draft->diff=difftime(draft->now, draft->start);
 		}
 		if(draft->flag!=1) //TIME ELLAPSED
 		{

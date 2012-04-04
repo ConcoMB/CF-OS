@@ -20,7 +20,6 @@ void logClient(client_t* myClient);
 void makeDisconnection(client_t* myClient);
 int controlDraft(draft_t* draft);
 void* keepAlive(void* arg);
-void putIntoDraft(client_t* myClient);
 void setNullIfDraft(client_t* myClient);
 
 
@@ -105,41 +104,7 @@ void start(client_t* myClient)
 	}
 }
 
-void putIntoDraft(client_t* myClient)
-{
-	printf("lo pongo al draft\n");
-	int msg=USER_DRAFTING;
-	sndMsg(myClient->channel,(void*)&msg, sizeof(int));
-	msg=myClient->user->draftLeague;
-	sndMsg(myClient->channel,(void*)&msg, sizeof(int));
-	//ignoramos estos dos msjs
-	rcvMsg(myClient->channel,(void*)&msg, sizeof(int));
-	rcvMsg(myClient->channel,(void*)&msg, sizeof(int));
 
-	msg=DRAFT_WAIT;
-	sndMsg(myClient->channel,(void*)&msg, sizeof(int));
-	msg=DRAFT_BEGUN;
-	sndMsg(myClient->channel,(void*)&msg, sizeof(int));
-
-	team_t* team= getTeamByClient(leagues[myClient->user->draftLeague], myClient);
-
-	draft_t* myDraft=leagues[myClient->user->draftLeague]->draft;
-
-	if(myDraft->turn==getTeamByClient(myDraft->league, myClient)->ID)
-	{
-		msg=YOUR_TURN;
-		sndMsg(myClient->channel,(void*)&msg, sizeof(int));
-		double remain=myDraft->(DRAFT_TIME-diff);
-		sndMsg(myClient->channel,(void*)&remain, sizeof(double));
-	}
-
-
-	leagues[myClient->user->draftLeague]->draft->clients[team->ID]=myClient;
-	while(myClient->user->draftLeague!=-1)
-	{
-		//mientras siga el draft espera;
-	}
-}
 
 void makeDisconnection(client_t* myClient)
 {

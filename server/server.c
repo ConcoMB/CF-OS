@@ -25,6 +25,10 @@ void * listenClient();
 void newClient();
 void* save();
 void* print();
+void quitDraft(int msg);
+void newClientAssist();
+void clientAlive(int msg);
+void clientDisconnect(int msg);
 league_t** leagues;
 int lCant, uCant;
 user_t** users;
@@ -83,53 +87,69 @@ void newClient()
 		bytes=rcvMsg(channel, (void*)&msg, sizeof(int));
 		if(bytes>0)
 		{
-			int id;
-			switch(msg)
+			if(msg==NEWCLIENT)
 			{
-				case NEWCLIENT:
-					id= nextClientID;
-					nextClientID+=2;
-					createChannel(id);
-					createChannel(id+1);
-					sndMsg(channel, (void*)&id, sizeof(int));
-					queueStr(printQueue,GREEN"New client connected. Asigned ID %d\n"WHITE,id);
-					client_t* newClient = malloc(sizeof(client_t));
-					newClient->ID=id;
-					newClient->time=time(NULL);
-					newClient->user=NULL;
-					insert(clients, newClient);
-					pthread_create(&(newClient->att), NULL, clientAtt, (void*) newClient);
-					break;
-				default:
-					if(msg>CLIENT_ALIVE && msg<QUIT_DRAFT)
-					{
-						int clientID=msg-CLIENT_ALIVE;
-						client_t* client;
-						client=getClientByID(clientID);
-						client->time=time(NULL);
-					}
-					else if(msg<CLIENT_DISCONNECT )
-					{
-						int clientID=-msg+CLIENT_DISCONNECT;
-						client_t* client;
-						client=getClientByID(clientID);
-						makeDisconnection(client);
-					}
-					else if(msg>QUIT_DRAFT)
-					{
-						int clientID=msg-QUIT_DRAFT;
-						client_t* clitentQ=getClientByID(clientID);
-						team_t* team = getTeamByClient(leagues[clientQ->user->draftLeague], clientQ);
-						leagues[clientQ->user->draftLeague]->draft->clients[team->ID]=NULL;
-					}
-					else
-					{
-						queueStr(printQueue,RED"Wrong CMD\n"WHITE);
-					}
-					break;
+				newClientAssist();
+			}
+			else if(msg>CLIENT_ALIVE && msg<QUIT_DRAFT)
+			{
+				clientAlive(msg);
+			}
+			else if(msg<CLIENT_DISCONNECT )
+			{
+				clientDisconnect(msg);
+			}
+			else if(msg>QUIT_DRAFT)
+			{
+				quitDraft(msg);
+			}
+			else
+			{
+				queueStr(printQueue,RED"Wrong CMD %d\n"WHITE, msg);
 			}
 		}
 	}
+}
+
+void quitDraft(int msg)
+{
+	int clientID=msg-QUIT_DRAFT;
+	client_t* clientQ=getClientByID(clientID);
+	league_t* myLeague=leagues[clientQ->user->draftLeague];
+	team_t* team = getTeamByClient(myLeague, clientQ);
+	myLeague->draft->clients[team->ID]=NULL;
+}
+
+void newClientAssist()
+{
+	int id= nextClientID;
+	nextClientID+=2;
+	createChannel(id);
+	createChannel(id+1);
+	sndMsg(channel, (void*)&id, sizeof(int));
+	queueStr(printQueue,GREEN"New client connected. Asigned ID %d\n"WHITE,id);
+	client_t* newClient = malloc(sizeof(client_t));
+	newClient->ID=id;
+	newClient->time=time(NULL);
+	newClient->user=NULL;
+	insert(clients, newClient);
+	pthread_create(&(newClient->att), NULL, clientAtt, (void*) newClient);
+}
+
+void clientAlive(int msg)
+{
+	int clientID=msg-CLIENT_ALIVE;
+	client_t* client;
+	client=getClientByID(clientID);
+	client->time=time(NULL);
+}
+
+void clientDisconnect(int msg)
+{
+	int clientID=-msg+CLIENT_DISCONNECT;
+	client_t* client;
+	client=getClientByID(clientID);
+	makeDisconnection(client);
 }
 
 void sighandler(int sig)
