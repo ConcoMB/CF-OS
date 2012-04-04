@@ -6,7 +6,7 @@
 
 int main(int argc, char** args)
 {
-    int msg = JOIN_LEAGUE;
+    int msg = JOIN_LEAGUE, flag;
 	int lID, clientID;
 	char name[NAME_LENGTH];
     void* channel;
@@ -50,10 +50,10 @@ int main(int argc, char** args)
    		{
         do
         {
-          int flag=0;
+          flag=0;
           printf("Enter password\n");
           scanf("%s", name);
-          if(strlen(name>=NAME_LENGTH))
+          if(strlen(name)>=NAME_LENGTH)
           {
             flag=1;
             printf("Password too long\n");

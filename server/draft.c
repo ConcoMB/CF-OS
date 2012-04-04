@@ -12,6 +12,7 @@ void* sportistReader(void* arg1);
 int sendToClient(client_t* client, int msg);
 void draftEnd(draft_t* draft);
 void draftBegin(draft_t* draft);
+void listenQuitters(draft_t* draft);
 
 
 int sendToClient(client_t* client, int msg)
@@ -32,10 +33,10 @@ void * draftAttendant(void* arg1)
 	printf("entre a la funcion draft\n");
 	draft_t* draft=(draft_t*) arg1;
 	int way=1, step=0, msg, i, leagueSize=draft->league->tMax;
-	time_t start, now;
-	double diff=0, end;
+	draft->diff=0;
 	draft->turn=0;
-	draftBegin(draft);
+	draft->flag=0;
+	//draftBegin(draft);
 	for(i=0; i< draft->league->tMax; i++)
 	{
 		msg=DRAFT_BEGUN;
@@ -46,7 +47,8 @@ void * draftAttendant(void* arg1)
 		int i;
 		pthread_t tReader;
 		draft->flag=0;
-		diff=0;
+		draft->diff=0;
+
 		msg=YOUR_TURN;
 		sendToClient(draft->clients[draft->turn], msg);
 		msg=DRAFT_WAIT;
@@ -60,16 +62,17 @@ void * draftAttendant(void* arg1)
 			{
 				printf("le mando los deportistas al %d\n", draft->turn);
 				sendAllSportists(draft->league,  draft->clients[draft->turn]->channel, SEND_SPORTIST);
-				end=DRAFT_TIME;
-				//sndMsg(draft->clients[i], (void*)&end, sizeof(double));
+				draft->end=DRAFT_TIME;
+				sndMsg(draft->clients[draft->turn]->channel, (void*)&(draft->end), sizeof(double));
+
+				pthread_create(&tReader, NULL, sportistReader, (void*) draft);
 			}
 		}
-		pthread_create(&tReader, NULL, sportistReader, (void*) draft);
-		start=time(NULL);
-		while(diff<=DRAFT_TIME && !draft->flag)
+		draft->start=time(NULL);
+		while(draft->diff<=DRAFT_TIME && !draft->flag)
 		{
-			now=time(NULL);
-			diff=difftime(now, start);
+			draft->now=time(NULL);
+			draft->diff=difftime(draft->now, draft->start);
 		}
 		if(draft->flag!=1) //TIME ELLAPSED
 		{
@@ -79,7 +82,7 @@ void * draftAttendant(void* arg1)
 			msg=setForcedSportist(draft->league, team);
 			sendToClient(draft->clients[draft->turn], msg);
 		}
-			//pthread_join(tReader, NULL);
+			pthread_join(tReader, NULL);
 		
 		draft->turn+=way;
 		if(draft->turn==leagueSize)

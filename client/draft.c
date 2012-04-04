@@ -7,23 +7,26 @@
 #include <stdlib.h>
 
 int flag;
+int clientID;
 
+void * quitThread(void* channel);
 void* spChooser(void* channel);
 
 int main(int argc, char** args)
 {
+	pthread_t quitT;
   time_t start, now;
   double diff=0, end;
-  int clientID;
-  void* channel;
+  void* channel, *quitChannel;
   clientID=atoi(args[1]);
   connectClient(clientID,&channel);
+  quitChannel=connectChannel(DEFAULTID+1);
   int ID=atoi(args[2]);
   int msg=DRAFT;
-  printf("%d\n", ID);
   sndMsg(channel, (void*)&msg, sizeof(int));
   sndMsg(channel, (void*)&ID, sizeof(int));
   rcvMsg(channel, (void*)&msg, sizeof(int));
+  pthread_create(&quitT, NULL, quitThread, quitChannel);
   if(msg==ID_INVALID)
   {
   	printf("INVALID ID\n");
@@ -46,29 +49,33 @@ int main(int argc, char** args)
 	  			sleep(1);
 	  			int i;
 	  			char string[200];
+	  			pthread_cancel(quitT);
 	  			for(i=0; i<CANT_SPORTIST; i++)
 	  			{
 		 			rcvMsg(channel, (void*)&msg, sizeof(int));
 		 			rcvString(channel, string);
-		 			printf("%s", string);
+		 			printf("sportist: %s", string);
 	  			}
 	  			flag=0;
 	  			pthread_t sportThrd;
-	  		  	//rcvMsg(channel,(void*)&end, sizeof(double));
-	  			pthread_create(&sportThrd, NULL, spChooser, channel);
+	  		  	rcvMsg(channel,(void*)&end, sizeof(double));
 	  			start=time(NULL);
-	  			while(diff<=DRAFT_TIME && !flag)
+	  			//printf("%f tiempo \n", end);
+	  			pthread_create(&sportThrd, NULL, spChooser, channel);
+	  			while(diff<=end && !flag)
 				{
 					now=time(NULL);
 					diff=difftime(now, start);
 				}
-					//pthread_join(sportThrd, NULL);
+				pthread_join(sportThrd, NULL);
+				pthread_cancel(sportThrd);
 				if(!flag) //NO SE ELIGIO
-				{
-					pthread_cancel(sportThrd);
+				{	
 		 			rcvMsg(channel, (void*)&msg, sizeof(int));
 					printf("Time ellapsed, you have a random sportist, ID %d\n",msg);
 				}
+				pthread_create(&quitT, NULL, quitThread, quitChannel);
+
 	  		}
 	  		else if(msg==DRAFT_WAIT)
 	  		{
@@ -102,6 +109,25 @@ void* spChooser(void* channel)
 			printf("You now have your desired sportist\n");
 			flag=1;
 			pthread_exit(0);
+		}
+	}
+	return NULL;
+}
+
+void * quitThread(void* channel)
+{
+	char  string[10];
+	int msg;
+	while(1)
+	{
+		scanf("%s", string);
+		if(strcmp(string,"quit")==0)
+		{
+			printf("exiting draft\n");
+			msg=QUIT_DRAFT+clientID;
+			printf("%d\n", clientID);
+			sndMsg(channel, (void*)&msg, sizeof(int));
+			exit(0);
 		}
 	}
 	return NULL;

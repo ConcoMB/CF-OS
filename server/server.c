@@ -22,9 +22,13 @@
 
 void sighandler(int sig);
 void * listenClient();
-void newClient();
+void defChannelListener();
 void* save();
 void* print();
+void quitDraft(int msg);
+void newClientAssist();
+void clientAlive(int msg);
+void clientDisconnect(int msg);
 league_t** leagues;
 int lCant, uCant;
 user_t** users;
@@ -69,12 +73,12 @@ void * listenClient()
 	queueStr(printQueue,GREEN"Listening to clients...\n"WHITE);
 	createChannel(DEFAULTID);
 	channel=connectChannel(DEFAULTID);
-	newClient();
+	defChannelListener();
 	return NULL;
 }
 
 
-void newClient()
+void defChannelListener()
 {
 	while(1)
 	{
@@ -83,46 +87,75 @@ void newClient()
 		bytes=rcvMsg(channel, (void*)&msg, sizeof(int));
 		if(bytes>0)
 		{
-			int id;
-			switch(msg)
+			if(msg==NEWCLIENT)
 			{
-				case NEWCLIENT:
-					id= nextClientID;
-					nextClientID+=2;
-					createChannel(id);
-					createChannel(id+1);
-					sndMsg(channel, (void*)&id, sizeof(int));
-					queueStr(printQueue,GREEN"New client connected. Asigned ID %d\n"WHITE,id);
-					client_t* newClient = malloc(sizeof(client_t));
-					newClient->ID=id;
-					newClient->time=time(NULL);
-					newClient->user=NULL;
-					insert(clients, newClient);
-					pthread_create(&(newClient->att), NULL, clientAtt, (void*) newClient);
-					break;
-				default:
-					if(msg>CLIENT_ALIVE)
-					{
-						int clientID=msg-CLIENT_ALIVE;
-						client_t* client;
-						client=getClientByID(clientID);
-						client->time=time(NULL);
-					}
-					else if(msg<CLIENT_DISCONNECT)
-					{
-						int clientID=-msg+CLIENT_DISCONNECT;
-						client_t* client;
-						client=getClientByID(clientID);
-						makeDisconnection(client);
-					}
-					else
-					{
-						queueStr(printQueue,RED"Wrong CMD\n"WHITE);
-					}
-					break;
+				newClientAssist();
+			}
+			else if(msg>CLIENT_ALIVE && msg<QUIT_DRAFT)
+			{
+				clientAlive(msg);
+			}
+			else if(msg<CLIENT_DISCONNECT )
+			{
+				clientDisconnect(msg);
+			}
+			else if(msg>QUIT_DRAFT)
+			{
+				quitDraft(msg);
+			}
+			else
+			{
+				queueStr(printQueue,RED"Wrong CMD %d\n"WHITE, msg);
 			}
 		}
 	}
+}
+
+void quitDraft(int msg)
+{
+	printf("entre a q d\n");
+	int clientID=(msg-QUIT_DRAFT);
+	printf("qd %d, msg%d, cID%d\n", QUIT_DRAFT, msg, clientID);
+	client_t* clientQ=getClientByID(clientID);
+	printf("1 dl %d\n", clientQ->user->draftLeague);
+	league_t* myLeague=leagues[clientQ->user->draftLeague];
+	printf("2\n");
+	team_t* team = getTeamByClient(myLeague, clientQ);
+	printf("3\n");
+	myLeague->draft->clients[team->ID]=NULL;
+	printf("4\n");
+}
+
+void newClientAssist()
+{
+	int id= nextClientID;
+	nextClientID+=2;
+	createChannel(id);
+	createChannel(id+1);
+	sndMsg(channel, (void*)&id, sizeof(int));
+	queueStr(printQueue,GREEN"New client connected. Asigned ID %d\n"WHITE,id);
+	client_t* newClient = malloc(sizeof(client_t));
+	newClient->ID=id;
+	newClient->time=time(NULL);
+	newClient->user=NULL;
+	insert(clients, newClient);
+	pthread_create(&(newClient->att), NULL, clientAtt, (void*) newClient);
+}
+
+void clientAlive(int msg)
+{
+	int clientID=msg-CLIENT_ALIVE;
+	client_t* client;
+	client=getClientByID(clientID);
+	client->time=time(NULL);
+}
+
+void clientDisconnect(int msg)
+{
+	int clientID=-msg+CLIENT_DISCONNECT;
+	client_t* client;
+	client=getClientByID(clientID);
+	makeDisconnection(client);
 }
 
 void sighandler(int sig)
