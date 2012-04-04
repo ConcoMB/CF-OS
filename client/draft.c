@@ -67,14 +67,14 @@ int main(int argc, char** args)
 					now=time(NULL);
 					diff=difftime(now, start);
 				}
-				//pthread_join(sportThrd, NULL);
+				pthread_join(sportThrd, NULL);
 				pthread_cancel(sportThrd);
 				if(!flag) //NO SE ELIGIO
 				{	
 		 			rcvMsg(channel, (void*)&msg, sizeof(int));
 					printf("Time ellapsed, you have a random sportist, ID %d\n",msg);
 				}
-				//pthread_create(&quitT, NULL, quitThread, quitChannel);
+				pthread_create(&quitT, NULL, quitThread, quitChannel);
 
 	  		}
 	  		else if(msg==DRAFT_WAIT)
@@ -125,6 +125,7 @@ void * quitThread(void* channel)
 		{
 			printf("exiting draft\n");
 			msg=QUIT_DRAFT+clientID;
+			printf("%d\n", clientID);
 			sndMsg(channel, (void*)&msg, sizeof(int));
 			exit(0);
 		}

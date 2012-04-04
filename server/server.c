@@ -22,7 +22,7 @@
 
 void sighandler(int sig);
 void * listenClient();
-void newClient();
+void defChannelListener();
 void* save();
 void* print();
 void quitDraft(int msg);
@@ -73,12 +73,12 @@ void * listenClient()
 	queueStr(printQueue,GREEN"Listening to clients...\n"WHITE);
 	createChannel(DEFAULTID);
 	channel=connectChannel(DEFAULTID);
-	newClient();
+	defChannelListener();
 	return NULL;
 }
 
 
-void newClient()
+void defChannelListener()
 {
 	while(1)
 	{
@@ -113,11 +113,17 @@ void newClient()
 
 void quitDraft(int msg)
 {
-	int clientID=msg-QUIT_DRAFT;
+	printf("entre a q d\n");
+	int clientID=(msg-QUIT_DRAFT);
+	printf("qd %d, msg%d, cID%d\n", QUIT_DRAFT, msg, clientID);
 	client_t* clientQ=getClientByID(clientID);
+	printf("1 dl %d\n", clientQ->user->draftLeague);
 	league_t* myLeague=leagues[clientQ->user->draftLeague];
+	printf("2\n");
 	team_t* team = getTeamByClient(myLeague, clientQ);
+	printf("3\n");
 	myLeague->draft->clients[team->ID]=NULL;
+	printf("4\n");
 }
 
 void newClientAssist()

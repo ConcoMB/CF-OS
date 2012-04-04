@@ -158,6 +158,7 @@ league_t* loadLeague(FILE* leagueFile){
 			league->draft->league=league;
 			league->draft->clients=malloc(sizeof(client_t*)*league->tMax);
 		    league->draft->turn=0;
+		    league->draft->flag=-1;
 		    for(i=0; i<league->tMax; i++)
 		    {
 		        league->draft->clients[i]=NULL;

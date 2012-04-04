@@ -35,7 +35,8 @@ void * draftAttendant(void* arg1)
 	int way=1, step=0, msg, i, leagueSize=draft->league->tMax;
 	draft->diff=0;
 	draft->turn=0;
-	draftBegin(draft);
+	draft->flag=0;
+	//draftBegin(draft);
 	for(i=0; i< draft->league->tMax; i++)
 	{
 		msg=DRAFT_BEGUN;

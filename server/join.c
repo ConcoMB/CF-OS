@@ -135,6 +135,7 @@ int createLeague(char* name, char* password, int cant)
     draft_t* draft=malloc(sizeof(draft));
     draft->clients=malloc(sizeof(client_t*)*cant);
     draft->turn=0;
+    draft->flag=-1;
     for(i=0; i<cant; i++)
     {
         draft->clients[i]=NULL;

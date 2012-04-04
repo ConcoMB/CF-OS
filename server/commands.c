@@ -129,8 +129,10 @@ void cmdDraft(client_t* myClient)
 		}
 		else
 		{
-			if(team->user->draftLeague==-1)
+			if(team->user->draftLeague==-1 || leagues[auxID]->draft->flag == -1)
 			{
+				//no quiteo
+				team->user->draftLeague=leagues[auxID]->ID;
 				leagues[auxID]->draft->clients[team->ID]=myClient;
 				msg=DRAFT_WAIT;
 				sndMsg(myClient->channel, (void*)&msg, sizeof(int));
@@ -142,7 +144,7 @@ void cmdDraft(client_t* myClient)
 				}
 				else
 				{
-					while(leagues[auxID]->draft!=NULL)
+					while(leagues[auxID]->draft->clients[team->ID]!=NULL)
 					{
 						//esperar
 					}
@@ -150,6 +152,7 @@ void cmdDraft(client_t* myClient)
 			}
 			else 	//YA ESTABA DRAFTEANDO Y SALIO
 			{
+				printf("salio pq dl es %d y flag es %d\n", team->user->draftLeague, leagues[auxID]->draft->flag);
 				putIntoDraft(myClient);
 			}
 			
