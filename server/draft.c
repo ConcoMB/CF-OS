@@ -61,10 +61,8 @@ void * draftAttendant(void* arg1)
 			{
 				printf("le mando los deportistas al %d\n", draft->turn);
 				sendAllSportists(draft->league,  draft->clients[draft->turn]->channel, SEND_SPORTIST);
-				/*draft->end=DRAFT_TIME;
-				printf("tiempo %f.....", draft->end);
-				sndMsg(draft->clients[draft->turn], (void*)&(draft->end), sizeof(double));
-								printf("enviado\n");*/
+				draft->end=DRAFT_TIME;
+				sndMsg(draft->clients[draft->turn]->channel, (void*)&(draft->end), sizeof(double));
 
 				pthread_create(&tReader, NULL, sportistReader, (void*) draft);
 			}
@@ -83,7 +81,7 @@ void * draftAttendant(void* arg1)
 			msg=setForcedSportist(draft->league, team);
 			sendToClient(draft->clients[draft->turn], msg);
 		}
-			//pthread_join(tReader, NULL);
+			pthread_join(tReader, NULL);
 		
 		draft->turn+=way;
 		if(draft->turn==leagueSize)

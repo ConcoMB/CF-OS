@@ -54,7 +54,6 @@ typedef struct
     int turn;
     time_t start, now;
     double diff, end;
-
 }draft_t;
 
 typedef struct league_s

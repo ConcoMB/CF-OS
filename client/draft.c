@@ -54,24 +54,23 @@ int main(int argc, char** args)
 	  			{
 		 			rcvMsg(channel, (void*)&msg, sizeof(int));
 		 			rcvString(channel, string);
-		 			printf("%s", string);
+		 			printf("sportist: %s", string);
 	  			}
 	  			flag=0;
 	  			pthread_t sportThrd;
-	  		  	//rcvMsg(channel,(void*)&end, sizeof(double));
+	  		  	rcvMsg(channel,(void*)&end, sizeof(double));
 	  			start=time(NULL);
-	  			//rcvMsg(channel, (void*)&end, sizeof(double));
 	  			//printf("%f tiempo \n", end);
 	  			pthread_create(&sportThrd, NULL, spChooser, channel);
-	  			while(diff<=DRAFT_TIME && !flag)
+	  			while(diff<=end && !flag)
 				{
 					now=time(NULL);
 					diff=difftime(now, start);
 				}
-				pthread_join(sportThrd, NULL);
+				//pthread_join(sportThrd, NULL);
+				pthread_cancel(sportThrd);
 				if(!flag) //NO SE ELIGIO
-				{
-					pthread_cancel(sportThrd);
+				{	
 		 			rcvMsg(channel, (void*)&msg, sizeof(int));
 					printf("Time ellapsed, you have a random sportist, ID %d\n",msg);
 				}
