@@ -79,7 +79,7 @@ void * draftAttendant(void* arg1)
 			team_t* team=draft->league->teams[draft->turn];
 			msg=setForcedSportist(draft->league, team);
 			sendToClient(draft->clients[draft->turn], msg);
-			queueStr(printQueue,MAGENTA"User %s time elapsed... got random sportist\n"WHITE, draft->clients[draft->turn]->user->name);
+			queueStr(printQueue,MAGENTA"Time elapsed... got random sportist\n"WHITE);
 		}
 		else
 		{

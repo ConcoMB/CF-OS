@@ -100,8 +100,11 @@ void start(client_t* myClient)
 		}
 		if(msg==LOG_OUT)
 			return;
-		printf("message: %d\n",msg);
-		cmds[msg-CMD_START](myClient);
+		printf("message: %d (%d)\n",msg, myClient->ID);
+		if(msg>=CMD_START)
+		{
+			cmds[msg-CMD_START](myClient);
+		}
 	}
 }
 
@@ -135,6 +138,10 @@ void setNullIfDraft(client_t* myClient)
 				sem_post(dSem[i]);
 				sem_destroy(dSem[i]);
 				dSem[i]=NULL;
+				if(leagues[aux]->draft->turn==i)
+				{
+					leagues[aux]->draft->sent=0;
+				}
 				queueStr(printQueue,RED"Client %d taken out from Draft\n"WHITE, myClient->ID);
 				return;
 			}

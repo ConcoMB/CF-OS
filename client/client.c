@@ -62,9 +62,11 @@ void userLog()
 			int aux=LOGIN;
 			sndMsg(channel, (void*)&aux, sizeof(int));
 			printf(CYAN"name: "WHITE);
+			fflush(stdout);
 			scanf("%s", name);
 			sndString(channel, name);
 			printf(CYAN"password: "WHITE);
+			fflush(stdout);
 			scanf("%s", password);
 			sndString(channel,password);
 			rcvMsg(channel, (void*)&handshake, sizeof(int));

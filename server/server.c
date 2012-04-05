@@ -121,6 +121,10 @@ void quitDraft(int msg)
 	sem_post(myLeague->draft->sem[team->ID]);
 	sem_destroy(myLeague->draft->sem[team->ID]);
 	myLeague->draft->sem[team->ID]=NULL;
+	if(myLeague->draft->turn==team->ID)
+	{
+		myLeague->draft->sent=0;
+	}
 	queueStr(printQueue,RED"Client %d quit Draft\n"WHITE, clientQ->ID);
 }
 

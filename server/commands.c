@@ -178,22 +178,26 @@ void putIntoDraft(client_t* myClient)
 
 	draft_t* myDraft=leagues[myClient->user->draftLeague]->draft;
 
-	if(myDraft->turn==getTeamByClient(myDraft->league, myClient)->ID&&myDraft->sent==0)
+	if(myDraft->turn==team->ID && myDraft->sent==0)
 	{		
 		//ES TU TURNO
 		msg=YOUR_TURN;
 		sndMsg(myClient->channel,(void*)&msg, sizeof(int));
+		printf("Mande YOUR_TURN\n");
 		sendAllSportists(myDraft->league,  myClient->channel, SEND_SPORTIST);
 		double remain=DRAFT_TIME - myDraft->diff;
 		sndMsg(myClient->channel,(void*)&remain, sizeof(double));
 	}
 	//LO REINSERTO AL VECTOR PARA QUE SIGA DRAFT
 	myDraft->clients[team->ID]=myClient;
-	sem_post(myDraft->chooseSem);
 	char semName[20];
 	sprintf(semName,"/semDraft%d_Cli%d",myDraft->league->ID, myClient->ID);
 	myDraft->sem[team->ID]=sem_open(semName, O_RDWR|O_CREAT, 0666, 0);
 	queueStr(printQueue,BLUE"User %s rejoined draft\n"WHITE,myClient->user->name);
+	if(myDraft->turn==team->ID)
+	{
+		sem_post(myDraft->chooseSem);
+	}
 	sem_wait(myDraft->sem[team->ID]);
 	/*while(myDraft->clients[team->ID]!=NULL)
 	{
