@@ -37,6 +37,9 @@ void * draftAttendant(void* arg1)
 	draft->diff=0;
 	draft->turn=0;
 	draft->flag=0;
+	char semName[15];
+	sprintf(semName,"/semDraft%d",draft->league);
+	draft->chooseSem=sem_open(semName, O_RDWR|O_CREAT, 0666, 0);
 	//draftBegin(draft);
 	for(i=0; i< draft->league->tMax; i++)
 	{
@@ -169,10 +172,10 @@ void* sportistReader(void* arg1)
 	printf(BLUE"SReader started\n"WHITE);
 	do
 	{
-		while(draft->clients[draft->turn]==NULL)
+		sem_init(draft->chooseSem,0,0);
+		if(draft->clients[draft->turn]==NULL)
 		{
-			//draft->flag=2;
-			//pthread_exit(0);
+			sem_wait(draft->chooseSem);
 		}
 		rcvMsg(draft->clients[draft->turn]->channel, (void*)&id, sizeof(int));
 		lID=id/CONVERSION;

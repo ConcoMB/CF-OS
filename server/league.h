@@ -52,6 +52,7 @@ typedef struct
     struct league_s* league;
     client_t ** clients;
     sem_t** sem;
+    sem_t * chooseSem;
     int flag;
     int turn;
     int sent;
