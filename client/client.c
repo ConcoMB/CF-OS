@@ -54,26 +54,26 @@ void userLog()
 	while(!loged)
 	{
 		char command[10], name[NAME_LENGTH], password[NAME_LENGTH];
-		printf("Type login or signup\n");
+		printf(BLUE"Type 'login' or 'signup': "WHITE);
 		scanf("%s", command);
 		if(strcmp(command, "login")==0)
 		{
 			int aux=LOGIN;
 			sndMsg(channel, (void*)&aux, sizeof(int));
-			printf("name:\n");
+			printf(CYAN"name: "WHITE);
 			scanf("%s", name);
 			sndString(channel, name);
-			printf("password:\n");
+			printf(CYAN"password: "WHITE);
 			scanf("%s", password);
 			sndString(channel,password);
 			rcvMsg(channel, (void*)&handshake, sizeof(int));
 			switch(handshake)
 			{
 				case INCORRECT_PASSWORD:
-					printf("incorrect password\n");
+					printf(RED"Incorrect password\n"WHITE);
 					break;
 				case USER_NOT_FOUND:
-					printf("user unknown\n");
+					printf(RED"User unknown\n"WHITE);
 					break;
 				default:
 					loged=1;
@@ -83,20 +83,20 @@ void userLog()
 		{
 			int aux=SIGNUP;
 			sndMsg(channel, (void*)&aux, sizeof(int));
-			printf("Enter new name:\n");
+			printf(GREEN"Enter new name: "WHITE);
 			scanf("%s", name);
 			sndString(channel, name);
-			printf("password:\n");
+			printf(GREEN"Password: "WHITE);
 			scanf("%s", password);
 			sndString(channel, password);
 			rcvMsg(channel, (void*)&handshake, sizeof(int));
 			switch(handshake)
 			{
 				case NAME_OCCUPIED:
-					printf("User name already taken, choose an other\n");
+					printf(RED"User name already taken, choose an other\n"WHITE);
 					break;
 				case NAME_OR_PASSWORD_TOO_LARGE:
-					printf("The length of the user name and the password must be lower than 15 characters\n");
+					printf(RED"The length of the user name and the password must be lower than 15 characters\n"WHITE);
 					break;
 				default:
 					loged=1;
@@ -104,7 +104,7 @@ void userLog()
 		}
 		else
 		{
-			printf("invalid command\n");
+			printf(RED"Invalid command\n"WHITE);
 		}
 	}
 	/*rcvMsg(channel, (void*)&handshake, sizeof(int));

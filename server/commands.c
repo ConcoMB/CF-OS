@@ -118,7 +118,6 @@ void cmdTradeShow(client_t* myClient)
 void cmdDraft(client_t* myClient)
 {
 	int msg, auxID;
-	printf("Comando Draft\n");
 	rcvMsg(myClient->channel, (void*)&auxID, sizeof(int));
 	if(auxID>=0 && auxID<lCant && leagues[auxID]->draft!=NULL)
 	{
@@ -140,6 +139,7 @@ void cmdDraft(client_t* myClient)
 				leagues[auxID]->draft->sem[team->ID]=sem_open(semName, O_RDWR|O_CREAT, 0666, 0);
 				msg=DRAFT_WAIT;
 				sndMsg(myClient->channel, (void*)&msg, sizeof(int));
+				queueStr(printQueue,BLUE"User %s joined draft\n"WHITE,myClient->user->name);
 				if(controlDraft(leagues[auxID]->draft))
 				{
 					pthread_t draftThr;
@@ -158,7 +158,6 @@ void cmdDraft(client_t* myClient)
 			}
 			
 		}
-		printf("Draft cmd ended\n");
 	}
 	else
 	{
@@ -169,8 +168,6 @@ void cmdDraft(client_t* myClient)
 
 void putIntoDraft(client_t* myClient)
 {
-	printf("PutIntoDraft\n");
-
 	int msg;
 	msg=DRAFT_WAIT;
 	sndMsg(myClient->channel, (void*)&msg, sizeof(int));
@@ -183,7 +180,6 @@ void putIntoDraft(client_t* myClient)
 
 	if(myDraft->turn==getTeamByClient(myDraft->league, myClient)->ID&&myDraft->sent==0)
 	{		//ES TU TURNO
-		printf("sent\n");
 		msg=YOUR_TURN;
 		sndMsg(myClient->channel,(void*)&msg, sizeof(int));
 		sendAllSportists(myDraft->league,  myClient->channel, SEND_SPORTIST);
@@ -194,13 +190,13 @@ void putIntoDraft(client_t* myClient)
 	myDraft->clients[team->ID]=myClient;
 	char semName[20];
 	sprintf(semName,"/semDraft%d_Cli%d",myDraft->league->ID, myClient->ID);
-	myDraft->sem[team->ID]=sem_open(semName, O_RDWR|O_CREAT, 0666, 0);;
+	myDraft->sem[team->ID]=sem_open(semName, O_RDWR|O_CREAT, 0666, 0);
+	queueStr(printQueue,BLUE"User %s rejoined draft\n"WHITE,myClient->user->name);
 	sem_wait(myDraft->sem[team->ID]);
 	/*while(myDraft->clients[team->ID]!=NULL)
 	{
 		//mientras siga el draft espera;
 	}*/
-	printf("Quit CA %d\n", myClient->ID);
 }
 
 void cmdMakeTrade(client_t* myClient)
