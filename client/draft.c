@@ -62,7 +62,7 @@ int main(int argc, char** args)
 	  		  	rcvMsg(channel,(void*)&end, sizeof(double));
 	  			start=time(NULL);
 	  			//printf("%f tiempo \n", end);
-	  			pthread_create(&sportThrd, NULL, spChooser, channels);
+	  			pthread_create(&sportThrd, NULL, spChooser, channel);
 	  			while(diff<=end && !flag)
 				{
 					now=time(NULL);
