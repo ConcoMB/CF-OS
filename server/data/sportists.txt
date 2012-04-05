@@ -15,7 +15,7 @@ Tryndamere
 Jax 
 Karthus
 Kayle 
-Lee Sin 
+Lee-Sin 
 Leona 
 Lux 
 Malphite 
@@ -29,4 +29,4 @@ Olaf
 Orianna 
 Pantheon 
 Renekton 
-Ryze 
+Ryze

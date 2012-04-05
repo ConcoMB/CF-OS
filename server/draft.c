@@ -38,7 +38,7 @@ void * draftAttendant(void* arg1)
 	draft->turn=0;
 	draft->flag=0;
 	char semName[15];
-	sprintf(semName,"/semDraft%d",draft->league);
+	sprintf(semName,"/semDraft%d",draft->league->ID);
 	draft->chooseSem=sem_open(semName, O_RDWR|O_CREAT, 0666, 0);
 	//draftBegin(draft);
 	for(i=0; i< draft->league->tMax; i++)

@@ -18,7 +18,7 @@ int main(int argc, char** args)
 	pthread_t quitT;
   time_t start, now;
   double diff=0, end;
-  void* channel, *quitChannel;
+  void* channels[2];
   clientID=atoi(args[1]);
   connectClient(clientID,&channel);
   quitChannel=connectChannel(DEFAULTID+1);
@@ -93,10 +93,16 @@ int main(int argc, char** args)
 void* spChooser(void* channel)
 {
 	int msg;
+	char string[10];
 	while(1)
 	{
 		printf(CYAN"Please choose your sportist: type its ID\n"WHITE);	
-		scanf("%d", &msg);
+		scanf("%s", string);
+		if(strcmp(string, "quit")==0)
+		{
+
+		}
+		msg=atoi(string);
 		fflush(stdout);
 		sndMsg(channel, (void*)&msg, sizeof(int));
 		rcvMsg(channel, (void*)&msg, sizeof(int));

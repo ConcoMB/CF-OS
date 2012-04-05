@@ -179,7 +179,8 @@ void putIntoDraft(client_t* myClient)
 	draft_t* myDraft=leagues[myClient->user->draftLeague]->draft;
 
 	if(myDraft->turn==getTeamByClient(myDraft->league, myClient)->ID&&myDraft->sent==0)
-	{		//ES TU TURNO
+	{		
+		//ES TU TURNO
 		msg=YOUR_TURN;
 		sndMsg(myClient->channel,(void*)&msg, sizeof(int));
 		sendAllSportists(myDraft->league,  myClient->channel, SEND_SPORTIST);
@@ -188,7 +189,7 @@ void putIntoDraft(client_t* myClient)
 	}
 	//LO REINSERTO AL VECTOR PARA QUE SIGA DRAFT
 	myDraft->clients[team->ID]=myClient;
-	sem_post(myDraft->chooserSem);
+	sem_post(myDraft->chooseSem);
 	char semName[20];
 	sprintf(semName,"/semDraft%d_Cli%d",myDraft->league->ID, myClient->ID);
 	myDraft->sem[team->ID]=sem_open(semName, O_RDWR|O_CREAT, 0666, 0);

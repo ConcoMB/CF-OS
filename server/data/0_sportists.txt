@@ -15,7 +15,7 @@
 14 0 2 Jax 
 15 0 -1 Karthus
 16 0 -1 Kayle 
-17 0 -1 Lee Sin 
+17 0 -1 Lee-Sin 
 18 0 -1 Leona 
 19 0 -1 Lux 
 20 0 -1 Malphite 
@@ -29,4 +29,4 @@
 28 0 -1 Orianna 
 29 0 -1 Pantheon 
 30 0 -1 Renekton 
-31 0 -1 Ryze 
+31 0 -1 Ryze
