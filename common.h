@@ -2,12 +2,14 @@
 #define __COMMON__
 
 #define DRAFT_TIME 10.0
-#define CANT_SPORTIST 55
+#define CANT_SPORTIST 32
+#define MIN_CANT_TEAM 3
+#define MAX_CANT_TEAM 6
 
 #define SEND_SPORTIST 26
 #define END_SEND_SPORTIST 25
 #define LEAGUE_FULL 27
-#define SPORT_NAME_L 30
+#define SPORT_NAME_L (NAME_LENGTH)
 #define NAME_TAKEN 4
 #define NAME_LENGTH 15
 #define USER_DRAFTING 1010

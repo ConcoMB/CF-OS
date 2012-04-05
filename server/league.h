@@ -4,7 +4,6 @@
 #include "../common.h"
 #include <pthread.h>
 #include <time.h>
-#define USERS_SHM 120
 #define TEAM_SIZE 5
 
 struct league_s;

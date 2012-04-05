@@ -53,7 +53,7 @@ int main(int argc, char** args)
 	{
 		printf("How many teams do you want in your league (3-10)\n");
 		scanf("%d",&cantT);
-	}while(!(cantT<=10 && cantT>=3));
+	}while(!(cantT<=MAX_CANT_LEAGUE && cantT>=MIN_CANT_LEAGUE));
 
 	sndMsg(channel, (void*)&msg, sizeof(int));
 	sndString(channel, lName);
