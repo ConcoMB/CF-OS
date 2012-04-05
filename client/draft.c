@@ -96,18 +96,13 @@ void* spChooser(void* channel)
 	char string[10];
 	while(1)
 	{
-<<<<<<< HEAD
 		printf(CYAN"Please choose your sportist by ID: "WHITE);	
-		scanf("%d", &msg);
-=======
-		printf(CYAN"Please choose your sportist: type its ID\n"WHITE);	
 		scanf("%s", string);
 		if(strcmp(string, "quit")==0)
 		{
 
 		}
 		msg=atoi(string);
->>>>>>> 26a4b189171564d84bb6f67984b92fe21ebd453a
 		fflush(stdout);
 		sndMsg(channel, (void*)&msg, sizeof(int));
 		rcvMsg(channel, (void*)&msg, sizeof(int));
