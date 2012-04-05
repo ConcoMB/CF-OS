@@ -95,7 +95,7 @@ void* spChooser(void* channel)
 	int msg;
 	while(1)
 	{
-		printf(CYAN"Please choose your sportist: type its ID\n"WHITE);	
+		printf(CYAN"Please choose your sportist by ID: "WHITE);	
 		scanf("%d", &msg);
 		fflush(stdout);
 		sndMsg(channel, (void*)&msg, sizeof(int));
