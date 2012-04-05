@@ -2,9 +2,10 @@
 #include <stdio.h>
 #include "../msg.h"
 #include "../common.h"
+#include "../colors.h"
 #include "shell.h"
 
-void shell(int msgID)
+void shell(int msgID, char* username)
 {
 	int command, auxID;
 	char string[20], auxString[10], auxStr2[10], auxStr3[10], idStr[5];
@@ -15,7 +16,7 @@ void shell(int msgID)
 	do
 	{
 		invalid=0;
-		printf("type your command \n");
+		printf(MAGENTA"%s:> "WHITE,username);
 		scanf("%s", string);
 		if(strcmp(string, "quit")==0)
 		{

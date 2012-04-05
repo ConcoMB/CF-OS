@@ -51,9 +51,10 @@ void userLog()
 {
 	int handshake;
 	int loged=0;
+	char name[NAME_LENGTH];
 	while(!loged)
 	{
-		char command[10], name[NAME_LENGTH], password[NAME_LENGTH];
+		char command[10], password[NAME_LENGTH];
 		printf(BLUE"Type 'login' or 'signup': "WHITE);
 		scanf("%s", command);
 		if(strcmp(command, "login")==0)
@@ -112,7 +113,7 @@ void userLog()
 	{
 		rejoinDraft(msgID);
 	}*/
-	shell(msgID);
+	shell(msgID,name);
 }
 
 void rejoinDraft(msgID)

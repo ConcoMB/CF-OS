@@ -5,6 +5,6 @@
 
 extern void* channel;
 
-void shell(int msgID);
+void shell(int msgID, char* username);
 
 #endif
