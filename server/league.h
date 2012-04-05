@@ -4,6 +4,7 @@
 #include "../common.h"
 #include <pthread.h>
 #include <time.h>
+#include <semaphore.h>
 #define USERS_SHM 120
 #define TEAM_SIZE 5
 
@@ -50,6 +51,7 @@ typedef struct
 {
     struct league_s* league;
     client_t ** clients;
+    sem_t** sem;
     int flag;
     int turn;
     int sent;

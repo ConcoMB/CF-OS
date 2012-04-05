@@ -5,6 +5,7 @@
 #include "../common.h"
 #include "league.h"
 #include "display.h"
+#include "../colors.h"
 
 
 int setForcedSportist(league_t* league, team_t* team);
@@ -30,7 +31,7 @@ int sendToClient(client_t* client, int msg)
 
 void * draftAttendant(void* arg1)
 {
-	printf("entre a la funcion draft\n");
+	printf("DRAFT ATTENDANT STARTED\n");
 	draft_t* draft=(draft_t*) arg1;
 	int way=1, step=0, msg, i, leagueSize=draft->league->tMax;
 	draft->diff=0;
@@ -45,6 +46,7 @@ void * draftAttendant(void* arg1)
 	while(step!=leagueSize*TEAM_SIZE)
 	{
 		int i;
+		printf("----- TURN %d ------\n", draft->turn);
 		pthread_t tReader;
 		draft->flag=0;
 		draft->diff=0;
@@ -62,12 +64,12 @@ void * draftAttendant(void* arg1)
 			draft->sent=1;
 			msg=YOUR_TURN;
 			if(draft->clients[draft->turn]!=NULL)
-				printf("le mando tu turno al %d\n", draft->turn);
+				printf("Sending turn\n");
 			sendToClient(draft->clients[draft->turn], msg);
-			printf("le mando los deportistas al %d\n", draft->turn);
+				printf("Sending sportists\n");
 			sendAllSportists(draft->league,  draft->clients[draft->turn]->channel, SEND_SPORTIST);
 			draft->end=DRAFT_TIME;
-			printf("le mando tiempo al %d\n", draft->turn);
+			printf("Sending time\n");
 			sndMsg(draft->clients[draft->turn]->channel, (void*)&(draft->end), sizeof(double));
 		}
 		pthread_create(&tReader, NULL, sportistReader, (void*) draft);
@@ -80,9 +82,14 @@ void * draftAttendant(void* arg1)
 		pthread_cancel(tReader);
 		if(draft->flag!=1) //TIME ELLAPSED
 		{
-			printf("se te paso el tiempo\n");
+			printf("Time Elapsed\n");
 			team_t* team=draft->league->teams[draft->turn];
 			msg=setForcedSportist(draft->league, team);
+			sendToClient(draft->clients[draft->turn], msg);
+		}
+		else
+		{
+			msg=DRAFT_OK;
 			sendToClient(draft->clients[draft->turn], msg);
 		}
 		
@@ -99,11 +106,16 @@ void * draftAttendant(void* arg1)
 		}
 		step++;
 	}
+	printf("DRAFT ENDED\n");
 	msg=END_DRAFT;
 	for(i=0; i<leagueSize; i++)
 	{
-		printf("le mando end al %d\n",i);
+		printf("Sending END_DRAFT to %d\n",i);
 		sendToClient(draft->clients[i], msg);
+		if(draft->sem[i])
+		{
+			sem_post(draft->sem[i]);
+		}
 	}
 	draftEnd(draft);
 	printf("1\n");
@@ -154,7 +166,7 @@ void* sportistReader(void* arg1)
 	int msg;
 	draft_t* draft=(draft_t*) arg1;
 	int id, lID;
-	printf("turno %d\n", draft->turn);
+	printf(BLUE"SReader started\n"WHITE);
 	do
 	{
 		while(draft->clients[draft->turn]==NULL)
@@ -168,12 +180,10 @@ void* sportistReader(void* arg1)
 
 		if(lID==draft->league->ID && id>=0 && id<CANT_SPORTIST && draft->league->sportists[id]->team==NULL)
 		{
-			printf("elije %d\n", id);
+			printf(BLUE"Chosen sportist: %d\n"WHITE, id);
 			draft->flag=1;
 			team_t* team=getTeamByClient(draft->league, draft->clients[draft->turn]);
 			draft->league->sportists[id]->team=team;
-			msg=DRAFT_OK;
-			sendToClient(draft->clients[draft->turn], msg);
 			pthread_exit(0);
 		}
 		else

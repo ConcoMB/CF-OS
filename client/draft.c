@@ -26,6 +26,7 @@ int main(int argc, char** args)
   printf("Entre a draft fork\n");
   sndMsg(channel, (void*)&msg, sizeof(int));
   sndMsg(channel, (void*)&ID, sizeof(int));
+  printf("Sent draft msg\n");
   rcvMsg(channel, (void*)&msg, sizeof(int));
   printf("Recibi mensajes\n");
   pthread_create(&quitT, NULL, quitThread, quitChannel);

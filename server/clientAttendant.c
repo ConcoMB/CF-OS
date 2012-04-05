@@ -93,6 +93,7 @@ void start(client_t* myClient)
 	}	*/
 	while(1)
 	{
+		printf(MAGENTA"Attending %d\n"WHITE,myClient->ID);
 		if(rcvMsg(myClient->channel,(void*)&msg, sizeof(int))<=0)
 		{
 			makeDisconnection(myClient);
@@ -125,12 +126,16 @@ void setNullIfDraft(client_t* myClient)
 	{
 		printf("lo pongo en null\n");
 		client_t ** dClients=leagues[aux]->draft->clients;
+		sem_t ** dSem=leagues[aux]->draft->sem;
 		int i;
 		for(i=0; i<leagues[aux]->tMax; i++)
 		{
 			if(dClients[i]->user->ID==myClient->user->ID)
 			{
 				dClients[i]=NULL;
+				sem_post(dSem[i]);
+				sem_destroy(dSem[i]);
+				dSem[i]=NULL;
 				queueStr(printQueue,"Client %d taken out from Draft\n", myClient->ID);
 				return;
 			}

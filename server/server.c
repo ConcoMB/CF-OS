@@ -113,7 +113,7 @@ void defChannelListener()
 
 void quitDraft(int msg)
 {
-	printf("entre a q d\n");
+	printf("Quit Draft\n");
 	int clientID=(msg-QUIT_DRAFT);
 	printf("qd %d, msg%d, cID%d\n", QUIT_DRAFT, msg, clientID);
 	client_t* clientQ=getClientByID(clientID);
@@ -123,6 +123,9 @@ void quitDraft(int msg)
 	team_t* team = getTeamByClient(myLeague, clientQ);
 	printf("3\n");
 	myLeague->draft->clients[team->ID]=NULL;
+	sem_post(myLeague->draft->sem[team->ID]);
+	sem_destroy(myLeague->draft->sem[team->ID]);
+	myLeague->draft->sem[team->ID]=NULL;
 	printf("4\n");
 }
 
