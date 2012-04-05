@@ -4,6 +4,8 @@
 #include "../common.h"
 #include <pthread.h>
 #include <time.h>
+
+#include <semaphore.h>
 #define TEAM_SIZE 5
 
 struct league_s;
@@ -49,8 +51,10 @@ typedef struct
 {
     struct league_s* league;
     client_t ** clients;
+    sem_t** sem;
     int flag;
     int turn;
+    int sent;
     time_t start, now;
     double diff, end;
 }draft_t;

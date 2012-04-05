@@ -113,17 +113,15 @@ void defChannelListener()
 
 void quitDraft(int msg)
 {
-	printf("entre a q d\n");
 	int clientID=(msg-QUIT_DRAFT);
-	printf("qd %d, msg%d, cID%d\n", QUIT_DRAFT, msg, clientID);
 	client_t* clientQ=getClientByID(clientID);
-	printf("1 dl %d\n", clientQ->user->draftLeague);
 	league_t* myLeague=leagues[clientQ->user->draftLeague];
-	printf("2\n");
 	team_t* team = getTeamByClient(myLeague, clientQ);
-	printf("3\n");
 	myLeague->draft->clients[team->ID]=NULL;
-	printf("4\n");
+	sem_post(myLeague->draft->sem[team->ID]);
+	sem_destroy(myLeague->draft->sem[team->ID]);
+	myLeague->draft->sem[team->ID]=NULL;
+	queueStr(printQueue,RED"Client %d quit Draft\n"WHITE, clientQ->ID);
 }
 
 void newClientAssist()

@@ -134,25 +134,26 @@ void cmdDraft(client_t* myClient)
 				//no quiteo
 				team->user->draftLeague=leagues[auxID]->ID;
 				leagues[auxID]->draft->clients[team->ID]=myClient;
+				char semName[20];
+				sprintf(semName,"/semDraft%d_Cli%d",leagues[auxID]->ID, myClient->ID);
+				leagues[auxID]->draft->sem[team->ID]=sem_open(semName, O_RDWR|O_CREAT, 0666, 0);
 				msg=DRAFT_WAIT;
 				sndMsg(myClient->channel, (void*)&msg, sizeof(int));
+				queueStr(printQueue,BLUE"User %s joined draft\n"WHITE,myClient->user->name);
 				if(controlDraft(leagues[auxID]->draft))
 				{
 					pthread_t draftThr;
 					pthread_create(&draftThr, NULL, draftAttendant, (void*)(leagues[auxID]->draft));
-					pthread_join(draftThr, NULL);
+					//pthread_join(draftThr, NULL);
 				}
-				else
+				sem_wait(leagues[auxID]->draft->sem[team->ID]);
+				/*while(leagues[auxID]->draft->clients[team->ID]!=NULL)
 				{
-					while(leagues[auxID]->draft->clients[team->ID]!=NULL)
-					{
-						//esperar
-					}
-				}
+					//esperar
+				}*/
 			}
 			else 	//YA ESTABA DRAFTEANDO Y SALIO
 			{
-				printf("salio pq dl es %d y flag es %d\n", team->user->draftLeague, leagues[auxID]->draft->flag);
 				putIntoDraft(myClient);
 			}
 			
@@ -167,8 +168,6 @@ void cmdDraft(client_t* myClient)
 
 void putIntoDraft(client_t* myClient)
 {
-	printf("lo pongo al draft\n");
-
 	int msg;
 	msg=DRAFT_WAIT;
 	sndMsg(myClient->channel, (void*)&msg, sizeof(int));
@@ -179,21 +178,25 @@ void putIntoDraft(client_t* myClient)
 
 	draft_t* myDraft=leagues[myClient->user->draftLeague]->draft;
 
-	if(myDraft->turn==getTeamByClient(myDraft->league, myClient)->ID)
-	{
-		//ES TU TURNO
-		sendAllSportists(myDraft->league,  myClient->channel, SEND_SPORTIST);
+	if(myDraft->turn==getTeamByClient(myDraft->league, myClient)->ID&&myDraft->sent==0)
+	{		//ES TU TURNO
 		msg=YOUR_TURN;
 		sndMsg(myClient->channel,(void*)&msg, sizeof(int));
+		sendAllSportists(myDraft->league,  myClient->channel, SEND_SPORTIST);
 		double remain=DRAFT_TIME - myDraft->diff;
 		sndMsg(myClient->channel,(void*)&remain, sizeof(double));
 	}
 	//LO REINSERTO AL VECTOR PARA QUE SIGA DRAFT
-	leagues[myClient->user->draftLeague]->draft->clients[team->ID]=myClient;
-	while(myClient->user->draftLeague!=-1)
+	myDraft->clients[team->ID]=myClient;
+	char semName[20];
+	sprintf(semName,"/semDraft%d_Cli%d",myDraft->league->ID, myClient->ID);
+	myDraft->sem[team->ID]=sem_open(semName, O_RDWR|O_CREAT, 0666, 0);
+	queueStr(printQueue,BLUE"User %s rejoined draft\n"WHITE,myClient->user->name);
+	sem_wait(myDraft->sem[team->ID]);
+	/*while(myDraft->clients[team->ID]!=NULL)
 	{
 		//mientras siga el draft espera;
-	}
+	}*/
 }
 
 void cmdMakeTrade(client_t* myClient)

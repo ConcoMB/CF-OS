@@ -1,4 +1,5 @@
 #include "../common.h"
+#include "../colors.h"
 #include "../msg.h"
 #include <stdio.h>
 #include <pthread.h>
@@ -34,18 +35,18 @@ int main(int argc, char** args)
   }
   if(msg==DRAFT_WAIT)
   {
-  	printf("Waiting for other teams...\n");
+  	printf(BLUE"Waiting for other teams...\n"WHITE);
   	rcvMsg(channel, (void*)&msg, sizeof(int));
   	if(msg==DRAFT_BEGUN)
   	{
-  		printf("Draft has begun\n");
+  		printf(GREEN"Draft has begun\n"WHITE);
 	  	rcvMsg(channel, (void*)&msg, sizeof(int));
 	  	while(msg!=END_DRAFT)
 	  	{
 	  		if(msg==YOUR_TURN)
 	  		{
 	  			diff=0;
-	  			printf("Its your turn to pick!!\n");
+	  			printf(RED"Its your turn to pick!!\n"WHITE);
 	  			sleep(1);
 	  			int i;
 	  			char string[200];
@@ -54,7 +55,7 @@ int main(int argc, char** args)
 	  			{
 		 			rcvMsg(channel, (void*)&msg, sizeof(int));
 		 			rcvString(channel, string);
-		 			printf("sportist: %s", string);
+		 			printf("/t%s", string);
 	  			}
 	  			flag=0;
 	  			pthread_t sportThrd;
@@ -67,23 +68,23 @@ int main(int argc, char** args)
 					now=time(NULL);
 					diff=difftime(now, start);
 				}
-				pthread_join(sportThrd, NULL);
+				//pthread_join(sportThrd, NULL);
 				pthread_cancel(sportThrd);
 				if(!flag) //NO SE ELIGIO
 				{	
 		 			rcvMsg(channel, (void*)&msg, sizeof(int));
-					printf("Time ellapsed, you have a random sportist, ID %d\n",msg);
+					printf(MAGENTA"Time ellapsed, you have a random sportist, ID %d\n"WHITE,msg);
 				}
 				pthread_create(&quitT, NULL, quitThread, quitChannel);
 
 	  		}
 	  		else if(msg==DRAFT_WAIT)
 	  		{
-	  			printf("The other players are picking teams, please wait.\n");
+	  			printf(BLUE"The other players are picking teams, please wait.\n"WHITE);
 	  		}
 	  		rcvMsg(channel, (void*)&msg, sizeof(int));
 	  	}
-	  	printf("Draft ended\n");
+	  	printf(GREEN"Draft ended\n"WHITE);
 	  }
   }
   exit(0);
@@ -94,19 +95,18 @@ void* spChooser(void* channel)
 	int msg;
 	while(1)
 	{
-		printf("Please choose your sportist: type its ID\n");	
+		printf(CYAN"Please choose your sportist: type its ID\n"WHITE);	
 		scanf("%d", &msg);
-		printf("lei %d\n", msg);
 		fflush(stdout);
 		sndMsg(channel, (void*)&msg, sizeof(int));
 		rcvMsg(channel, (void*)&msg, sizeof(int));
 		if(msg==ID_INVALID)
 		{
-			printf("Invalid sportists ID\n");
+			printf(RED"Invalid sportists ID\n"WHITE);
 		}
 		else if(msg==DRAFT_OK)
 		{
-			printf("You now have your desired sportist\n");
+			printf(GREEN"You now have your desired sportist\n"WHITE);
 			flag=1;
 			pthread_exit(0);
 		}
@@ -123,9 +123,7 @@ void * quitThread(void* channel)
 		scanf("%s", string);
 		if(strcmp(string,"quit")==0)
 		{
-			printf("exiting draft\n");
 			msg=QUIT_DRAFT+clientID;
-			printf("%d\n", clientID);
 			sndMsg(channel, (void*)&msg, sizeof(int));
 			exit(0);
 		}
