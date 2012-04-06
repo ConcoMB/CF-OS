@@ -154,6 +154,12 @@ void cmdDraft(client_t* myClient)
 			}
 			else 	//YA ESTABA DRAFTEANDO Y SALIO
 			{
+				int dl= team->user->draftLeague;
+				if(dl<0 || dl>lCant || leagues[dl]->draft==NULL || leagues[dl]->ID!=dl)
+				{
+					msg=ID_INVALID;
+					sndMsg(myClient->channel, (void*)&msg, sizeof(int));
+				}
 				putIntoDraft(myClient);
 			}
 			
