@@ -32,7 +32,6 @@ int sndMsg(void* fd, void* data, int size)
 	{
 		printf("Send Error: errno %d\n", errno);
 	}
-	printf("Sent with id: %i (%d)\n",(int)msg.fromID,i);
 	return i;
 }
 

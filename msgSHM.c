@@ -9,14 +9,7 @@
 #define SIZE 4000
 #define BUFFER_S 200
 
-static shm_t* cChannel(int id);
-static sem_t* initMutex(char* id);
-static void enter(sem_t* sem);
-static void leave(sem_t* sem);
 
-int created=0;
-int mapped=0;
-void* startMem=NULL;
 
 typedef struct
 {
@@ -32,7 +25,14 @@ typedef struct
 } shmDesc_t;
 
 
+shm_t* cChannel(int id);
+sem_t* initMutex(char* id);
+void enter(sem_t* sem);
+void leave(sem_t* sem);
 
+int created=0;
+int mapped=0;
+void* startMem=NULL;
 
 int sndMsg(void* fd, void* data, int size)
 {
@@ -126,7 +126,7 @@ void* connectChannel(int id)
 	return (void*) shmd;
 }
 
-static shm_t* cChannel(int id)
+shm_t* cChannel(int id)
 {
 	//printf("Trying to connect ...");
 	char semName[10];
@@ -212,12 +212,12 @@ void destroyChannel(int id)
 	}
 }
 
-static void enter(sem_t* sem)
+void enter(sem_t* sem)
 {
 	sem_wait(sem);
 }
 
-static void leave(sem_t* sem)
+void leave(sem_t* sem)
 {
 	sem_post(sem);
 }

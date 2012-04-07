@@ -93,7 +93,6 @@ int main(int argc, char** args)
 void* spChooser(void* channel)
 {
 	int msg;
-	char string[10];
 	while(1)
 	{
 		printf(CYAN"Please choose your sportist by ID: "WHITE);	
