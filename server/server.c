@@ -50,11 +50,11 @@ int main()
 	pthread_create(&clThread, NULL, listenClient, NULL);
 	pthread_create(&printThread, NULL, print, NULL);
 	//pthread_create(&saveThread, NULL, save, NULL);
-	pthread_create(&newMatchFilesThread, NULL, newMatchesListener, NULL);
+	//pthread_create(&newMatchFilesThread, NULL, newMatchesListener, NULL);
 	pthread_join(clThread, NULL);
 	pthread_join(printThread, NULL);
 	//pthread_join(saveThread, NULL);
-	pthread_join(newMatchFilesThread, NULL);
+	//pthread_join(newMatchFilesThread, NULL);
 	return 0;
 }
 
@@ -172,6 +172,7 @@ void sighandler(int sig)
     		destroyChannel(client->ID);
     	}
     }
+    printf("\n Destroyed channels\n");
     exit(0);
 }
 

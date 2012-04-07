@@ -55,7 +55,7 @@ int main(int argc, char** args)
 	  			{
 		 			rcvMsg(channel, (void*)&msg, sizeof(int));
 		 			rcvString(channel, string);
-		 			printf("/t%s", string);
+		 			printf("\t%s", string);
 	  			}
 	  			flag=0;
 	  			pthread_t sportThrd;

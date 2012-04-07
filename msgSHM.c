@@ -6,8 +6,8 @@
 #include <stdlib.h>
 #include <errno.h>
 
-#define SIZE 4000
-#define BUFFER_S 200
+#define SIZE 15000
+#define BUFFER_S 800
 
 
 
@@ -36,6 +36,8 @@ void* startMem=NULL;
 
 int sndMsg(void* fd, void* data, int size)
 {
+	printf("Sending...\n");
+	fflush(stdout);
 	int i;
 	shmDesc_t *shmd=(shmDesc_t*)fd;
 	shm_t* shm=shmd->write;
@@ -52,6 +54,7 @@ int sndMsg(void* fd, void* data, int size)
 	}
 	leave(shm->sem);
 	sem_post(shm->changes);
+	printf("sent\n");
 	return size;
 }
 

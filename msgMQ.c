@@ -3,7 +3,7 @@
 #include <errno.h>
 #include <sys/msg.h>
 
-#define MQ_MSGSIZE 5
+#define MSGSIZE 300
 
 typedef struct
 {
@@ -15,7 +15,7 @@ typedef struct
 typedef struct
 {
 	long int fromID;
-	char data[MQ_MSGSIZE];
+	char data[MSGSIZE];
 } msg_t;
 
 int connected=0;
@@ -27,7 +27,7 @@ int sndMsg(void* fd, void* data, int size)
 	msg_t msg;
 	msg.fromID=mq->writeID;
 	strncpy(msg.data, (char*)data, size);
-	i= msgsnd(mq->mqd, (void*)&msg, sizeof(msg_t), 0);
+	i= msgsnd(mq->mqd, (void*)&msg, MSGSIZE, 0);
 	if(i==-1)
 	{
 		printf("Send Error: errno %d\n", errno);
@@ -40,7 +40,7 @@ int rcvMsg(void* fd, void* data, int size)
 	mq_t* mq=(mq_t*) fd;
 	msg_t msg;
 	//printf("Recieving with id: %d...",mq->id);
-	int i= msgrcv(mq->mqd, &msg, (size_t)(sizeof(msg)), mq->readID,0);
+	int i= msgrcv(mq->mqd, &msg, MSGSIZE, mq->readID,0);
 	//printf("%d (errno: %d)\n",i, errno);
 	strncpy((char*)data, msg.data, size);
 	return i;
@@ -94,7 +94,7 @@ int rcvString(void* fd, char* data)
 {
 	mq_t* mq=(mq_t*) fd;
 	msg_t msg;
-	int i=msgrcv(mq->mqd, &msg, (size_t)(sizeof(msg)), mq->readID,0);
+	int i=msgrcv(mq->mqd, &msg, MSGSIZE, mq->readID,0);
 	strcpy((char*)data, msg.data);
 	return i;
 }
@@ -106,7 +106,7 @@ int sndString(void* fd, char* string)
 	msg_t msg;
 	msg.fromID=mq->writeID;
 	strcpy(msg.data, string);
-	i= msgsnd(mq->mqd, (void*)&msg, sizeof(msg_t), 0);
+	i= msgsnd(mq->mqd, (void*)&msg, MSGSIZE, 0);
 	if(i==-1)
 	{
 		printf("Send Error: errno %d\n", errno);
