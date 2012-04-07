@@ -76,6 +76,7 @@ void listTeam(user_t* user, void* writeChannel)
 			sndMsg(writeChannel, (void*) &msg, sizeof(int));
 			sndString(writeChannel, team->name);
 			sndString(writeChannel, team->league->name);
+			sndMsg(writeChannel, (void*) &(team->league->ID), sizeof(int));
 			sndMsg(writeChannel, (void*) &teamID, sizeof(int));
 			sndMsg(writeChannel, (void*) &(team->points), sizeof(int));
 		}

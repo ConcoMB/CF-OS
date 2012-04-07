@@ -14,6 +14,6 @@
 
 void * newMatchesListener();
 
-void updateSportistPoints(int id, int score);
+void updateSportistPoints(int id, int val);
 
 #endif

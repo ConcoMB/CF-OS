@@ -9,7 +9,7 @@ int main(int argc, char** args)
 {
     int msg = SEND_TEAM;
     char teamName[NAME_LENGTH], leagueName[NAME_LENGTH];
-    int teamID,clientID;
+    int teamID,clientID, leagueID;
     void* channel;
 	clientID=atoi(args[1]);
 	connectClient(clientID,&channel);
@@ -19,9 +19,10 @@ int main(int argc, char** args)
     {
 	   rcvString(channel, teamName);
 	   rcvString(channel, leagueName);
+       rcvMsg(channel, (void*)&leagueID, sizeof(int));
        rcvMsg(channel, (void*)&teamID, sizeof(int));
 	   rcvMsg(channel, (void*)&msg, sizeof(int));
-	   printf("You own the team %s (ID %d) in the league %s, you currently have %d points\n", teamName, teamID, leagueName, msg);
+	   printf("You own the team %s (ID %d) in the league %s (ID%d), you currently have %d points\n", teamName, teamID, leagueName, leagueID, msg);
 	   rcvMsg(channel, (void*)&msg, sizeof(int));
     }
 

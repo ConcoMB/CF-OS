@@ -14,58 +14,33 @@ int sendToClient(client_t* client, int msg);
 void draftEnd(draft_t* draft);
 void draftBegin(draft_t* draft);
 void listenQuitters(draft_t* draft);
+void updateInfo(draft_t* draft);
+void clientsWait(draft_t* draft, int leagueSize);
 
 
-int sendToClient(client_t* client, int msg)
-{
-	if(client!=NULL)
-	{
-		return sndMsg(client->channel, (void*)&msg, sizeof(int));
-	}
-	return -1;
-}
+
 
 void * draftAttendant(void* arg1)
 {
 	draft_t* draft=(draft_t*) arg1;
 	queueStr(printQueue,GREEN"Draft Started! (League %s)\n"WHITE,draft->league->name);
-	int way=1, step=0, msg, i, leagueSize=draft->league->tMax;
+	int way=1, step=0, msg, leagueSize=draft->league->tMax;
 	draft->diff=0;
 	draft->turn=0;
 	draft->flag=0;
 	char semName[15];
 	sprintf(semName,"/semDraft%d",draft->league->ID);
 	draft->chooseSem=sem_open(semName, O_RDWR|O_CREAT, 0666, 0);
-	//draftBegin(draft);
-	for(i=0; i< draft->league->tMax; i++)
-	{
-		msg=DRAFT_BEGUN;
-		sendToClient(draft->clients[i], msg);
-	}
+	draftBegin(draft);
+	
 	while(step!=leagueSize*TEAM_SIZE)
 	{
-		int i;
 		pthread_t tReader;
 		draft->flag=0;
 		draft->diff=0;
 		draft->sent=0;
-		msg=DRAFT_WAIT;
-		for(i=0; i<leagueSize; i++)
-		{
-			if(i!=draft->turn)
-			{
-				sendToClient(draft->clients[i], msg);
-			}
-		}
-		if(draft->clients[draft->turn]!=NULL)
-		{
-			draft->sent=1;
-			msg=YOUR_TURN;
-			sendToClient(draft->clients[draft->turn], msg);
-			sendAllSportists(draft->league,  draft->clients[draft->turn]->channel, SEND_SPORTIST);
-			draft->end=DRAFT_TIME;
-			sndMsg(draft->clients[draft->turn]->channel, (void*)&(draft->end), sizeof(double));
-		}
+		clientsWait(draft, leagueSize);
+		updateInfo(draft);
 		pthread_create(&tReader, NULL, sportistReader, (void*) draft);
 		draft->start=time(NULL);
 		while(draft->diff<=DRAFT_TIME && !draft->flag)
@@ -101,15 +76,6 @@ void * draftAttendant(void* arg1)
 		step++;
 	}
 	queueStr(printQueue,GREEN"Draft Ended! (League %s)\n"WHITE,draft->league->name);
-	msg=END_DRAFT;
-	for(i=0; i<leagueSize; i++)
-	{
-		sendToClient(draft->clients[i], msg);
-		if(draft->sem[i])
-		{
-			sem_post(draft->sem[i]);
-		}
-	}
 	draftEnd(draft);
 	draft->league->draft=NULL;
 	free(draft->clients);
@@ -119,20 +85,26 @@ void * draftAttendant(void* arg1)
 
 void draftBegin(draft_t* draft)
 {
-	int i;
-	for(i=0; i<draft->league->tMax; i++)
+	int i, msg;
+	for(i=0; i< draft->league->tMax; i++)
 	{
-		draft->league->teams[i]->user->draftLeague=draft->league->ID;
+		msg=DRAFT_BEGUN;
+		sendToClient(draft->clients[i], msg);
 	}
 }
 
 
 void draftEnd(draft_t* draft)
 {
-	int i;
+	int i, 	msg=END_DRAFT;;
 	for(i=0; i<draft->league->tMax; i++)
 	{
+		sendToClient(draft->clients[i], msg);
 		draft->league->teams[i]->user->draftLeague=-1;
+		if(draft->sem[i])
+		{
+			sem_post(draft->sem[i]);
+		}
 	}
 }
 
@@ -180,4 +152,39 @@ void* sportistReader(void* arg1)
 			sendToClient(draft->clients[draft->turn], msg);
 		}	
 	}while(1);
+}
+
+void updateInfo(draft_t* draft)
+{
+	if(draft->clients[draft->turn]!=NULL)
+	{
+		draft->sent=1;
+		int msg=YOUR_TURN;
+		sendToClient(draft->clients[draft->turn], msg);
+		sendAllSportists(draft->league,  draft->clients[draft->turn]->channel, SEND_SPORTIST);
+		draft->end=DRAFT_TIME;
+		sndMsg(draft->clients[draft->turn]->channel, (void*)&(draft->end), sizeof(double));
+	}
+}
+
+void clientsWait(draft_t* draft, int leagueSize)
+{
+	int i, msg=DRAFT_WAIT;
+	for(i=0; i<leagueSize; i++)
+	{
+		if(i!=draft->turn)
+		{
+			sendToClient(draft->clients[i], msg);
+		}
+	}
+}
+
+
+int sendToClient(client_t* client, int msg)
+{
+	if(client!=NULL)
+	{
+		return sndMsg(client->channel, (void*)&msg, sizeof(int));
+	}
+	return -1;
 }
