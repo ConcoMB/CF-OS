@@ -24,22 +24,22 @@ void shell(int msgID, char* username)
 		}
 		else if(strcmp(string, "listleagues")==0)
 		{
-			path="./listleagues.e";
-			args[0]="listleagues.e";
+			path="./listleagues";
+			args[0]="listleagues";
 			args[1]=idStr;
 			args[2]=NULL;
 		}
 		else if(strcmp(string, "listteams")==0)
 		{
-			path="./listteams.e";
-			args[0]="listteams.e";
+			path="./listteams";
+			args[0]="listteams";
 			args[1]=idStr;
 			args[2]=NULL;
 		}
 		else if(strcmp(string, "listtrades")==0)
 		{
-			path="./listtrades.e";
-			args[0]="listtrades.e";
+			path="./listtrades";
+			args[0]="listtrades";
 			args[1]=idStr;
 			args[2]=NULL;
 		}
@@ -49,8 +49,8 @@ void shell(int msgID, char* username)
 			sprintf(auxString, "%d",auxID );
 			sprintf(auxStr2, "%d", LEAGUE_SHOW);
 			sprintf(auxStr3, "%d", END_LEAGUE_SHOW);
-			path="./ltShow.e";
-			args[0]="ltShow.e";
+			path="./ltShow";
+			args[0]="ltShow";
 			args[1]=idStr;
 			args[2]=auxString;
 			args[3]=auxStr2;
@@ -63,8 +63,8 @@ void shell(int msgID, char* username)
 			sprintf(auxString, "%d",auxID);
 			sprintf(auxStr2, "%d", TEAM_SHOW);
 			sprintf(auxStr3, "%d", END_TEAM_SHOW);
-			path="./ltShow.e";
-			args[0]="ltShow.e";
+			path="./ltShow";
+			args[0]="ltShow";
 			args[1]=idStr;
 			args[2]=auxString;
 			args[3]=auxStr2;
@@ -75,8 +75,8 @@ void shell(int msgID, char* username)
 		{
 			scanf("%d", &auxID);
 			sprintf(auxString, "%d",auxID);
-			path="./tradeShow.e";
-			args[0]="tradeShow.e";
+			path="./tradeShow";
+			args[0]="tradeShow";
 			args[1]=idStr;
 			args[2]=auxString;
 			args[3]=NULL;
@@ -85,8 +85,8 @@ void shell(int msgID, char* username)
 		{
 			scanf("%d", &auxID);
 			sprintf(auxString, "%d",auxID);
-			path="./draft.e";
-			args[0]="draft.e";
+			path="./draft";
+			args[0]="draft";
 			args[1]=idStr;
 			args[2]=auxString;
 			args[3]=NULL;
@@ -96,8 +96,8 @@ void shell(int msgID, char* username)
 		{
 			scanf("%d", &auxID);
 			sprintf(auxString, "%d",auxID);
-			path="./makeTrade.e";
-			args[0]="makeTrade.e";
+			path="./makeTrade";
+			args[0]="makeTrade";
 			args[1]=idStr;
 			args[2]=auxString;
 			args[3]=NULL;
@@ -108,8 +108,8 @@ void shell(int msgID, char* username)
 			sprintf(auxString, "%d",auxID);
 			command=TRADE_WD;
 			sprintf(auxStr2, "%d", command);
-			path="./tradeAW.e";
-			args[0]="tradeAW.e";
+			path="./tradeAW";
+			args[0]="tradeAW";
 			args[1]=idStr;
 			args[2]=auxString;
 			args[3]=auxStr2;
@@ -121,8 +121,8 @@ void shell(int msgID, char* username)
 			sprintf(auxString, "%d",auxID);
 			command=TRADE_YES;
 			sprintf(auxStr2, "%d", command);
-			path="./tradeAW.e";
-			args[0]="tradeAW.e";
+			path="./tradeAW";
+			args[0]="tradeAW";
 			args[1]=idStr;
 			args[2]=auxString;
 			args[3]=auxStr2;
@@ -132,16 +132,16 @@ void shell(int msgID, char* username)
 		{
 			scanf("%d", &auxID);
 			sprintf(auxString, "%d",auxID);
-			path="./tradeNegociate.e";
-			args[0]="tradeNegociate.e";
+			path="./tradeNegociate";
+			args[0]="tradeNegociate";
 			args[1]=idStr;
 			args[2]=auxString;
 			args[3]=NULL;
 		}
 		else if(strcmp(string, "createleague")==0)
 		{
-			path="./makeLeague.e";
-			args[0]="makeLeague.e";
+			path="./makeLeague";
+			args[0]="makeLeague";
 			args[1]=idStr;
 			args[2]=NULL;
 		}
@@ -149,8 +149,8 @@ void shell(int msgID, char* username)
 		{
 			scanf("%d", &auxID);
 			sprintf(auxString, "%d",auxID);
-			path="./joinLeague.e";
-			args[0]="joinLeague.e";
+			path="./joinLeague";
+			args[0]="joinLeague";
 			args[1]=idStr;
 			args[2]=auxString;
 			args[3]=NULL;
