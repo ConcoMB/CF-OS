@@ -8,7 +8,7 @@
 
 
 #define SHM_SIZE 4000
-#define BUFFER_S 200
+#define BUFFER_S 400
 
 typedef struct
 {
@@ -30,6 +30,7 @@ static shm_t* cChannel(int id);
 sem_t* initMutex(char* id);
 int isFull(shm_t* shm);
 
+int cant=0;
 int created=0;
 int mapped=0;
 void* startMem=NULL;
@@ -111,6 +112,8 @@ int rcvMsg(void* fd, void* data, int size)
 
 void createChannel(int id)
 {
+	cant++;
+	printf("voy %d\n", cant);
 	if(!created)
 	{
 		int i;
@@ -138,6 +141,7 @@ void createChannel(int id)
 
 void* connectChannel(int id)
 {
+
 	int writeID;
 	if(id%2==0)
 	{
@@ -157,7 +161,7 @@ static shm_t* cChannel(int id)
 {
 	//printf("Trying to connect ...");
 	char semName[10];
-	shm_t* shm=malloc(sizeof(shm_t));
+	shm_t* shm=malloc(sizeof(shm_t));	
 	if(!mapped)
 	{
 		int fd;
@@ -236,16 +240,49 @@ int sndString(void* fd, char* string)
 
 void disconnect(void* fd)
 {
+	
 	shm_t *shm=(shm_t*)fd;
 	munmap(shm->mem,BUFFER_S);
 	sem_close(shm->sem);
 	sem_close(shm->changes);
+	sem_close(shm->full);
+
 }
 
 void destroyChannel(int id)
 {
-	if(created)
+	char semName[15];
+		cant--;
+	printf("quedan %d\n", cant);
+	
+		printf("tengo id %d\n\n", id);
+	
+	sprintf(semName,"/mutex%d",id);
+	printf("voy a borrar el %s\n", semName);
+	sem_unlink(semName);
+	sprintf(semName,"/mutexCh%d",id);
+		printf("voy a borrar el %s\n", semName);
+
+	sem_unlink(semName);
+	sprintf(semName,"/mutexFull%d",id);
+		printf("voy a borrar el %s\n", semName);
+	sem_unlink(semName);
+	if(id==0)
 	{
+		sprintf(semName,"/mutex%d",1);
+	printf("voy a borrar el %s\n", semName);
+	sem_unlink(semName);
+	sprintf(semName,"/mutexCh%d",1);
+		printf("voy a borrar el %s\n", semName);
+
+	sem_unlink(semName);
+	sprintf(semName,"/mutexFull%d",1);
+		printf("voy a borrar el %s\n", semName);
+	sem_unlink(semName);
+	}
+	if(created && cant==0)
+	{
+		printf("destroy shm\n");
 		shm_unlink("/shm");
 		created=0;
 	}
