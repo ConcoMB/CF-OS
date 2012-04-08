@@ -61,7 +61,6 @@ int main(int argc, char** args)
 	  			pthread_t sportThrd;
 	  		  	rcvMsg(channel,(void*)&end, sizeof(double));
 	  			start=time(NULL);
-	  			printf("%f tiempo \n", end);
 	  			pthread_create(&sportThrd, NULL, spChooser, channel);
 	  			while(diff<=end && !flag)
 				{
@@ -92,10 +91,11 @@ int main(int argc, char** args)
 void* spChooser(void* channel)
 {
 	int msg;
-	while(1)
+	do
 	{
-		printf(CYAN"Please choose your sportist by ID: "WHITE);	
-		scanf("%d", &msg);
+		printf(CYAN"\nPlease choose your sportist by ID:"WHITE);	
+		scanf("%d",&msg);
+		sleep(1);
 		sndMsg(channel, (void*)&msg, sizeof(int));
 		rcvMsg(channel, (void*)&msg, sizeof(int));
 		if(msg==ID_INVALID)
@@ -104,12 +104,11 @@ void* spChooser(void* channel)
 		}
 		else if(msg==DRAFT_OK)
 		{
-			printf(GREEN"You now have your desired sportist\n"WHITE);
+			printf(GREEN"\nYou now have your desired sportist\n"WHITE);
 			flag=1;
 			pthread_exit(0);
 		}
-		sleep(1);
-	}
+	}while(1);
 	return NULL;
 }
 

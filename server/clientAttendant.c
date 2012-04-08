@@ -82,15 +82,6 @@ void logClient(client_t* myClient)
 void start(client_t* myClient)
 {
 	int msg;
-	/*if(myClient->user->draftLeague!=-1)
-	{
-		putIntoDraft(myClient);
-	}
-	else
-	{
-		msg=!USER_DRAFTING;
-		sndMsg(myClient->channel, (void*)&msg, sizeof(int));
-	}	*/
 	while(1)
 	{
 		queueStr(printQueue,MAGENTA"Attending %d\n"WHITE,myClient->ID);
@@ -115,6 +106,7 @@ void makeDisconnection(client_t* myClient)
 	setNullIfDraft(myClient);
 	disconnect(myClient->channel);
 	destroyChannel(myClient->ID);
+	destroyChannel(myClient->ID+1);
 	queueStr(printQueue,RED"Client %d disconnected\n"WHITE,myClient->ID);
 	pthread_cancel(myClient->keepAliveThread);
 	delete(clients, myClient);
@@ -129,23 +121,17 @@ void setNullIfDraft(client_t* myClient)
 	{
 		client_t ** dClients=leagues[aux]->draft->clients;
 		sem_t ** dSem=leagues[aux]->draft->sem;
-		int i;
-		for(i=0; i<leagues[aux]->tMax; i++)
+		team_t * team = getTeamByClient(leagues[aux], myClient);
+		dClients[team->ID]=NULL;
+		sem_post(dSem[team->ID]);
+		sem_destroy(dSem[team->ID]);
+		dSem[team->ID]=NULL;
+		if(leagues[aux]->draft->turn==team->ID)
 		{
-			if(dClients[i]->user->ID==myClient->user->ID)
-			{
-				dClients[i]=NULL;
-				sem_post(dSem[i]);
-				sem_destroy(dSem[i]);
-				dSem[i]=NULL;
-				if(leagues[aux]->draft->turn==i)
-				{
-					leagues[aux]->draft->sent=0;
-				}
-				queueStr(printQueue,RED"Client %d taken out from Draft\n"WHITE, myClient->ID);
-				return;
-			}
+			leagues[aux]->draft->sent=0;
 		}
+		queueStr(printQueue,RED"Client %d taken out from Draft\n"WHITE, myClient->ID);
+		return;
 	}
 }
 

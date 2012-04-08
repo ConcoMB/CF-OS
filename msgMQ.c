@@ -18,7 +18,7 @@ typedef struct
 	char data[MSGSIZE];
 } msg_t;
 
-int connected=0;
+int connected=0, cant=0;
 
 int sndMsg(void* fd, void* data, int size)
 {
@@ -49,6 +49,7 @@ int rcvMsg(void* fd, void* data, int size)
 
 void createChannel(int id)
 {
+	cant++;
 	int key;
 	key=ftok("../msg.h",0);
 	if(msgget(key, IPC_CREAT|0666)==-1)
@@ -122,7 +123,8 @@ void disconnect(void* fd)
 
 void destroyChannel(int id)
 {
-	if(connected)
+	cant--;
+	if(connected && cant==0)
 	{
 		msgctl(connected, IPC_RMID, NULL);
 		connected=0;

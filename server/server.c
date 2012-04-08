@@ -154,6 +154,8 @@ void clientAlive(int msg)
 
 void clientDisconnect(int msg)
 {
+		printf("entre al Client disc \n");
+
 	int clientID=-msg+CLIENT_DISCONNECT;
 	client_t* client;
 	client=getClientByID(clientID);
@@ -170,8 +172,11 @@ void sighandler(int sig)
     	if(client->channel !=NULL){
     		disconnect(client->channel);
     		destroyChannel(client->ID);
+    		destroyChannel(client->ID+1);
     	}
     }
+    char* semN="semPrint";
+    sem_unlink(semN);
     printf("\n Destroyed channels\n");
     exit(0);
 }

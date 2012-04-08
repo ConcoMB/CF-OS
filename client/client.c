@@ -14,7 +14,6 @@
 void sighandler(int sig);
 void userLog();
 void start();
-void rejoinDraft(int msgID);
 void makeDefConnection();
 void* channel;
 void* defChannel;
@@ -110,35 +109,9 @@ void userLog()
 			printf(RED"Invalid command\n"WHITE);
 		}
 	}
-	/*rcvMsg(channel, (void*)&handshake, sizeof(int));
-	if(handshake==USER_DRAFTING)
-	{
-		rejoinDraft(msgID);
-	}*/
+	
 	shell(msgID,name);
 }
-
-void rejoinDraft(msgID)
-{
-	int aux;
-	char auxString[NAME_LENGTH], idStr[5], *args[4], *path;
-	rcvMsg(channel, (void*)&aux, sizeof(int));
-	sprintf(auxString, "%d",aux);
-	sprintf(idStr,"%d",msgID);
-	path="./draft.e";
-	args[0]="draft.e";
-	args[1]=idStr;
-	args[2]=auxString;
-	args[3]=NULL;
-	if(fork())
-	{
-		wait((int*) 0);
-	}
-	else
-	{
-		execv(path, args);
-	}
-}	
 
 void sighandler(int sig)
 {

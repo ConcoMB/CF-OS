@@ -7,7 +7,6 @@
 #include "display.h"
 #include "../colors.h"
 
-
 int setForcedSportist(league_t* league, team_t* team);
 void* sportistReader(void* arg1);
 int sendToClient(client_t* client, int msg);
@@ -80,8 +79,12 @@ void * draftAttendant(void* arg1)
 	draft->league->draft=NULL;
 	free(draft->clients);
 	free(draft);
+	printf("voy a borrar\n");
+	sem_unlink(semName);	
 	pthread_exit(0);
+
 }
+
 
 void draftBegin(draft_t* draft)
 {
