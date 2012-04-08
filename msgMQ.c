@@ -42,7 +42,6 @@ int rcvMsg(void* fd, void* data, int size)
 	//printf("Recieving with id: %d...",mq->id);
 	int i= msgrcv(mq->mqd, &msg,(size_t)sizeof(msg.data), mq->readID,0);
 	//printf("%d (errno: %d)\n",i, errno);
-	//strncpy((char*)data, msg.data, size);
 	memcpy(data,msg.data,size);
 	//printf("Recieved %d\n",*(int*)data);
 	return i;

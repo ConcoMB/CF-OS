@@ -8,7 +8,7 @@ void * newMatchesListener()
 		DIR * dir = opendir("./matches");
 		if (dir == NULL) 
 		{
-			printf("Falta el directorio matches\n");
+			queueStr(printQueue,RED"Directory 'matches' not found\n"WHITE);
 			exit(0);
 		} 
 		else

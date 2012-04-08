@@ -94,7 +94,7 @@ void saveTrade(FILE* tradeFile, trade_t* trade){
 
 void saveSportist(FILE* sportistFile, sportist_t* sportist){
 	int teamID;
-	if(sportist->team==NULL)
+	if(sportist->team==NULL||sportist->team->league->draft!=NULL)
 	{
 		teamID=-1;
 	}

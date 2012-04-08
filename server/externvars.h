@@ -13,5 +13,6 @@ extern int nextUserID;
 extern int nextLeagueID;
 extern int nextClientID;
 extern strQueue_t printQueue;
+extern sem_t* saveSem;
 
 #endif
