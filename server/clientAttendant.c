@@ -91,7 +91,7 @@ void start(client_t* myClient)
 		}
 		if(msg==LOG_OUT)
 			return;
-		printf("message: %d (%d)\n",msg, myClient->ID);
+		queueStr(printQueue,WHITE"Message: %d (Client %d)\n",msg, myClient->ID);
 		if(msg>=CMD_START)
 		{
 			cmds[msg-CMD_START](myClient);

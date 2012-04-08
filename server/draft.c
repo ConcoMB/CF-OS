@@ -79,7 +79,6 @@ void * draftAttendant(void* arg1)
 	draft->league->draft=NULL;
 	free(draft->clients);
 	free(draft);
-	printf("voy a borrar\n");
 	sem_unlink(semName);	
 	pthread_exit(0);
 

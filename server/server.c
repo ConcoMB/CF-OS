@@ -31,6 +31,7 @@ void clientAlive(int msg);
 void clientDisconnect(int msg);
 league_t** leagues;
 int lCant, uCant;
+sem_t* saveSem;
 user_t** users;
 listADT clients;
 strQueue_t printQueue;
@@ -40,6 +41,7 @@ void* channel;
 
 int main()
 {
+	saveSem=sem_open("/mutexSave", O_RDWR|O_CREAT, 0666, 1);
 	signal(SIGABRT, sighandler);
 	signal(SIGTERM, sighandler);
 	signal(SIGINT, sighandler);
@@ -49,12 +51,12 @@ int main()
 	pthread_t saveThread,clThread,newMatchFilesThread, printThread;
 	pthread_create(&clThread, NULL, listenClient, NULL);
 	pthread_create(&printThread, NULL, print, NULL);
-	//pthread_create(&saveThread, NULL, save, NULL);
-	//pthread_create(&newMatchFilesThread, NULL, newMatchesListener, NULL);
+	pthread_create(&saveThread, NULL, save, NULL);
+	pthread_create(&newMatchFilesThread, NULL, newMatchesListener, NULL);
 	pthread_join(clThread, NULL);
 	pthread_join(printThread, NULL);
-	//pthread_join(saveThread, NULL);
-	//pthread_join(newMatchFilesThread, NULL);
+	pthread_join(saveThread, NULL);
+	pthread_join(newMatchFilesThread, NULL);
 	return 0;
 }
 
@@ -62,9 +64,12 @@ void * save()
 {
 	while(1)
 	{
+		sleep(60);
+		sem_wait(saveSem);
+		queueStr(printQueue,"Saving...\n");
 		saveAll();
 		queueStr(printQueue,"Auto saved\n");
-		sleep(30);
+		sem_post(saveSem);
 	}
 }
 
@@ -154,8 +159,6 @@ void clientAlive(int msg)
 
 void clientDisconnect(int msg)
 {
-		printf("entre al Client disc \n");
-
 	int clientID=-msg+CLIENT_DISCONNECT;
 	client_t* client;
 	client=getClientByID(clientID);
@@ -164,6 +167,7 @@ void clientDisconnect(int msg)
 
 void sighandler(int sig)
 {
+	sem_wait(saveSem);
     client_t * client;
     reset(clients);
     disconnect(channel);
@@ -175,9 +179,9 @@ void sighandler(int sig)
     		destroyChannel(client->ID+1);
     	}
     }
-    char* semN="semPrint";
-    sem_unlink(semN);
-    printf("\n Destroyed channels\n");
+    sem_unlink("/semPrint");
+    sem_unlink("/mutexSave");
+    fprintf(stderr,RED"\nDestroyed channels\n"WHITE);
     exit(0);
 }
 

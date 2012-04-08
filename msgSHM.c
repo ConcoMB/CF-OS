@@ -225,7 +225,6 @@ int rcvString(void* fd, char* data)
 		i++;
 	}
 	sem_post(shm->sem);
-	printf("string: %d\n",i);
 	return i;
 }
 

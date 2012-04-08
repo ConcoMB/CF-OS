@@ -9,6 +9,8 @@
 #include <dirent.h>
 #include <pthread.h>
 #include "files.h"
+#include "../colors.h"
+#include "strQueue.h"
 #include "externvars.h"
 
 

@@ -190,7 +190,6 @@ void putIntoDraft(client_t* myClient)
 		//ES TU TURNO
 		msg=YOUR_TURN;
 		sndMsg(myClient->channel,(void*)&msg, sizeof(int));
-		printf("Mande YOUR_TURN\n");
 		sendAllSportists(myDraft->league,  myClient->channel, SEND_SPORTIST);
 		double remain=DRAFT_TIME - myDraft->diff;
 		sndMsg(myClient->channel,(void*)&remain, sizeof(double));

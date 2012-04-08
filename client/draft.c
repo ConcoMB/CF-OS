@@ -95,7 +95,6 @@ void* spChooser(void* channel)
 	{
 		printf(CYAN"\nPlease choose your sportist by ID:"WHITE);	
 		scanf("%d",&msg);
-		sleep(1);
 		sndMsg(channel, (void*)&msg, sizeof(int));
 		rcvMsg(channel, (void*)&msg, sizeof(int));
 		if(msg==ID_INVALID)
