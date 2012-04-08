@@ -45,7 +45,7 @@ int sndMsg(void* fd, void* data, int size)
 	{
 		if(isFull(shm))
 		{
-			sem_wait(shm->sem);
+			sem_post(shm->sem);
 			//printf("espero\n");
 			sem_wait(shm->full);
 			//printf("volvi\n");
