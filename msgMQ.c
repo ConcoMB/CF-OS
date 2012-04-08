@@ -51,7 +51,6 @@ int rcvMsg(void* fd, void* data, int size)
 void createChannel(int id)
 {
 	cant++;
-	printf("coyd %d\n",cant);
 	int key;
 	key=ftok("../msg.h",0);
 	if(msgget(key, IPC_CREAT|0666)==-1)
@@ -126,7 +125,6 @@ void disconnect(void* fd)
 void destroyChannel(int id)
 {
 	cant--;
-	printf("quedan %d\n", cant);
 	if(connected && cant==0)
 	{
 		msgctl(connected, IPC_RMID, NULL);

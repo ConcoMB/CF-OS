@@ -154,6 +154,8 @@ void clientAlive(int msg)
 
 void clientDisconnect(int msg)
 {
+		printf("entre al Client disc \n");
+
 	int clientID=-msg+CLIENT_DISCONNECT;
 	client_t* client;
 	client=getClientByID(clientID);

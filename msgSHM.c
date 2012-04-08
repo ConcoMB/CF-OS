@@ -6,15 +6,9 @@
 #include <stdlib.h>
 #include <errno.h>
 
-<<<<<<< HEAD
+
 #define SHM_SIZE 4000
-#define BUFFER_S 800
-
-
-=======
-#define SIZE 4000
 #define BUFFER_S 200
->>>>>>> b36069b9488b8e1b48229a7585410cbefc11505d
 
 typedef struct
 {
@@ -31,15 +25,10 @@ typedef struct
 } shmDesc_t;
 
 
-<<<<<<< HEAD
-shm_t* cChannel(int id);
-=======
+
 static shm_t* cChannel(int id);
 sem_t* initMutex(char* id);
 int isFull(shm_t* shm);
-void enter(sem_t* sem);
-void leave(sem_t* sem);
->>>>>>> b36069b9488b8e1b48229a7585410cbefc11505d
 
 int created=0;
 int mapped=0;
@@ -47,10 +36,6 @@ void* startMem=NULL;
 
 int sndMsg(void* fd, void* data, int size)
 {
-<<<<<<< HEAD
-	fflush(stdout);
-=======
->>>>>>> b36069b9488b8e1b48229a7585410cbefc11505d
 	int i;
 	shmDesc_t *shmd=(shmDesc_t*)fd;
 	shm_t* shm=shmd->write;
@@ -60,11 +45,11 @@ int sndMsg(void* fd, void* data, int size)
 	{
 		if(isFull(shm))
 		{
-			leave(shm->sem);
+			sem_wait(shm->sem);
 			//printf("espero\n");
 			sem_wait(shm->full);
 			//printf("volvi\n");
-			enter(shm->sem);
+			sem_wait(shm->sem);
 		}
 		((char*)shm->mem)[*head]=((char*)data)[i];
 		(*head)++;
@@ -118,12 +103,8 @@ int rcvMsg(void* fd, void* data, int size)
 			*tail=sizeof(int)*2;
 		}
 	}
-<<<<<<< HEAD
 	sem_post(shm->sem);
-=======
-	leave(shm->sem);
 	//printf("%d\n",*(int*)data);
->>>>>>> b36069b9488b8e1b48229a7585410cbefc11505d
 	//sleep(1);
 	return i;
 }
@@ -237,7 +218,6 @@ int rcvString(void* fd, char* data)
 			sem_post(shm->sem);
 			return i+1;
 		}
-<<<<<<< HEAD
 		if(*tail>=SHM_SIZE)
 		{
 			*tail=sizeof(int)*2;
@@ -245,12 +225,7 @@ int rcvString(void* fd, char* data)
 		i++;
 	}
 	sem_post(shm->sem);
-=======
-		i++;
-	}
-	leave(shm->sem);
 	printf("string: %d\n",i);
->>>>>>> b36069b9488b8e1b48229a7585410cbefc11505d
 	return i;
 }
 
