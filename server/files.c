@@ -76,6 +76,7 @@ void saveLeague(FILE* leagueFile, league_t* league){
 	if(league->password[0]=='\0')
 	{
 		pass[0]='0';
+		pass[1]='\0';
 	}
 	else
 	{

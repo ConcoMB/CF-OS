@@ -125,16 +125,19 @@ void setNullIfDraft(client_t* myClient)
 		client_t ** dClients=leagues[aux]->draft->clients;
 		sem_t ** dSem=leagues[aux]->draft->sem;
 		team_t * team = getTeamByClient(leagues[aux], myClient);
-		dClients[team->ID]=NULL;
-		sem_post(dSem[team->ID]);
-		sem_destroy(dSem[team->ID]);
-		dSem[team->ID]=NULL;
-		if(leagues[aux]->draft->turn==team->ID)
+		if(dClients[team->ID]!=NULL)
 		{
-			leagues[aux]->draft->sent=0;
+			dClients[team->ID]=NULL;
+			sem_post(dSem[team->ID]);
+			sem_destroy(dSem[team->ID]);
+			dSem[team->ID]=NULL;
+			if(leagues[aux]->draft->turn==team->ID)
+			{
+				leagues[aux]->draft->sent=0;
+			}
+			queueStr(printQueue,RED"Client %d taken out from Draft\n"WHITE, myClient->ID);
+			return;
 		}
-		queueStr(printQueue,RED"Client %d taken out from Draft\n"WHITE, myClient->ID);
-		return;
 	}
 }
 
