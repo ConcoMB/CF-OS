@@ -125,9 +125,9 @@ void * save()
 {
 	while(1)
 	{
+		sleep(60);
 		saveAll();
-		queueStr(printQueue,"Auto saved\n");
-		sleep(30);
+		queueStr(printQueue,"Auto saved\n");	
 	}
 	return NULL;
 }
@@ -144,8 +144,11 @@ void * listenClient()
 
 void* print()
 {
+	char* tmp;
 	while(1)
 	{
-		printf("%s",dequeueStr(printQueue));
+		tmp=dequeueStr(printQueue);
+		printf("%s",tmp);
+		free(tmp);
 	}
 }

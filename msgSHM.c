@@ -252,36 +252,25 @@ void destroyChannel(int id)
 {
 	char semName[15];
 		cant--;
-	printf("quedan %d\n", cant);
-	
-		printf("tengo id %d\n\n", id);
 	
 	sprintf(semName,"/mutex%d",id);
-	printf("voy a borrar el %s\n", semName);
 	sem_unlink(semName);
 	sprintf(semName,"/mutexCh%d",id);
-		printf("voy a borrar el %s\n", semName);
-
 	sem_unlink(semName);
 	sprintf(semName,"/mutexFull%d",id);
-		printf("voy a borrar el %s\n", semName);
 	sem_unlink(semName);
 	if(id==0)
 	{
 		sprintf(semName,"/mutex%d",1);
-	printf("voy a borrar el %s\n", semName);
-	sem_unlink(semName);
-	sprintf(semName,"/mutexCh%d",1);
-		printf("voy a borrar el %s\n", semName);
+		sem_unlink(semName);
+		sprintf(semName,"/mutexCh%d",1);
 
-	sem_unlink(semName);
-	sprintf(semName,"/mutexFull%d",1);
-		printf("voy a borrar el %s\n", semName);
-	sem_unlink(semName);
+		sem_unlink(semName);
+		sprintf(semName,"/mutexFull%d",1);
+		sem_unlink(semName);
 	}
 	if(created && cant==0)
 	{
-		printf("destroy shm\n");
 		shm_unlink("/shm");
 		created=0;
 	}
