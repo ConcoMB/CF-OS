@@ -6,15 +6,14 @@
 #include <stdlib.h>
 #include <errno.h>
 
-#define SIZE 15000
-#define BUFFER_S 800
-
-
+#define SIZE 4000
+#define BUFFER_S 200
 
 typedef struct
 {
 	sem_t* sem; //semaforo para leer/escribir
 	sem_t* changes; //semaforo para indicar cambios
+	sem_t* full;
 	void* mem;
 } shm_t;
 
@@ -25,8 +24,9 @@ typedef struct
 } shmDesc_t;
 
 
-shm_t* cChannel(int id);
+static shm_t* cChannel(int id);
 sem_t* initMutex(char* id);
+int isFull(shm_t* shm);
 void enter(sem_t* sem);
 void leave(sem_t* sem);
 
@@ -36,8 +36,6 @@ void* startMem=NULL;
 
 int sndMsg(void* fd, void* data, int size)
 {
-	printf("Sending...\n");
-	fflush(stdout);
 	int i;
 	shmDesc_t *shmd=(shmDesc_t*)fd;
 	shm_t* shm=shmd->write;
@@ -45,6 +43,14 @@ int sndMsg(void* fd, void* data, int size)
 	int *head=(int*)shm->mem;
 	for(i=0;i<size;i++)
 	{
+		if(isFull(shm))
+		{
+			leave(shm->sem);
+			//printf("espero\n");
+			sem_wait(shm->full);
+			//printf("volvi\n");
+			enter(shm->sem);
+		}
 		((char*)shm->mem)[*head]=((char*)data)[i];
 		(*head)++;
 		if(*head>=BUFFER_S)
@@ -54,8 +60,20 @@ int sndMsg(void* fd, void* data, int size)
 	}
 	leave(shm->sem);
 	sem_post(shm->changes);
-	printf("sent\n");
 	return size;
+}
+
+int isFull(shm_t* shm)
+{
+	int *head=(int*)shm->mem;
+	int *tail=(int*)(shm->mem+sizeof(int));
+	//printf("h %d t %d\n",*head,*tail);
+	if( *head+1==*tail|| (*tail==sizeof(int)*2 && *head==BUFFER_S-1) )
+	{
+		//printf("FULL\n");
+		return 1;
+	}
+	return 0;
 }
 
 int rcvMsg(void* fd, void* data, int size)
@@ -74,6 +92,11 @@ int rcvMsg(void* fd, void* data, int size)
 			break;
 		}
 		((char*)data)[i]=((char*)shm->mem)[*tail];
+		if(isFull(shm))
+		{
+			//printf("Estaba full\n");
+			sem_post(shm->full);
+		}
 		(*tail)++;
 		if(*tail>=BUFFER_S)
 		{
@@ -81,6 +104,7 @@ int rcvMsg(void* fd, void* data, int size)
 		}
 	}
 	leave(shm->sem);
+	//printf("%d\n",*(int*)data);
 	//sleep(1);
 	return i;
 }
@@ -129,7 +153,7 @@ void* connectChannel(int id)
 	return (void*) shmd;
 }
 
-shm_t* cChannel(int id)
+static shm_t* cChannel(int id)
 {
 	//printf("Trying to connect ...");
 	char semName[10];
@@ -146,6 +170,8 @@ shm_t* cChannel(int id)
 	shm->sem=sem_open(semName, O_RDWR|O_CREAT, 0666, 1);
 	sprintf(semName,"/mutexCh%d",id);
 	shm->changes=sem_open(semName, O_RDWR|O_CREAT, 0666, 0);
+	sprintf(semName,"/mutexFull%d",id);
+	shm->full=sem_open(semName, O_RDWR|O_CREAT, 0666, 0);
 	shm->mem=startMem+id*BUFFER_S;
 	if(startMem==MAP_FAILED)
 	{
@@ -177,19 +203,25 @@ int rcvString(void* fd, char* data)
 	while(*head!=*tail)
 	{
 		data[i]=((char*)shm->mem)[*tail];
+		if(isFull(shm))
+		{
+			//printf("Estaba sfull\n");
+			sem_post(shm->full);
+		}
 		(*tail)++;
+		if(*tail>=BUFFER_S)
+		{
+			*tail=sizeof(int)*2;
+		}
 		if(data[i]==0)
 		{
 			leave(shm->sem);
 			return i+1;
 		}
-		if(*tail>=SIZE)
-		{
-			*tail=sizeof(int)*2;
-		}
 		i++;
 	}
 	leave(shm->sem);
+	printf("string: %d\n",i);
 	return i;
 }
 

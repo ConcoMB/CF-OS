@@ -27,11 +27,12 @@ int sndMsg(void* fd, void* data, int size)
 	msg_t msg;
 	msg.fromID=mq->writeID;
 	strncpy(msg.data, (char*)data, size);
-	i= msgsnd(mq->mqd, (void*)&msg, MSGSIZE, 0);
+	i= msgsnd(mq->mqd, (void*)&msg, (size_t)sizeof(msg.data), 0);
 	if(i==-1)
 	{
 		printf("Send Error: errno %d\n", errno);
 	}
+	//printf("sent\n");
 	return i;
 }
 
@@ -40,9 +41,10 @@ int rcvMsg(void* fd, void* data, int size)
 	mq_t* mq=(mq_t*) fd;
 	msg_t msg;
 	//printf("Recieving with id: %d...",mq->id);
-	int i= msgrcv(mq->mqd, &msg, MSGSIZE, mq->readID,0);
+	int i= msgrcv(mq->mqd, &msg,(size_t)sizeof(msg.data), mq->readID,0);
 	//printf("%d (errno: %d)\n",i, errno);
 	strncpy((char*)data, msg.data, size);
+	//printf("Recieved %d\n",*(int*)data);
 	return i;
 }
 
@@ -94,7 +96,7 @@ int rcvString(void* fd, char* data)
 {
 	mq_t* mq=(mq_t*) fd;
 	msg_t msg;
-	int i=msgrcv(mq->mqd, &msg, MSGSIZE, mq->readID,0);
+	int i=msgrcv(mq->mqd, &msg, (size_t)sizeof(msg.data), mq->readID,0);
 	strcpy((char*)data, msg.data);
 	return i;
 }
@@ -106,7 +108,7 @@ int sndString(void* fd, char* string)
 	msg_t msg;
 	msg.fromID=mq->writeID;
 	strcpy(msg.data, string);
-	i= msgsnd(mq->mqd, (void*)&msg, MSGSIZE, 0);
+	i= msgsnd(mq->mqd, (void*)&msg, (size_t)sizeof(msg.data), 0);
 	if(i==-1)
 	{
 		printf("Send Error: errno %d\n", errno);

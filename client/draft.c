@@ -109,6 +109,7 @@ void* spChooser(void* channel)
 			flag=1;
 			pthread_exit(0);
 		}
+		sleep(1);
 	}
 	return NULL;
 }
