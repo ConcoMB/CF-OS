@@ -1,23 +1,4 @@
-
-#include <pthread.h>
-#include <time.h>
-#include "getter.h"
-#include "../common.h"
-#include "league.h"
-#include "display.h"
-#include "../colors.h"
-
-int setForcedSportist(league_t* league, team_t* team);
-void* sportistReader(void* arg1);
-int sendToClient(client_t* client, int msg);
-void draftEnd(draft_t* draft);
-void draftBegin(draft_t* draft);
-void listenQuitters(draft_t* draft);
-void updateInfo(draft_t* draft);
-void clientsWait(draft_t* draft, int leagueSize);
-
-
-
+#include "draft.h"
 
 void * draftAttendant(void* arg1)
 {
@@ -84,6 +65,37 @@ void * draftAttendant(void* arg1)
 
 }
 
+void* sportistReader(void* arg1)
+{
+	int msg;
+	draft_t* draft=(draft_t*) arg1;
+	int id, lID;
+	do
+	{
+		sem_init(draft->chooseSem,0,0);
+		if(draft->clients[draft->turn]==NULL)
+		{
+			sem_wait(draft->chooseSem);
+		}
+		rcvMsg(draft->clients[draft->turn]->channel, (void*)&id, sizeof(int));
+		lID=id/CONVERSION;
+		id%=CONVERSION;
+
+		if(lID==draft->league->ID && id>=0 && id<CANT_SPORTIST && draft->league->sportists[id]->team==NULL)
+		{
+			queueStr(printQueue,BLUE"User %s chose sportist: %s\n"WHITE, draft->clients[draft->turn]->user->name, draft->league->sportists[id]->name);
+			draft->flag=1;
+			team_t* team=getTeamByClient(draft->league, draft->clients[draft->turn]);
+			draft->league->sportists[id]->team=team;
+			pthread_exit(0);
+		}
+		else
+		{
+			msg=ID_INVALID;
+			sendToClient(draft->clients[draft->turn], msg);
+		}	
+	}while(1);
+}
 
 void draftBegin(draft_t* draft)
 {
@@ -124,37 +136,6 @@ int setForcedSportist(league_t* league, team_t* team)
 	return -1;
 }
 
-void* sportistReader(void* arg1)
-{
-	int msg;
-	draft_t* draft=(draft_t*) arg1;
-	int id, lID;
-	do
-	{
-		sem_init(draft->chooseSem,0,0);
-		if(draft->clients[draft->turn]==NULL)
-		{
-			sem_wait(draft->chooseSem);
-		}
-		rcvMsg(draft->clients[draft->turn]->channel, (void*)&id, sizeof(int));
-		lID=id/CONVERSION;
-		id%=CONVERSION;
-
-		if(lID==draft->league->ID && id>=0 && id<CANT_SPORTIST && draft->league->sportists[id]->team==NULL)
-		{
-			queueStr(printQueue,BLUE"User %s chose sportist: %s\n"WHITE, draft->clients[draft->turn]->user->name, draft->league->sportists[id]->name);
-			draft->flag=1;
-			team_t* team=getTeamByClient(draft->league, draft->clients[draft->turn]);
-			draft->league->sportists[id]->team=team;
-			pthread_exit(0);
-		}
-		else
-		{
-			msg=ID_INVALID;
-			sendToClient(draft->clients[draft->turn], msg);
-		}	
-	}while(1);
-}
 
 void updateInfo(draft_t* draft)
 {

@@ -1,5 +1,5 @@
 #include "commands.h"
-#include "draft.c"
+
 
 
 void (*cmds[])(client_t*)=

@@ -2,6 +2,7 @@
 #define __COMMANDS__
 #include "league.h"
 #include "../common.h"
+#include "draft.h"
 #include "../msg.h"
 #include "trade.h"
 #include "display.h"

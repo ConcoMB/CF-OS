@@ -1,27 +1,4 @@
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <fcntl.h>
-#include "list.h"
-#include <pthread.h>
-#include "join.h"
-#include "league.h"
-#include <sys/shm.h>
-#include <signal.h>
-#include "commands.h"
-#include "externvars.h"
-#include "../colors.h"
-
-void makeConnection(client_t* myClient);
-void start(client_t* myClient);
-void logClient(client_t* myClient);
-void makeDisconnection(client_t* myClient);
-int controlDraft(draft_t* draft);
-void* keepAlive(void* arg);
-void setNullIfDraft(client_t* myClient);
-
+#include "clientAttendant.h"
 
 
 void* clientAtt(void* arg)
@@ -106,7 +83,7 @@ void start(client_t* myClient)
 
 void makeDisconnection(client_t* myClient)
 {
-	setNullIfDraft(myClient);
+	draftManager(myClient);
 	disconnect(myClient->channel);
 	destroyChannel(myClient->ID);
 	destroyChannel(myClient->ID+1);
@@ -117,7 +94,7 @@ void makeDisconnection(client_t* myClient)
 	pthread_cancel(myClient->att);
 }
 
-void setNullIfDraft(client_t* myClient)
+void draftManager(client_t* myClient)
 {
 	int aux;
 	if(myClient->user!=NULL && (aux=myClient->user->draftLeague)!=-1)
