@@ -90,7 +90,10 @@ void start(client_t* myClient)
 			makeDisconnection(myClient);
 		}
 		if(msg==LOG_OUT)
+		{
+			myClient->user=NULL;
 			return;
+		}
 		queueStr(printQueue,WHITE"Message: %d (Client %d)\n",msg, myClient->ID);
 		if(msg>=CMD_START)
 		{

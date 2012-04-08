@@ -71,7 +71,7 @@ int main(int argc, char** args)
 				if(!flag) //NO SE ELIGIO
 				{	
 		 			rcvMsg(channel, (void*)&msg, sizeof(int));
-					printf(MAGENTA"Time ellapsed, you have a random sportist, ID %d\n"WHITE,msg);
+					printf(MAGENTA"Time elapsed, you have a random sportist, ID %d\n"WHITE,msg);
 				}
 				pthread_create(&quitT, NULL, quitThread, quitChannel);
 

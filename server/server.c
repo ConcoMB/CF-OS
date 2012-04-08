@@ -186,8 +186,11 @@ void sighandler(int sig)
 
 void* print()
 {
+	char* tmp;
 	while(1)
 	{
-		printf("%s",dequeueStr(printQueue));
+		tmp=dequeueStr(printQueue);
+		printf("%s",tmp);
+		free(tmp);
 	}
 }
