@@ -115,6 +115,7 @@ void makeDisconnection(client_t* myClient)
 	setNullIfDraft(myClient);
 	disconnect(myClient->channel);
 	destroyChannel(myClient->ID);
+	destroyChannel(myClient->ID+1);
 	queueStr(printQueue,RED"Client %d disconnected\n"WHITE,myClient->ID);
 	pthread_cancel(myClient->keepAliveThread);
 	delete(clients, myClient);

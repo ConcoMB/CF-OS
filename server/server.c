@@ -170,8 +170,11 @@ void sighandler(int sig)
     	if(client->channel !=NULL){
     		disconnect(client->channel);
     		destroyChannel(client->ID);
+    		destroyChannel(client->ID+1);
     	}
     }
+    char* semN="semPrint";
+    sem_unlink(semN);
     printf("\n Destroyed channels\n");
     exit(0);
 }

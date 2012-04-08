@@ -151,6 +151,7 @@ void cmdDraft(client_t* myClient)
 				{
 					//esperar
 				}*/
+				sem_unlink(semName);
 			}
 			else 	//YA ESTABA DRAFTEANDO Y SALIO
 			{

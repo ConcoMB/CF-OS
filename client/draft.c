@@ -93,10 +93,13 @@ int main(int argc, char** args)
 void* spChooser(void* channel)
 {
 	int msg;
-	while(1)
+	do
 	{
-		printf(CYAN"Please choose your sportist by ID: "WHITE);	
-		scanf("%d", &msg);
+		printf(CYAN"\n\nPlease choose your sportist by ID: \n\n"WHITE);	
+		sleep(1);
+		scanf("%d",&msg);
+		sleep(1);
+		printf("lei %d\n", msg);
 		sndMsg(channel, (void*)&msg, sizeof(int));
 		rcvMsg(channel, (void*)&msg, sizeof(int));
 		if(msg==ID_INVALID)
@@ -109,7 +112,7 @@ void* spChooser(void* channel)
 			flag=1;
 			pthread_exit(0);
 		}
-	}
+	}while(1);
 	return NULL;
 }
 

@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <errno.h>
 
-#define SIZE 15000
+#define SHM_SIZE 4000
 #define BUFFER_S 800
 
 
@@ -26,9 +26,6 @@ typedef struct
 
 
 shm_t* cChannel(int id);
-sem_t* initMutex(char* id);
-void enter(sem_t* sem);
-void leave(sem_t* sem);
 
 int created=0;
 int mapped=0;
@@ -36,12 +33,11 @@ void* startMem=NULL;
 
 int sndMsg(void* fd, void* data, int size)
 {
-	printf("Sending...\n");
 	fflush(stdout);
 	int i;
 	shmDesc_t *shmd=(shmDesc_t*)fd;
 	shm_t* shm=shmd->write;
-	enter(shm->sem);
+	sem_wait(shm->sem);
 	int *head=(int*)shm->mem;
 	for(i=0;i<size;i++)
 	{
@@ -52,9 +48,8 @@ int sndMsg(void* fd, void* data, int size)
 			*head=sizeof(int)*2;
 		}
 	}
-	leave(shm->sem);
+	sem_post(shm->sem);
 	sem_post(shm->changes);
-	printf("sent\n");
 	return size;
 }
 
@@ -66,7 +61,7 @@ int rcvMsg(void* fd, void* data, int size)
 	int *head=(int*)shm->mem;
 	int *tail=(int*)(shm->mem+sizeof(int));
 	sem_wait(shm->changes);
-	enter(shm->sem);
+	sem_wait(shm->sem);
 	for(i=0;i<size;i++)
 	{
 		if(*tail==*head)
@@ -80,7 +75,7 @@ int rcvMsg(void* fd, void* data, int size)
 			*tail=sizeof(int)*2;
 		}
 	}
-	leave(shm->sem);
+	sem_post(shm->sem);
 	//sleep(1);
 	return i;
 }
@@ -96,10 +91,10 @@ void createChannel(int id)
 		sprintf(shmName,"/shm");
 		fd=shm_open(shmName, O_RDWR|O_CREAT, 0666);
 		void* mem=mmap(NULL, BUFFER_S, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
-		ftruncate(fd, SIZE);
+		ftruncate(fd, SHM_SIZE);
 		close(fd);
-		memset(mem, 0, SIZE);
-		for(i=0; i<SIZE; i+=BUFFER_S)
+		memset(mem, 0, SHM_SIZE);
+		for(i=0; i<SHM_SIZE; i+=BUFFER_S)
 		{
 			((int*)(mem+i))[0]=sizeof(int)*2;
 			((int*)(mem+i))[1]=sizeof(int)*2;
@@ -138,7 +133,7 @@ shm_t* cChannel(int id)
 	{
 		int fd;
 		fd=shm_open("/shm", O_RDWR, 0666);
-		startMem=mmap(NULL, SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
+		startMem=mmap(NULL, SHM_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
 		close(fd);
 		mapped=1;
 	}
@@ -171,7 +166,7 @@ int rcvString(void* fd, char* data)
 	shm_t* shm=shmd->read;
 	int i=0;
 	sem_wait(shm->changes);
-	enter(shm->sem);
+	sem_wait(shm->sem);
 	int *head=(int*)shm->mem;
 	int *tail=(int*)(shm->mem+sizeof(int));
 	while(*head!=*tail)
@@ -180,16 +175,16 @@ int rcvString(void* fd, char* data)
 		(*tail)++;
 		if(data[i]==0)
 		{
-			leave(shm->sem);
+			sem_post(shm->sem);
 			return i+1;
 		}
-		if(*tail>=SIZE)
+		if(*tail>=SHM_SIZE)
 		{
 			*tail=sizeof(int)*2;
 		}
 		i++;
 	}
-	leave(shm->sem);
+	sem_post(shm->sem);
 	return i;
 }
 
@@ -213,14 +208,4 @@ void destroyChannel(int id)
 		shm_unlink("/shm");
 		created=0;
 	}
-}
-
-void enter(sem_t* sem)
-{
-	sem_wait(sem);
-}
-
-void leave(sem_t* sem)
-{
-	sem_post(sem);
 }

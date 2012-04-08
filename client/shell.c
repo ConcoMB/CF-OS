@@ -1,8 +1,4 @@
-#include <string.h>
-#include <stdio.h>
-#include "../msg.h"
-#include "../common.h"
-#include "../colors.h"
+
 #include "shell.h"
 
 void shell(int msgID, char* username)
