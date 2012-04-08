@@ -66,9 +66,8 @@ void * save()
 	{
 		sleep(60);
 		sem_wait(saveSem);
-		queueStr(printQueue,"Saving...\n");
 		saveAll();
-		queueStr(printQueue,"Auto saved\n");
+		queueStr(printQueue,MAGENTA"Auto saved\n"WHITE);
 		sem_post(saveSem);
 	}
 }
