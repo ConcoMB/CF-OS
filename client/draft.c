@@ -61,14 +61,13 @@ int main(int argc, char** args)
 	  			pthread_t sportThrd;
 	  		  	rcvMsg(channel,(void*)&end, sizeof(double));
 	  			start=time(NULL);
-	  			//printf("%f tiempo \n", end);
+	  			printf("%f tiempo \n", end);
 	  			pthread_create(&sportThrd, NULL, spChooser, channel);
 	  			while(diff<=end && !flag)
 				{
 					now=time(NULL);
 					diff=difftime(now, start);
 				}
-				//pthread_join(sportThrd, NULL);
 				pthread_cancel(sportThrd);
 				if(!flag) //NO SE ELIGIO
 				{	
@@ -126,6 +125,10 @@ void * quitThread(void* channel)
 			msg=QUIT_DRAFT+clientID;
 			sndMsg(channel, (void*)&msg, sizeof(int));
 			exit(0);
+		}
+		else
+		{
+			printf("Invalid Command\n");
 		}
 	}
 	return NULL;
