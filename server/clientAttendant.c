@@ -71,7 +71,7 @@ void start(client_t* myClient)
 			myClient->user=NULL;
 			return;
 		}
-		queueStr(printQueue,WHITE"Message: %d (Client %d)\n",msg, myClient->ID);
+		queueStr(printQueue,WHITE"Read message: %d (Client %d)\n",msg, myClient->ID);
 		if(msg>=CMD_START)
 		{
 			cmds[msg-CMD_START](myClient);

@@ -21,10 +21,10 @@ int main(int argc, char** args)
   {
   	printf("ID INVALID\n");
   }
-  else
+  else if(msg==TRADE_SHOW)
   {
   	rcvString(channel, string);
-  	printf("%s\n", string);
+  	printf("%s", string);
   }
   exit(0);
 }

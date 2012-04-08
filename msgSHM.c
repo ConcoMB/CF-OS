@@ -113,7 +113,6 @@ int rcvMsg(void* fd, void* data, int size)
 void createChannel(int id)
 {
 	cant++;
-	printf("voy %d\n", cant);
 	if(!created)
 	{
 		int i;
@@ -264,7 +263,6 @@ void destroyChannel(int id)
 		sprintf(semName,"/mutex%d",1);
 		sem_unlink(semName);
 		sprintf(semName,"/mutexCh%d",1);
-
 		sem_unlink(semName);
 		sprintf(semName,"/mutexFull%d",1);
 		sem_unlink(semName);

@@ -100,6 +100,8 @@ void cmdTradeShow(client_t* myClient)
 		trade= getTradeByID(leagues[lID], tID);
 		if(trade!=NULL)
 		{
+			msg=TRADE_SHOW;
+			sndMsg(myClient->channel, (void*)&msg, sizeof(int));
 			tradeShow(trade, myClient->channel);
 		}
 		else
@@ -322,12 +324,10 @@ void cmdTradeNeg(client_t* myClient)
 	tID%=CONVERSION;
 	trade=getTradeByID(leagues[lID], tID);
 	if(lID==offer/CONVERSION && lID== change/CONVERSION &&
-		lID<lCant && lID>=0 && trade!=NULL && offer>=0 &&
-		change>=0 && offer<CANT_SPORTIST && change<CANT_SPORTIST &&
+		lID<lCant && lID>=0 && trade!=NULL && (offer%=CONVERSION)>=0 &&
+		(change%=CONVERSION)>=0 && offer<CANT_SPORTIST && change<CANT_SPORTIST &&
 		trade->to->user->ID==myClient->user->ID)
 	{
-		offer%=CONVERSION;
-		change&=CONVERSION;
 		if(negociate(trade, leagues[lID]->sportists[offer], leagues[lID]->sportists[change], leagues[lID])==0)
 		{
 			msg=TRADE_NEG;

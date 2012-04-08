@@ -19,9 +19,13 @@ int main(int argc, char** args)
     {
         printf("Transaction successfull\n");
     }
-    else if(msg== ERROR || msg==ID_INVALID)
+    else if(msg== ERROR)
     {
         printf("An error ocurred, please check the parameters \n");
     }
+    else if(msg==ID_INVALID)
+    {
+		printf("Invalid ID\n");
+	}
     exit(0);
 }
