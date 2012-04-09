@@ -60,7 +60,7 @@ int main(int argc, char** args)
 	  			flag=0;
 	  			pthread_t sportThrd;
 	  		  	rcvMsg(channel,(void*)&end, sizeof(double));
-	  		  	printf("\nYou have %f seconds\n", end);
+	  		  	printf("\nYou have %2.0f seconds\n", end);
 	  			start=time(NULL);
 	  			pthread_create(&sportThrd, NULL, spChooser, channel);
 	  			while(diff<=end && !flag)
