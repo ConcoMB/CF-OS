@@ -51,7 +51,7 @@ int main(int argc, char** args)
 	}
 	do
 	{
-		printf("How many teams do you want in your league (3-10)\n");
+		printf("How many teams do you want in your league (3-6)\n");
 		scanf("%d",&cantT);
 	}while(!(cantT<=MAX_CANT_TEAM && cantT>=MIN_CANT_TEAM));
 
