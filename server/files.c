@@ -34,8 +34,10 @@ void saveLeagues(){
     int lid;
     for(lid=0;lid<lCant;lid++)
     {
+		printf("Saving league\n");
 		league=leagues[lid];
 		saveLeague(leagueFile,league);
+		printf("Save\n");
 		char filename[30];
 		sprintf(filename,"./data/%d_sportists.txt",league->ID);
 		sportistFile=fopen(filename,"w");
@@ -44,21 +46,26 @@ void saveLeagues(){
 		sprintf(filename,"./data/%d_trades.txt",league->ID);
 		tradeFile=fopen(filename,"w");
 		reset(league->trades);
+		printf("Saving trades\n");
 		while((trade=(trade_t*)getNext(league->trades))){
 			saveTrade(tradeFile, trade);
 		}
 		int tid;
+		printf("Saving teams\n");
 		for(tid=0;tid<league->tCant;tid++)
 		{
 			team=league->teams[tid];
 			saveTeam(teamFile, team);
 		}
 		int sid;
+		printf("Saving sportists\n");
 		for(sid=0;sid<CANT_SPORTIST&&league->sportists[sid];sid++)
 		{
+			printf("sportist %d\n",sid);
 			sportist=league->sportists[sid];
 			saveSportist(sportistFile, sportist);
 		}
+		printf("saved all\n");
 		fclose(teamFile);
 		fclose(sportistFile);
 		fclose(tradeFile);
@@ -293,10 +300,12 @@ void loadNewSportists(league_t* league){
 		char name[SPORT_NAME_L];
 		if(fscanf(sportistFile,"%s\n",name)!=EOF)
 		{
+			printf("%s\n",name);
 			sportist=malloc(sizeof(sportist_t));
 			strcpy(sportist->name,name);
-			sportist->ID=i++;
+			sportist->ID=i;
 			sportist->team=NULL;
+			league->sportists[i]=sportist;
 		}
 	}
 	fclose(sportistFile);
