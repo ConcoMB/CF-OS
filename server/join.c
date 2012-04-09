@@ -132,7 +132,7 @@ int createLeague(char* name, char* password, int cant)
     league->tMax=cant;
     league->nextTradeID=0;
     league->trades=newList(cmpTrade);
-    draft_t* draft=malloc(sizeof(draft));
+    draft_t* draft=malloc(sizeof(draft_t));
     draft->clients=malloc(sizeof(client_t*)*cant);
     draft->sem=malloc(sizeof(sem_t*)*cant);
     draft->turn=0;

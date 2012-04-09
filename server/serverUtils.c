@@ -97,8 +97,8 @@ void sighandler(int sig)
     	}
     }
     eraseDraftSems();
-    char* semN="semPrint";
-    sem_unlink(semN);
+    sem_unlink("semPrint");
+    sem_unlink("mutexSave");
     printf("\n Destroyed channels\n");
     exit(0);
 }
