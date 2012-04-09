@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-g -lpthread -Wall
+CFLAGS=-g -lpthread -Wall -lrt
 make:
 	$(CC) ./server/server.c -o ./server/server ./server/cmp.c ./server/join.c ./server/getter.c ./server/files.c ./server/draft.c ./server/clientAttendant.c ./server/serverUtils.c ./server/display.c ./server/arrays.c ./server/strQueue.c ./server/list.c ./server/commands.c ./server/newMatchesListener.c ./server/trade.c msg$(IPC).c $(CFLAGS)
 	$(CC) ./client/client.c -o ./client/client ./client/connection.c ./client/shell.c msg$(IPC).c $(CFLAGS)
