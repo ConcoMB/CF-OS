@@ -1,3 +1,3 @@
-0 lobos 3 59
-1 ranas 4 89
-2 concoteam2 5 116
+0 lobos 3 0
+1 ranas 4 0
+2 concoteam2 5 0

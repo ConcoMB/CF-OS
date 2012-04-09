@@ -137,6 +137,7 @@ int createLeague(char* name, char* password, int cant)
     draft->sem=malloc(sizeof(sem_t*)*cant);
     draft->turn=0;
     draft->flag=-1;
+    draft->league=league;
     for(i=0; i<cant; i++)
     {
         draft->clients[i]=NULL;
