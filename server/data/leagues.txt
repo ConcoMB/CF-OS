@@ -1,5 +1,4 @@
 0 3 LoL 5 3 0 pass
 1 0 WoW 4 0 1 0
 2 3 draftL 3 0 1 0
-3 2 Caposs 3 0 1 0
-4 0 pipi 3 0 1 0
+
