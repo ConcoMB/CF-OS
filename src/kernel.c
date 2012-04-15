@@ -8,6 +8,7 @@
 #include "../include/paging.h"
 #include "../include/libc.h"
 #include "../include/extras.h"
+#include "../include/scheduler.h"
 
 DESCR_INT idt[0xFF];			/* IDT de 10 entradas*/
 IDTR idtr;				/* IDTR */
@@ -52,7 +53,9 @@ void kmain()
 	_Sti();	
 	
 	/*Test*/
-	shell();
+	initScheduler();
+	//shell();
+	printf("initSCH\n");
         while(1)
         {
 			

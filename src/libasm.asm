@@ -28,6 +28,10 @@ EXTERN  eokl
 EXTERN  int_09
 EXTERN  int_80
 EXTERN  page_fault
+EXTERN  getStack
+EXTERN  saveStack
+EXTERN  getNextProcess
+EXTERN  getIdleStack
 
 
 SECTION .text
@@ -83,19 +87,51 @@ _epag:
 		
 		
 _int_08_hand:				; Handler de INT 8 ( Timer tick)
-        push    ds
-        push    es                      ; Se salvan los registros
-        pusha                           ; Carga de DS y ES con el valor del selector
-        mov     ax, 10h			; a utilizar.
-        mov     ds, ax
-        mov     es, ax                  
-        call    int_08                 
-        mov	al,20h			; Envio de EOI generico al PIC
-	out	20h,al
-	popa                            
-        pop     es
-        pop     ds
+        ;push ebp
+		;mov ebp,esp
+        ;push ds
+        ;push es
+        ;pusha                         ; Carga de DS y ES con el valor del selector
+        ;mov     ax, 10h			; a utilizar.
+        ;mov     ds, ax
+        ;mov     es, ax                  
+        ;call    int_08 
+        
+        ;popa
+        ;pop es
+        ;pop ds
+        ;cli
+        cli
+	pushad
+		mov eax, esp
+		push eax
+		
+		;pusha                         ; Carga de DS y ES con el valor del selector
+        ;mov     ax, 10h			; a utilizar.
+        ;mov     ds, ax
+        ;mov     es, ax                  
+        ;call    int_08 
+        ;popa
+		
+		call saveStack
+		pop eax
+		call getIdleStack
+		mov esp, eax
+		call getNextProcess
+		push eax
+		call getStack
+		pop ebx
+		mov esp,eax
+		mov	al,20h			; Envio de EOI generico al PIC
+		out	20h,al
+	popad  
+	 
+	
+		;mov esp,ebp
+		;pop ebp
+		;sti  
         iret
+    
 
 _int_80_hand:				; Handler de INT 80 ( System calls)
         push ebp
