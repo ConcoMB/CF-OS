@@ -124,8 +124,8 @@ _int_08_hand:				; Handler de INT 8 ( Timer tick)
 		mov esp,eax
 		mov	al,20h			; Envio de EOI generico al PIC
 		out	20h,al
-	popad  
-	 
+		popad 
+		 
 	
 		;mov esp,ebp
 		;pop ebp

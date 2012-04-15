@@ -7,7 +7,7 @@ int current, cant;
 
 void saveStack(int sp)
 {
-	printf("1");
+	//printf("1");
 	task_t* temp;
 	if (!firstTime)
 	{
@@ -50,7 +50,7 @@ task_t* getNextTask (void)
 //Funcion que devuelve el ESP del proceso actual.
 int getStack(task_t* proc)
 {
-	printf("2");
+	//printf("2");
 	return proc->sp;
 }
 
@@ -86,6 +86,7 @@ int initStackFrame(int (*funct)(int, char **), int argc, char** argv, int bot, v
 	sf->EIP=(int)funct;
 	sf->CS=0x08;
 	
+	printf("%d,", sf->EIP);
 	sf->EFLAGS=0;
 	sf->retaddr=clean;
 	sf->argc=argc;
