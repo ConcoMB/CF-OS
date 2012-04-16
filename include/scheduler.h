@@ -4,17 +4,8 @@
 #include "../include/libc.h"
 
 #define MAXPROC 10
-#define STACK_SIZE 64
+#define STACK_SIZE 128
 typedef enum {RUN, BLOCK, READY} status_t;
-
-typedef struct
-{
-	status_t status;
-	int pid;
-	int priority;
-	int ss, ssize;
-	int sp;
-} task_t;
 
 
 typedef struct
@@ -25,12 +16,22 @@ typedef struct
 	char** argv;
 } stackframe_t;
 
-int initStackFrame(int (*funct)(int, char **), int argc, char** argv, int bot, void(*clean)());
-void saveStack(int ESP);
+typedef struct
+{
+	status_t status;
+	int pid;
+	int priority;
+	int ss, ssize;
+	stackframe_t* sp;
+} task_t;
+
+task_t* getProcess(int current);
+stackframe_t* initStackFrame(int (*funct)(int, char **), int argc, char** argv, int bot, void(*clean)());
+void saveStack(stackframe_t* ESP);
 void* getIdleStack(void);
 task_t* getNextProcess (void);
 task_t* getNextTask (void);
-int getStack(task_t* proc);
+stackframe_t* getStack(task_t* proc);
 void initScheduler();
 void cleaner(void);
 int idle(int argc, char* argv[]);

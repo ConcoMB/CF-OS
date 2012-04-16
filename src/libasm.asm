@@ -23,6 +23,8 @@ GLOBAL _fill_page1
 GLOBAL __stack_count
 GLOBAL _sys_stack_count
 
+EXTERN getIP
+EXTERN  printIdleStack
 EXTERN  int_08
 EXTERN  eokl
 EXTERN  int_09
@@ -32,6 +34,7 @@ EXTERN  getStack
 EXTERN  saveStack
 EXTERN  getNextProcess
 EXTERN  getIdleStack
+EXTERN  printStack
 
 
 SECTION .text
@@ -100,19 +103,18 @@ _int_08_hand:				; Handler de INT 8 ( Timer tick)
         ;popa
         ;pop es
         ;pop ds
-        ;cli
         cli
-	pushad
+        call printIdleStack
+  		pushad
 		mov eax, esp
 		push eax
-		
 		;pusha                         ; Carga de DS y ES con el valor del selector
         ;mov     ax, 10h			; a utilizar.
         ;mov     ds, ax
         ;mov     es, ax                  
         ;call    int_08 
         ;popa
-		
+        call printIdleStack
 		call saveStack
 		pop eax
 		call getIdleStack
@@ -121,7 +123,13 @@ _int_08_hand:				; Handler de INT 8 ( Timer tick)
 		push eax
 		call getStack
 		pop ebx
+		;push 0
+		;push 0x08
+		;call getIP
+		;push eax
 		mov esp,eax
+		call printIdleStack
+
 		mov	al,20h			; Envio de EOI generico al PIC
 		out	20h,al
 		popad 
@@ -129,7 +137,7 @@ _int_08_hand:				; Handler de INT 8 ( Timer tick)
 	
 		;mov esp,ebp
 		;pop ebp
-		;sti  
+		sti
         iret
     
 
@@ -137,9 +145,9 @@ _int_80_hand:				; Handler de INT 80 ( System calls)
         push ebp
 		mov ebp,esp
         pusha
-		sti
-        call    int_80
 		cli
+        call    int_80
+		sti
 		mov esp,ebp
 		pop ebp
           
