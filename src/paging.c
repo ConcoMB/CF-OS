@@ -23,6 +23,28 @@ void page_init(){
 	_epag();
 }
 
+void* getPage()
+{
+	int i;
+	for(i=0; i<USER_PAGES; i++)
+	{
+		if(!page_present[i])
+		{
+			page_present[i]=1;
+			page_table[i+KERNEL_PAGES]=(int*)((int)(page_table[i+KERNEL_PAGES])|0x00000001);
+			return (void*)((i+KERNEL_PAGES)*PAGE_SIZE);
+		}
+	}
+	return 0;
+}
+
+void freePage(void* address)
+{
+	int i=(int)address/PAGE_SIZE - KERNEL_PAGES;
+	page_table[i+KERNEL_PAGES]=(int*)((int)(page_table[i+KERNEL_PAGES])&0xFFFFFFFE);
+}
+
+/*
 void * sys_malloc(int bytes)
 {	
 	int j, start;
@@ -102,3 +124,4 @@ void page_fault(int fault){
 	}
 	while(1);
 }
+*/
