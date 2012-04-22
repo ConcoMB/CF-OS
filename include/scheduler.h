@@ -38,6 +38,6 @@ stackframe_t* getStack(task_t* proc);
 void initScheduler();
 void cleaner(void);
 int idle(int argc, char* argv[]);
-void createProcess(int (*funct)(int, char **));
+void createProcess(int (*funct)(int, char **), int p);
 
 #endif

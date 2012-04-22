@@ -2,6 +2,7 @@
 
 int firstTime=1;
 task_t process[MAXPROC]; 
+int level[MAXPROC];
 //char stack[MAXPROC][STACK_SIZE];
 task_t idleP;
 int current, cant;
@@ -61,9 +62,9 @@ task_t* getNextTask (void)
 	int cantChecked=0;
 	//printf("%d ",current);
 	//printf("%d ", current);
-	while(cantChecked<MAXPROC+1)
+	while(cantChecked<cant+1)
 	{
-		if(k==MAXPROC)
+		if(k==cant)
 		{
 			k=0;
 		}
@@ -78,6 +79,39 @@ task_t* getNextTask (void)
 	return &idleP;	
 }
 
+void swap(int a, int b)
+{
+	task_t aux=process[a];
+	process[a]=process[b];
+	process[b]=aux;
+}
+
+task_t* getNextTaskFF()
+{
+	int i;
+	if(cant==0)
+	{
+		return &idleP;
+	}
+	_Cli();
+	while(1)
+	{
+		for(i=0; i<cant; i++)
+		{
+			if(process[i].status==READY)
+			{
+				if((level[i]+=process[i].priority+1)>=100)
+				{
+					level[i]=0;
+					current=1;
+					_Sti();
+					return process[i];
+				}
+			}
+		}
+	}
+}
+
 //Funcion que devuelve el ESP del proceso actual.
 stackframe_t* getStack(task_t* proc)
 {
@@ -89,6 +123,7 @@ void initScheduler()
 	int i;
 	for(i=0;i<MAXPROC;i++)
 	{
+		level[i]=0;
 		process[i].status=FREE;
 	}
 	cant=0;
@@ -107,6 +142,8 @@ void cleaner(void)
 	printf("clean");
 	process[current].status=FREE;
 	freePage((void*)process[current].ss);
+	swap(cant, current);
+	cant--;
 	//YIELD
 	while(1);
 }
@@ -161,7 +198,7 @@ int getFreeTask(void)
 	return 0;
 }
 
-void createProcess(int (*funct)(int, char **))
+void createProcess(int (*funct)(int, char **), int p)
 {
 	_Cli();
 	int i=getFreeTask();
@@ -170,5 +207,7 @@ void createProcess(int (*funct)(int, char **))
 	task->status=READY;
 	task->ss=(int)getPage();
 	task->sp=initStackFrame(funct, 0, 0, task->ss+STACK_SIZE-1, cleaner);
+	task->priority=p;
 	_Sti();
 }
+
