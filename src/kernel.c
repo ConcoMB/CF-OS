@@ -1,16 +1,4 @@
-#include "../include/kasm.h"
-#include "../include/kc.h"
-#include "../include/defs.h"
-#include "../include/kb.h"
-#include "../include/int80.h"
-#include "../include/timertick.h"
-#include "../include/shell.h"
-#include "../include/paging.h"
-#include "../include/libc.h"
-#include "../include/stdio.h"
-
-#include "../include/extras.h"
-#include "../include/scheduler.h"
+#include "../include/kernel.h"
 
 DESCR_INT idt[0xFF];			/* IDT de 10 entradas*/
 IDTR idtr;				/* IDTR */
@@ -84,7 +72,7 @@ void kmain()
 	srand(getmin());
 	_Cli();
 	//initScheduler();
-	createProcess(test);
+	createProcess(test, 4);
 /* Habilito interrupcion de timer tick*/
 
         _mascaraPIC1(0xFC);

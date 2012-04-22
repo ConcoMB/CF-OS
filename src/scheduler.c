@@ -105,7 +105,7 @@ task_t* getNextTaskFF()
 					level[i]=0;
 					current=1;
 					_Sti();
-					return process[i];
+					return &process[i];
 				}
 			}
 		}

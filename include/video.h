@@ -1,16 +1,20 @@
 #ifndef __VID__
 #define __VID__
-#include "scheduler.h"
+#include "kernel.h"
+//#include "scheduler.h"
 
-#define VID_DIR (char*) 0xb8000
+#define VID_DIR 0xb8000
+#define WIDTH 80
+#define WHITE_TXT 0x07 // Atributo de video. Letras blancas, fondo negro
+#define BLACK_TXT 0x70
 
 typedef struct
 {
-	char* video;
-	char color=0x07;
-	int cursor_x=0;
-	int cursor_y=0;
-}tty_t;
+	char * video;
+	char color;
+	int cursor_x;
+	int cursor_y;
+} tty_t;
 
 
 void initScreens();

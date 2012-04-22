@@ -9,13 +9,16 @@ void int_80(REG registers)
 	//while(1){};
 	char *c;
 	int i;
-	switch(registers.ebx){
+	switch(registers.ebx)
+	{
 		case 1:
 			i=registers.edx;
 			c=(char*)registers.ecx;
-			if(i==1){
+			if(i==1)
+			{
 				sys_print(*c);
-			}else if(i==4){
+			}else if(i==4)
+			{
 				/*sys_print(*c);*/
 				sys_speak(*c);
 			}
@@ -63,13 +66,15 @@ void int_80(REG registers)
 
 /* BUFFER FUNCTIONS */
 
-void sys_read(char *c){
+void sys_read(char *c)
+{
 	*c=buffer_getchar();
 }
 
 /* TIME FUNCTIONS */
 
-void sys_hour(char* hp){
+void sys_hour(char* hp)
+{
 	_IO_out(0x70, 0x04);
 	char hour=_IO_in(0x71);
 	/*BCD to binary*/
@@ -77,7 +82,8 @@ void sys_hour(char* hp){
 	*hp=hour;
 }
 
-void sys_min(char* mp){
+void sys_min(char* mp)
+{
 	_IO_out(0x70,0x02);
 	char min=_IO_in(0x71);
 	/*BCD to binary*/

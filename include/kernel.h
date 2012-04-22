@@ -1,4 +1,4 @@
-#include "defs.h"
+
 
 /********************************** 
 *
@@ -8,7 +8,18 @@
 
 #ifndef _kernel_
 #define _kernel_
-
+#include "defs.h"
+#include "kasm.h"
+#include "kb.h"
+#include "int80.h"
+#include "timertick.h"
+#include "shell.h"
+#include "paging.h"
+#include "libc.h"
+#include "stdio.h"
+#include "extras.h"
+#include "scheduler.h"
+#include "video.h"
 #define OS_PID	0
 
 int (*player)(void);
