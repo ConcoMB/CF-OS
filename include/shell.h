@@ -5,6 +5,11 @@
 #define CMD_MEMORY 5
 #define SCREEN 1
 #define SPEAKER 4
+#include "libc.h"
+#include "string.h"
+#include "extras.h"
+#include "systemcalls.h"
+#include "stdio.h"
 
 char color(char* color_name);
 void set_out_stream_command(char* c);

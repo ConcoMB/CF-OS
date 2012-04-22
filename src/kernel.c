@@ -7,6 +7,8 @@
 #include "../include/shell.h"
 #include "../include/paging.h"
 #include "../include/libc.h"
+#include "../include/stdio.h"
+
 #include "../include/extras.h"
 #include "../include/scheduler.h"
 
