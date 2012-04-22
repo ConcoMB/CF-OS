@@ -1,0 +1,101 @@
+#include "../heap.h"
+
+void * memoAlloc(int size)
+{
+	int CONDITION=sizeof(head_t)+4;
+	head_t* heap=(head_t*)process[current].ss;
+	int i, avail=0;
+	while()
+	{
+		if(heap->free)
+		{
+			int dif=heap->front-size;
+			if(heap->front==0)
+			{
+				heap->free=0;
+				heap->front=size;
+				heap=advance(heap);
+				heap->front=0;
+				heap->back=size;
+				heap->free=1;
+				return backward(heap)+1;
+			}
+			else if(dif>=0 && dif<CONDITION)
+			{
+				heap->free=0;
+				return heap+1;
+			}
+			else if(dif>=CONDITION)
+			{
+				heap->free=0;
+				heap->front=size;
+				heap=advance(heap);
+				heap->front=dif-sizeof(head_t);
+				heap->back=size;
+				heap->free=1;
+				return backward(heap)+1;
+			}
+		}
+		heap+=(heap->front+sizeof(head_t));
+	}
+}
+
+head_t* advance(head_t* head)
+{
+	char* dir=(char*)head;
+	dir+=head->front+sizeof(head_t);
+	return (head_t*)dir;
+}
+
+
+head_t* backward(head_t* head)
+{
+	char* dir=(char*)head;
+	dir-=(head->back+sizeof(head_t));
+	return (head_t*)dir;
+}
+
+void free(void* dir)
+{
+	int acum=0, last=0;
+	head_t* heap=(head_t*)(dir-sizeof(head_t));
+	head_t* next=advance(heap);
+	if(next->front)
+	{
+		if(next->free)
+		{
+			acum+=next->front+sizeof(head_t);
+			next=advance(next);
+		}
+	}
+	else
+	{
+		last=1;
+	}
+	if(heap->back)
+	{
+		head_t* prev=backward(heap);
+		if(prev->free)
+		{
+			acum+=heap->front+sizeof(head_t);
+		}
+		else
+		{
+			prev=heap;
+		}
+	}
+	else
+	{
+		prev=heap;
+	}
+	if(!last)
+	{
+		prev->front+=acum;
+	}
+	else
+	{
+		prev->front=0;
+	}
+	next->back=prev->front;
+	prev->free=1;
+}
