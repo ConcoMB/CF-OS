@@ -49,14 +49,16 @@ int test(int argc, char** argv)
 	str[0]=malloc(10);
 	void* start=str[0];
 	strcpy(str[0], "hola");
-	str[1]=malloc(5);
+	str[1]=malloc(20);
 	strcpy(str[1], "como");
 	str[2]=malloc(7);
 	strcpy(str[2], "estas");
 	//free(str[2]);
+	//str[3]=malloc(15);
+	//strcpy(str[3],"todo");
+	//free(str[2]);
+	free(str[0]);
 	free(str[1]);
-	str[3]=malloc(9);
-	strcpy(str[3],"todobien");
 	printHeap(start);
 	return 0;
 }

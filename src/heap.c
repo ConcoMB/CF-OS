@@ -58,6 +58,10 @@ int sys_free(void* dir)
 {
 	int acum=0, last=0;
 	head_t* heap=(head_t*)(dir-sizeof(head_t));
+	if(heap->free==1)
+	{
+		return 0;
+	}
 	head_t* next=advance(heap);
 	if(next->front)
 	{
