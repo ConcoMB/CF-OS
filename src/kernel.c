@@ -18,7 +18,41 @@ kmain()
 Punto de entrada de cóo C.
 *************************************************/
 
- 
+ int par(int argc, char* argv[])
+{
+	int n=0;
+	while(1)
+	{
+		if(n%1000==0)
+		{
+			putchar('c');
+			//printf("%d ",n);
+		}
+		n+=2;
+		if(n>10000)
+		{
+			n=0;
+		}
+	}
+}
+
+int impar(int argc, char* argv[])
+{
+	int n=1;
+	while(1)
+	{
+		if((n+1)%1000==0)
+		{
+			//printf("%d ",n);
+			putchar('d');
+		}
+		n+=2;
+		if(n>10000)
+		{
+			n=1;
+		}
+	}
+}
  
 void kmain() 
 {
@@ -46,6 +80,8 @@ void kmain()
 	srand(getmin());
 	_Cli();
 	initScheduler();
+	createProcess(par);
+	createProcess(impar);
 /* Habilito interrupcion de timer tick*/
 
         _mascaraPIC1(0xFC);
