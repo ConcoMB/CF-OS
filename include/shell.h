@@ -11,6 +11,7 @@
 #include "systemcalls.h"
 #include "stdio.h"
 
+
 char color(char* color_name);
 void set_out_stream_command(char* c);
 void print_memory();

@@ -3,6 +3,7 @@
 #include "kasm.h"
 #include "stdio.h"
 #include "paging.h"
+//#include "video.h"
 #include "heap.h"
 
 #define MAXPROC 10
@@ -24,6 +25,7 @@ typedef struct
 	int priority;
 	int ss, ssize;
 	stackframe_t* sp;
+	tty_t tty;
 } task_t;
 
 extern task_t process[];
@@ -39,6 +41,6 @@ stackframe_t* getStack(task_t* proc);
 void initScheduler();
 void cleaner(void);
 int idle(int argc, char* argv[]);
-void createProcess(int (*funct)(int, char **));
+void createProcess(int (*funct)(int, char **), int p);
 
 #endif

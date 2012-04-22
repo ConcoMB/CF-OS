@@ -1,19 +1,8 @@
-#include "../include/kasm.h"
-#include "../include/kc.h"
-#include "../include/defs.h"
-#include "../include/kb.h"
-#include "../include/int80.h"
-#include "../include/timertick.h"
-#include "../include/shell.h"
-#include "../include/paging.h"
-#include "../include/libc.h"
-#include "../include/stdio.h"
-
-#include "../include/extras.h"
-#include "../include/scheduler.h"
+#include "../include/kernel.h"
 
 DESCR_INT idt[0xFF];			/* IDT de 10 entradas*/
 IDTR idtr;				/* IDTR */
+
 
 /**********************************************
 kmain() 
@@ -66,10 +55,6 @@ int test(int argc, char** argv)
 void kmain() 
 {
 
-/* Borra la pantalla. */ 
-
-	k_clear_screen();
-
 /* CARGA DE IDT CON LA RUTINA DE ATENCION DE IRQ0    */
 
         setup_IDT_entry (&idt[0x08], 0x08, (dword)&_int_08_hand, ACS_INT, 0);
@@ -88,8 +73,8 @@ void kmain()
 	kb_init();
 	srand(getmin());
 	_Cli();
-	initScheduler();
-	createProcess(test);
+	//initScheduler();
+	createProcess(test, 4);
 /* Habilito interrupcion de timer tick*/
 
         _mascaraPIC1(0xFC);
@@ -99,7 +84,7 @@ void kmain()
 	
 	/*Test*/
 	
-	//shell();
+	shell();
 	printf("initSCH\n");
         while(1)
         {
