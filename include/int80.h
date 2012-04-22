@@ -10,6 +10,7 @@
 #include "speaker.h"
 #include "kernel.h"
 #include "kb.h"
+#include "heap.h"
 
 #define WIDTH 80
 

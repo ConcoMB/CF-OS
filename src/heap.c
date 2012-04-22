@@ -1,11 +1,10 @@
-#include "../heap.h"
+#include "../include/heap.h"
 
 void * sys_malloc(int size)
 {
 	int CONDITION=sizeof(head_t)+4;
 	head_t* heap=(head_t*)process[current].ss;
-	int i, avail=0;
-	while()
+	while(1)
 	{
 		if(heap->free)
 		{
@@ -36,7 +35,7 @@ void * sys_malloc(int size)
 				return backward(heap)+1;
 			}
 		}
-		heap+=(heap->front+sizeof(head_t));
+		heap=advance(heap);
 	}
 }
 
@@ -55,7 +54,7 @@ head_t* backward(head_t* head)
 	return (head_t*)dir;
 }
 
-void sys_free(void* dir)
+int sys_free(void* dir)
 {
 	int acum=0, last=0;
 	head_t* heap=(head_t*)(dir-sizeof(head_t));
@@ -72,9 +71,10 @@ void sys_free(void* dir)
 	{
 		last=1;
 	}
+	head_t* prev;
 	if(heap->back)
 	{
-		head_t* prev=backward(heap);
+		prev=backward(heap);
 		if(prev->free)
 		{
 			acum+=heap->front+sizeof(head_t);
@@ -98,4 +98,13 @@ void sys_free(void* dir)
 	}
 	next->back=prev->front;
 	prev->free=1;
+	return 1;
+}
+
+void initHeap(void* dir)
+{
+	head_t* heap=(head_t*)dir;
+	heap->front=0;
+	heap->back=0;
+	heap->free=1;
 }

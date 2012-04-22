@@ -20,42 +20,47 @@ kmain()
 Punto de entrada de cóo C.
 *************************************************/
 
- int par(int argc, char* argv[])
+void printHeap(void* start)
 {
-	int n=0;
+	void* dir=start;
 	while(1)
 	{
-		if(n%1000==0)
+		int* front=dir-3*sizeof(int);
+		int* back=dir-2*sizeof(int);
+		int* free=dir-sizeof(int);
+		printf("Free:%d  Front:%d  Back:%d\n",*free,*front,*back);
+		if(*front==0)
 		{
-			putchar('c');
-			//printf("%d ",n);
+			return;
 		}
-		n+=2;
-		if(n>10000)
+		int i;
+		for(i=0; i<*front; i++)
 		{
-			n=0;
+			printf("%c ",*(char*)(dir+i));
 		}
+		printf("\n");
+		dir+=*front+3*sizeof(int);
 	}
 }
 
-int impar(int argc, char* argv[])
+int test(int argc, char** argv)
 {
-	int n=1;
-	while(1)
-	{
-		if((n+1)%1000==0)
-		{
-			//printf("%d ",n);
-			putchar('d');
-		}
-		n+=2;
-		if(n>10000)
-		{
-			n=1;
-		}
-	}
+	char* str[4];
+	str[0]=malloc(10);
+	void* start=str[0];
+	strcpy(str[0], "hola");
+	str[1]=malloc(5);
+	strcpy(str[1], "como");
+	str[2]=malloc(7);
+	strcpy(str[2], "estas");
+	//free(str[2]);
+	free(str[1]);
+	str[3]=malloc(9);
+	strcpy(str[3],"todobien");
+	printHeap(start);
+	return 0;
 }
- 
+
 void kmain() 
 {
 
@@ -82,8 +87,7 @@ void kmain()
 	srand(getmin());
 	_Cli();
 	initScheduler();
-	createProcess(par);
-	createProcess(impar);
+	createProcess(test);
 /* Habilito interrupcion de timer tick*/
 
         _mascaraPIC1(0xFC);

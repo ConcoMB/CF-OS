@@ -131,6 +131,7 @@ void initScheduler()
 	idleP.pid=-1;
 	idleP.status=READY;
 	idleP.ss=(int)getPage();
+	initHeap((void*)idleP.ss);
 	//idleP.ssize=STACK_SIZE;
 	idleP.sp=initStackFrame(idle, 0, 0, idleP.ss+STACK_SIZE-1, cleaner);
 	
@@ -139,7 +140,7 @@ void initScheduler()
 
 void cleaner(void)
 {
-	printf("clean");
+	//printf("clean");
 	process[current].status=FREE;
 	freePage((void*)process[current].ss);
 	swap(cant, current);
@@ -206,6 +207,7 @@ void createProcess(int (*funct)(int, char **), int p)
 	task->pid=cant++;
 	task->status=READY;
 	task->ss=(int)getPage();
+	initHeap((void*)task->ss);
 	task->sp=initStackFrame(funct, 0, 0, task->ss+STACK_SIZE-1, cleaner);
 	task->priority=p;
 	_Sti();
