@@ -75,7 +75,7 @@ void kmain()
 	idtr.limit = sizeof(idt)-1;
 	
 	_lidt (&idtr);
-	//page_init();
+	page_init();
 	kb_init();
 	srand(getmin());
 	_Cli();

@@ -1,12 +1,12 @@
 #ifndef __SCH__
 #define __SCH__
-#include "../include/kasm.h"
-#include "../include/libc.h"
+#include "include/kasm.h"
+#include "include/libc.h"
+#include "include/paging.h"
 
 #define MAXPROC 10
-#define STACK_SIZE 512
+#define STACK_SIZE 4096
 typedef enum {RUN, BLOCK, READY, FREE} status_t;
-
 
 typedef struct
 {
@@ -24,6 +24,9 @@ typedef struct
 	int ss, ssize;
 	stackframe_t* sp;
 } task_t;
+
+extern task_t process[];
+extern int current;
 
 task_t* getProcess(int current);
 stackframe_t* initStackFrame(int (*funct)(int, char **), int argc, char** argv, int bot, void(*clean)());

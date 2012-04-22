@@ -1,9 +1,7 @@
 #include "../include/scheduler.h"
-#include "../include/paging.h"
 
 int firstTime=1;
 task_t process[MAXPROC]; 
-char idleStack[STACK_SIZE];
 //char stack[MAXPROC][STACK_SIZE];
 task_t idleP;
 int current, cant;
@@ -97,9 +95,9 @@ void initScheduler()
 	current=-1;
 	idleP.pid=-1;
 	idleP.status=READY;
-	idleP.ss=(int)idleStack;
+	idleP.ss=(int)getPage();
 	//idleP.ssize=STACK_SIZE;
-	idleP.sp=initStackFrame(idle, 0, 0, ((int)(idleStack))+STACK_SIZE-1, cleaner);
+	idleP.sp=initStackFrame(idle, 0, 0, idleP.ss+STACK_SIZE-1, cleaner);
 	
 	printf("inicie\n");
 }
@@ -107,7 +105,9 @@ void initScheduler()
 void cleaner(void)
 {
 	printf("clean");
-	process[current];
+	process[current].status=FREE;
+	freePage((void*)process[current].ss);
+	//YIELD
 	while(1);
 }
 
@@ -169,6 +169,6 @@ void createProcess(int (*funct)(int, char **))
 	task->pid=cant++;
 	task->status=READY;
 	task->ss=(int)getPage();
-	task->sp=initStackFrame(funct, 0, 0, ((int)(task->ss))+STACK_SIZE-1, cleaner);
+	task->sp=initStackFrame(funct, 0, 0, task->ss+STACK_SIZE-1, cleaner);
 	_Sti();
 }
