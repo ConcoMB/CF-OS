@@ -104,7 +104,6 @@ _int_08_hand:				; Handler de INT 8 ( Timer tick)
         ;pop es
         ;pop ds
         cli
-        call printIdleStack
   		pushad
 		mov eax, esp
 		push eax
@@ -114,7 +113,6 @@ _int_08_hand:				; Handler de INT 8 ( Timer tick)
         ;mov     es, ax                  
         ;call    int_08 
         ;popa
-        call printIdleStack
 		call saveStack
 		pop eax
 		call getIdleStack
@@ -128,7 +126,6 @@ _int_08_hand:				; Handler de INT 8 ( Timer tick)
 		;call getIP
 		;push eax
 		mov esp,eax
-		call printIdleStack
 
 		mov	al,20h			; Envio de EOI generico al PIC
 		out	20h,al
@@ -142,15 +139,14 @@ _int_08_hand:				; Handler de INT 8 ( Timer tick)
     
 
 _int_80_hand:				; Handler de INT 80 ( System calls)
+		cli
         push ebp
 		mov ebp,esp
         pusha
-		cli
         call    int_80
-		sti
 		mov esp,ebp
 		pop ebp
-          
+        sti
         iret
         
 _int_09_hand:				; Handler de INT 09 (Teclado)

@@ -1,7 +1,10 @@
 #include "../include/scheduler.h"
+#include "../include/paging.h"
+
 int firstTime=1;
-task_t process[MAXPROC];
+task_t process[MAXPROC]; 
 char idleStack[STACK_SIZE];
+//char stack[MAXPROC][STACK_SIZE];
 task_t idleP;
 int current, cant;
 
@@ -11,7 +14,6 @@ task_t* getProcess(int current)
 {
 	if(current>=0 && current<cant)
 		return &process[current];
-	printf("else\n");
 	return &idleP;
 }
 
@@ -23,7 +25,6 @@ void printIdleStack()
 
 void saveStack(stackframe_t* sp)
 {
-	printf("1");
 	task_t* temp;
 	if (!firstTime)
 	{
@@ -43,9 +44,11 @@ void* getIdleStack(void)
 //Funcion que devuelve el PROCESS* siguiente a ejecutar
 task_t* getNextProcess (void)
 {
+	//printf("a");
 	task_t* temp;
 	//selecciona la tarea
 	temp=getNextTask();
+	//printf("task: %d, current %d\n", temp->pid, current);
 	//temp->lastCalled=0;
 	current=temp->pid;
 	//last100[counter100]=CurrentPID;
@@ -56,22 +59,40 @@ task_t* getNextProcess (void)
 
 task_t* getNextTask (void)
 {
-	if(cant==0)
+	int k=current+1;
+	int cantChecked=0;
+	//printf("%d ",current);
+	//printf("%d ", current);
+	while(cantChecked<MAXPROC+1)
 	{
-		return &idleP;
+		if(k==MAXPROC)
+		{
+			k=0;
+		}
+		//printf("%d %d",k, current);
+		if(process[k].status==READY)
+		{
+			//printf("Proceso %d ready %d\n", k,current);
+			return &process[k];
+		}
+		cantChecked++;
 	}
-	return &idleP;
+	return &idleP;	
 }
 
 //Funcion que devuelve el ESP del proceso actual.
 stackframe_t* getStack(task_t* proc)
 {
-	//printf("2");
 	return proc->sp;
 }
 
 void initScheduler()
 {
+	int i;
+	for(i=0;i<MAXPROC;i++)
+	{
+		process[i].status=FREE;
+	}
 	cant=0;
 	current=-1;
 	idleP.pid=-1;
@@ -79,12 +100,14 @@ void initScheduler()
 	idleP.ss=(int)idleStack;
 	//idleP.ssize=STACK_SIZE;
 	idleP.sp=initStackFrame(idle, 0, 0, ((int)(idleStack))+STACK_SIZE-1, cleaner);
+	
 	printf("inicie\n");
 }
 
 void cleaner(void)
 {
 	printf("clean");
+	process[current];
 	while(1);
 }
 
@@ -94,7 +117,7 @@ int idle(int argc, char* argv[])
 	while(1)
 	{
 		
-		printf("idle %d", count++);
+		//printf("idle %d", count++);
 		//YIELD
 	}
 }
@@ -106,8 +129,8 @@ stackframe_t * initStackFrame(int (*funct)(int, char **), int argc, char** argv,
 	sf->EIP=(int)funct;
 	sf->CS=0x08;
 	
-	printf("IP:%d\n", sf->EIP);
-	sf->EFLAGS=0;
+	//printf("IP:%d\n", sf->EIP);
+	sf->EFLAGS=512;
 	sf->retaddr=clean;
 	sf->argc=argc;
 	sf->argv=argv;
@@ -123,4 +146,29 @@ void printStack(int a, int b, int c)
 void* getIP()
 {
 	return &idle;
+}
+
+int getFreeTask(void)
+{
+	int i;
+	for(i=0;i<MAXPROC;i++)
+	{
+		if(process[i].status==FREE)
+		{
+			return i;
+		}
+	}
+	return 0;
+}
+
+void createProcess(int (*funct)(int, char **))
+{
+	_Cli();
+	int i=getFreeTask();
+	task_t* task=&process[i];
+	task->pid=cant++;
+	task->status=READY;
+	task->ss=(int)getPage();
+	task->sp=initStackFrame(funct, 0, 0, ((int)(task->ss))+STACK_SIZE-1, cleaner);
+	_Sti();
 }
