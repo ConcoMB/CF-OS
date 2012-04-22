@@ -24,11 +24,12 @@ typedef struct {
 	int second;
 } time_t;
 
+
+
 void sys_print(char c);
 void sys_read(char *c);
 void sys_hour(char* hp);
 void sys_min(char* mp);
-void sys_setcolor(char c);
 int sys_heap_count();
 int sys_stack_count(unsigned int esp);
 

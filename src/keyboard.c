@@ -1,12 +1,7 @@
-#include "../include/kasm.h"
-#include "../include/defs.h"
+
 #include "../include/kb.h"
-#include "../include/kernel.h"
 
-#define BUFFER_SIZE 10
-#define ESP 1
-#define ENG 2
-
+/*
 char ESP_SCAN_CODES[0x51]={'\x1B','@','1','2','3','4','5','6','7','8','9','0','#','*','\x08','\t','q','w','e','r','t','y','u','i','o','p','`','+','\n','@','a','s','d','f','g','h','j','k','l','{','#','}','@','<','z','x','c','v', 'b','n','m',',','.','-','@','@','@',' ','@','1','2','3','4','5','6','7','8','9','0','@','@','@','\x11','@','@','\x12','@','\x12','@','@','\x13'};
 
 char SHIFT_ESP_SCAN_CODES[0x51]={'\x1B','#','!','"','-','$','%','&','/','(',')','=','?','@','\x08','\t','Q','W','E','R','T','Y','U','I','O','P','^','*','\n','@','A','S','D','F','G','H','J','K','L','"','+','@','@','>','Z','X','C','V','B','N','M',';',':','_','@','@','@',' ','@','1','2','3','4','5','6','7','8','9','0','@','@','@','\x11','@','@','\x12','@','\x12','@','@','\x13'};
@@ -23,7 +18,6 @@ char* current_scan_code;
 char* current_shifted_scan_code;
 char *video = (char *) 0xb8000;
 int kb_index=(24*80)*2;
-
 
 void kb_init(){
 	sys_set_scancode(ESP);
@@ -59,6 +53,10 @@ int caps=0;
 void int_09(){
 	_Cli();
 	char scanCode=_IO_in(0x60);
+	if(scanCode>=0x3b &&scanCode<=0x42)
+	{
+		swapTTY(scanCode-0x3b);
+	}
 	if(scanCode & 0x80){
 		/*RELEASED KEY*/
 		if(scanCode==(char)0xAA||scanCode==(char)0xB6){

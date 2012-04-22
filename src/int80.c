@@ -1,12 +1,11 @@
 #include "../include/int80.h"
 
 
-int cursor_x=0;
-int cursor_y=0;
 
 /*INT 80 RUTINE*/
 
-void int_80(REG registers) {
+void int_80(REG registers) 
+{
 	//while(1){};
 	char *c;
 	int i;
@@ -61,100 +60,6 @@ void int_80(REG registers) {
 	}  
 }
 
-/* SCREEN FUNCTIONS */
-
-char current_color=0x07;
-
-int cursor_index(){
-	return (cursor_y * WIDTH + cursor_x);
-}
-
-void update_cursor(void)
-{
-    int index;
-	index= cursor_index();
-    _IO_out(0x3D4, 14);
-    _IO_out(0x3D5, index >> 8);
-    _IO_out(0x3D4, 15);
-    _IO_out(0x3D5, index);
-}
-
-void scroll(){
-	if(cursor_y==24){
-		/* Scroll down*/
-		char *video = (char *) 0xb8000;
-		int i;
-		for(i=0;i<23*160;i++){
-			video[i]=video[i+160];
-		}
-		while(i<24*160){
-			video[i++]=' ';
-			video[i++]=WHITE_TXT;
-		}
-		cursor_y--;
-	}	
-}
-
-
-void sys_print(char c){
-    char *video = (char *) 0xb8000;
-    if(c=='\n'){
-		cursor_y++;
-		cursor_x=0;
-	}
-	else if(c=='\b'){
-		if(cursor_x!=0){
-			cursor_x--;
-			video[cursor_index()*2]=' ';
-		 }
-	}
-	else if(c=='\r'){
-		cursor_x=0;
-	}
-    else {
-		video[cursor_index()*2]=c;
-		video[cursor_index()*2+1]=current_color;
-		cursor_x++;
-	}
-    
-    /* Control del cursor */
-    if(cursor_x>=WIDTH){
-		cursor_y++;
-		cursor_x=0;
-	}
-	scroll();
-	update_cursor();
-}
-
-void sys_setcolor(char c){
-	current_color=c;
-}
-
-/***************************************************************
-*k_clear_screen
-*
-* Borra la pantalla en modo texto color.
-****************************************************************/
-
-void k_clear_screen() 
-{
-	char *vidmem = (char *) 0xb8000;
-	unsigned int i=0;
-	while(i < (80*24*2))
-	{
-		vidmem[i]=' ';
-		i++;
-		vidmem[i]=WHITE_TXT;
-		i++;
-	};
-	while(i < (80*25*2))
-	{
-		vidmem[i]=' ';
-		i++;
-		vidmem[i]=BLACK_TXT;
-		i++;
-	};
-}
 
 /* BUFFER FUNCTIONS */
 
@@ -193,11 +98,12 @@ void sys_min(char* mp){
 *	 Cero
 ****************************************************************/
 
-void setup_IDT_entry (DESCR_INT *item, byte selector, dword offset, byte access,
-			 byte cero) {
+void setup_IDT_entry (DESCR_INT *item, byte selector, dword offset, byte access,byte cero) 
+{
   item->selector = selector;
   item->offset_l = offset & 0xFFFF;
   item->offset_h = offset >> 16;
   item->access = access;
   item->cero = cero;
 }
+

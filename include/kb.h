@@ -1,6 +1,16 @@
 #ifndef __KB__
 #define __KB__
 
+#include "kasm.h"
+#include "defs.h"
+#include "kernel.h"
+#include "video.h"
+
+
+#define BUFFER_SIZE 10
+#define ESP 1
+#define ENG 2
+
 void kb_init();
 void int_09();
 char buffer_getchar();
