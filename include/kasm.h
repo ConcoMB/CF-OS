@@ -3,6 +3,8 @@ kasm.h
 
 ************************************************/
 
+#ifndef KASM__
+#define KASM__
 #include "defs.h"
 
 
@@ -27,3 +29,4 @@ int		_sys_stack_count();
 
 void		_debug (void);
 
+#endif
