@@ -1,7 +1,7 @@
 #ifndef __LIBC__
 #define __LIBC__
-#include "../include/systemcalls.h"
-#include "../include/stdio.h"
+#include "systemcalls.h"
+#include "stdio.h"
 
 int stack_count();
 int pow(int b,int e);
