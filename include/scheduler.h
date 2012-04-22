@@ -3,6 +3,7 @@
 #include "kasm.h"
 #include "libc.h"
 #include "paging.h"
+#include "heap.h"
 
 #define MAXPROC 10
 #define STACK_SIZE 4096

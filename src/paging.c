@@ -45,16 +45,7 @@ void freePage(void* address)
 }
 
 
-void * sys_malloc(int bytes)
-{	
-	return 0;
-}
-
 void * sys_calloc(int bytes){
-	return 0;
-}
-
-int sys_free(void * adress){
 	return 0;
 }
 
