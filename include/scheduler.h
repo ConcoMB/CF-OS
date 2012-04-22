@@ -1,7 +1,7 @@
 #ifndef __SCH__
 #define __SCH__
 #include "kasm.h"
-#include "libc.h"
+#include "stdio.h"
 #include "paging.h"
 
 #define MAXPROC 10

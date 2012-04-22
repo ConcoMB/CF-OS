@@ -1,11 +1,6 @@
 /* SHELL */
 
-#include "../include/systemcalls.h"
 #include "../include/shell.h"
-#include "../include/libc.h"
-#include "../include/extras.h"
-#include "../include/mastermind.h"
-
 
 char color(char* color_name){
 	if(strcmp("blue",color_name)==0){
@@ -216,9 +211,6 @@ void shell(){
 		}
 		else if(strcmp("help", buffer)==0){
 			help();
-		}
-		else if(strcmp("mastermind",buffer)==0){
-			mastermind();
 		}
 		else{
 			printf("Command not found\n");
