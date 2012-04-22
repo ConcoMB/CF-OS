@@ -8,7 +8,7 @@
 #include "paging.h"
 #include "speaker.h"
 #include "kernel.h"
-#include "kb.h"
+//#include "kb.h"
 #include "heap.h"
 
 

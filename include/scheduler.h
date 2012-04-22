@@ -3,7 +3,7 @@
 #include "kasm.h"
 #include "stdio.h"
 #include "paging.h"
-//#include "video.h"
+#include "video.h"
 #include "heap.h"
 
 #define MAXPROC 10

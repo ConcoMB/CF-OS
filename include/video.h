@@ -1,7 +1,7 @@
 #ifndef __VID__
 #define __VID__
 #include "kernel.h"
-//#include "scheduler.h"
+#include "scheduler.h"
 
 #define VID_DIR 0xb8000
 #define WIDTH 80
