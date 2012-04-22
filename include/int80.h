@@ -1,6 +1,18 @@
 #ifndef _systemcalls_
 #define _systemcalls_
 
+
+#include "kasm.h"
+#include "kc.h"
+#include "defs.h"
+#include "int80.h"
+#include "paging.h"
+#include "speaker.h"
+#include "kernel.h"
+#include "kb.h"
+
+#define WIDTH 80
+
 /* Tiempo*/
 typedef struct {
 	int day;

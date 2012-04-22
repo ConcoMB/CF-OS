@@ -1,6 +1,6 @@
 #include "../heap.h"
 
-void * memoAlloc(int size)
+void * sys_malloc(int size)
 {
 	int CONDITION=sizeof(head_t)+4;
 	head_t* heap=(head_t*)process[current].ss;
@@ -55,7 +55,7 @@ head_t* backward(head_t* head)
 	return (head_t*)dir;
 }
 
-void free(void* dir)
+void sys_free(void* dir)
 {
 	int acum=0, last=0;
 	head_t* heap=(head_t*)(dir-sizeof(head_t));

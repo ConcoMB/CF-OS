@@ -1,13 +1,5 @@
-#include "../include/kasm.h"
-#include "../include/kc.h"
-#include "../include/defs.h"
 #include "../include/int80.h"
-#include "../include/paging.h"
-#include "../include/speaker.h"
-#include "../include/kernel.h"
-#include "../include/kb.h"
 
-#define WIDTH 80
 
 int cursor_x=0;
 int cursor_y=0;

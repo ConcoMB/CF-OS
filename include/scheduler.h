@@ -1,8 +1,8 @@
 #ifndef __SCH__
 #define __SCH__
-#include "include/kasm.h"
-#include "include/libc.h"
-#include "include/paging.h"
+#include "kasm.h"
+#include "libc.h"
+#include "paging.h"
 
 #define MAXPROC 10
 #define STACK_SIZE 4096
