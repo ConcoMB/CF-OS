@@ -85,7 +85,7 @@ void kmain()
 	
 	/*Test*/
 	
-	//shell();
+	shell();
 	printf("initSCH\n");
         while(1)
         {

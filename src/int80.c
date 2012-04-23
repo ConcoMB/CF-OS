@@ -60,6 +60,11 @@ void int_80(REG registers)
 			break;
 		case 11:
 			registers.eax=_sys_stack_count();
+			break;
+		case 12:
+			i=registers.ecx;
+			registers.eax=sys_kill(i);
+			break;
 	}  
 }
 

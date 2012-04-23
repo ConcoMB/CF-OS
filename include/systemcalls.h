@@ -10,6 +10,7 @@ int __stack_count();
 void __setcolor(char* colorp);
 void __set_scancode(int i);
 int __heap_count();
+int __kill(int pID);
 
 /* __write
 *

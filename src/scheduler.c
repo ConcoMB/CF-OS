@@ -214,3 +214,16 @@ void createProcess(int (*funct)(int, char **), int p)
 	_Sti();
 }
 
+int sys_kill(int pID){
+	//task_t * proces;
+	//task_t * child;
+	//task_t * father;
+	if( pID > cant || process[pID].status==FREE ){
+		return 1;
+	}
+	//proces=&process[pID];
+	cant--;
+	process[pID].status = FREE;
+	return 0;
+}
+

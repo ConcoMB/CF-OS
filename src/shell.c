@@ -212,6 +212,17 @@ void shell(){
 		else if(strcmp("help", buffer)==0){
 			help();
 		}
+		else if(substr("kill ", buffer)){
+			i=atoi(buffer+5);
+			switch(kill(i)){
+				case 0:
+					printf("Procces killed succefully");
+					break;
+				case 1:
+					printf("PID invalid");
+					break;
+			}
+		}
 		else{
 			printf("Command not found\n");
 		}

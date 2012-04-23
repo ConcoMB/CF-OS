@@ -73,3 +73,8 @@ int pageprint(int page){
 	}
 	return 1;
 }
+
+int kill(int pID)
+{
+	return __kill(pID);
+}

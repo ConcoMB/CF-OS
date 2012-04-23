@@ -17,6 +17,7 @@ GLOBAL __calloc
 GLOBAL __free
 GLOBAL __heap_count
 GLOBAL  __set_scancode
+GLOBAL __kill
 GLOBAL _lcr3
 GLOBAL _epag
 GLOBAL _fill_page1
@@ -240,6 +241,11 @@ __heap_count:
 
 __stack_count:
 	mov ebx, 11
+	int 080h
+	ret
+
+__kill:
+	mov ebx, 12
 	int 080h
 	ret
 	

@@ -14,5 +14,6 @@ int free(void* page);
 int heap_count();
 void set_scancode(int i);
 int pageprint(int page);
+int kill(int pID);
 
 #endif

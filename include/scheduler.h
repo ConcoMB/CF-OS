@@ -52,5 +52,6 @@ void initScheduler();
 void cleaner(void);
 int idle(int argc, char* argv[]);
 void createProcess(int (*funct)(int, char **), int p);
+int sys_kill(int pID);
 
 #endif
