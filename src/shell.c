@@ -223,6 +223,9 @@ int shell(int argc, char** argv){
 					break;
 			}
 		}
+		else if(strcmp("top", buffer)==0){
+			top();
+		}
 		else{
 			printf("Command not found\n");
 		}

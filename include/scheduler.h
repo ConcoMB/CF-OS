@@ -26,8 +26,9 @@ stackframe_t* getStack(task_t* proc);
 void initScheduler();
 void cleaner(void);
 int idle(int argc, char* argv[]);
-int sys_kill(int pID);
 void createProcess(int (*funct)(int, char **), int p, int ttyN);
 int processHasFocus();
+int sys_kill(int pID);
+void top();
 
 #endif

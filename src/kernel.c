@@ -77,8 +77,8 @@ void kmain()
 	initScheduler();
 /* Habilito interrupcion de timer tick*/
 
-        _mascaraPIC1(0xFC);
-        _mascaraPIC2(0xFF);
+    _mascaraPIC1(0xFC);
+    _mascaraPIC2(0xFF);
 	_Sti();	
 	
 	/*Test*/
