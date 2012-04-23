@@ -15,7 +15,7 @@
 char color(char* color_name);
 void set_out_stream_command(char* c);
 void print_memory();
-void shell();
+int shell(int argc, char** argv);
 void help();
 
 #endif

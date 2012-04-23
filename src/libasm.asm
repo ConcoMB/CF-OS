@@ -150,6 +150,7 @@ _int_80_hand:				; Handler de INT 80 ( System calls)
         iret
         
 _int_09_hand:				; Handler de INT 09 (Teclado)
+		cli
         push ebp
 		mov ebp,esp
 		pusha 
@@ -161,7 +162,7 @@ _int_09_hand:				; Handler de INT 09 (Teclado)
 		popa
 		mov esp,ebp
 		pop ebp
-          
+		sti
         iret
         
 _int_0E_hand:				; Handler de INT 14 (PAGE FAULT)

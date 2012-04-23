@@ -74,19 +74,18 @@ void kmain()
 	srand(getmin());
 	_Cli();
 	initScreens();
-	//initScheduler();
-	//createProcess(test, 4);
+	initScheduler();
 /* Habilito interrupcion de timer tick*/
 
         _mascaraPIC1(0xFC);
         _mascaraPIC2(0xFF);
-        
 	_Sti();	
 	
 	/*Test*/
-	
-	//shell();
-	printf("initSCH\n");
+	createProcess(shell, 4, 0);
+	//createProcess(test, 4, 1);
+	createProcess(shell, 4, 1);
+	//printf("initSCH\n");
         while(1)
         {
 			

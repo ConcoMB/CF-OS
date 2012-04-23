@@ -131,11 +131,12 @@ void initScheduler()
 	idleP.pid=-1;
 	idleP.status=READY;
 	idleP.ss=(int)getPage();
+	idleP.tty=&terminals[7];
 	initHeap((void*)idleP.ss);
 	//idleP.ssize=STACK_SIZE;
 	idleP.sp=initStackFrame(idle, 0, 0, idleP.ss+STACK_SIZE-1, cleaner);
 	
-	printf("inicie\n");
+	//printf("inicie\n");
 }
 
 void cleaner(void)
@@ -154,7 +155,6 @@ int idle(int argc, char* argv[])
 	
 	while(1)
 	{
-		
 		//printf("idle %d", count++);
 		//YIELD
 	}
@@ -199,7 +199,7 @@ int getFreeTask(void)
 	return 0;
 }
 
-void createProcess(int (*funct)(int, char **), int p)
+void createProcess(int (*funct)(int, char **), int p, int ttyN)
 {
 	_Cli();
 	int i=getFreeTask();
@@ -210,7 +210,12 @@ void createProcess(int (*funct)(int, char **), int p)
 	initHeap((void*)task->ss);
 	task->sp=initStackFrame(funct, 0, 0, task->ss+STACK_SIZE-1, cleaner);
 	task->priority=p;
-	task->tty=&terminals[0];
+	task->tty=&terminals[ttyN];
 	_Sti();
 }
 
+int processHasFocus()
+{
+	//printf("focus %d\n", process[current].tty==&terminals[currentTTY]);
+	return process[current].tty==&terminals[currentTTY];
+}
