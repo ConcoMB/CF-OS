@@ -32,7 +32,7 @@ void printHeap(void* start)
 	}
 }
 
-int test(int argc, char** argv)
+/*int test(int argc, char** argv)
 {
 	char* str[4];
 	str[0]=malloc(10);
@@ -50,6 +50,20 @@ int test(int argc, char** argv)
 	free(str[1]);
 	printHeap(start);
 	return 0;
+}*/
+
+int test(int argc, char** argv)
+{
+	while(1)
+	{
+		char c='a';
+		//c=getchar();
+		printf("%c",c++);
+		if(c>'Z')
+		{
+			c='a';
+		}
+	}
 }
 
 void kmain() 
@@ -82,9 +96,9 @@ void kmain()
 	_Sti();	
 	
 	/*Test*/
-	createProcess(shell, 4, 0);
+	createProcess(test, 4, 0);
 	//createProcess(test, 4, 1);
-	createProcess(shell, 4, 1);
+	createProcess(test, 4, 1);
 	//printf("initSCH\n");
         while(1)
         {
