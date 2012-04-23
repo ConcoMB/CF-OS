@@ -20,7 +20,7 @@ char *video = (char *) 0xb8000;
 int kb_index=(24*80)*2;
 
 void kb_init(){
-	sys_set_scancode(ESP);
+	sys_set_scancode(ES);
 }
 void buffer_putchar(char c){
 	buffer[head++]=c;
@@ -111,13 +111,13 @@ char to_lower(char c){
 }
 
 void sys_set_scancode(int i){
-	if(i==ESP){
+	if(i==ES){
 		current_scan_code=ESP_SCAN_CODES;
 		current_shifted_scan_code=SHIFT_ESP_SCAN_CODES;
 		video[kb_index]='E';
 		video[kb_index+2]='S';
 		video[kb_index+4]='P';
-	}else if(i==ENG){
+	}else if(i==EN){
 		current_scan_code=ENG_SCAN_CODES;
 		current_shifted_scan_code=SHIFT_ENG_SCAN_CODES;
 		video[kb_index]='E';

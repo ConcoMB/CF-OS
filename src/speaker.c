@@ -1,6 +1,4 @@
 #include "../include/speaker.h"
-#include "../include/kernel.h"
-#include "../include/timertick.h"
 
 char* CODES[36]={
 	 ".-",		//A

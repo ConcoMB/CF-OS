@@ -10,7 +10,7 @@
 #define _kernel_
 #include "defs.h"
 #include "kasm.h"
-//#include "kb.h"
+#include "kb.h"
 #include "int80.h"
 #include "timertick.h"
 #include "shell.h"

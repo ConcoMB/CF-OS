@@ -210,6 +210,7 @@ void createProcess(int (*funct)(int, char **), int p)
 	initHeap((void*)task->ss);
 	task->sp=initStackFrame(funct, 0, 0, task->ss+STACK_SIZE-1, cleaner);
 	task->priority=p;
+	task->tty=&terminals[0];
 	_Sti();
 }
 

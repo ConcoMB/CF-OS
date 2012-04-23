@@ -1,5 +1,7 @@
 #ifndef __SPEAKER__
 #define __SPEAKER__
+#include "kernel.h"
+#include "timertick.h"
 
 void sys_speak(char c);
 void play_sound(int nFrequence) ;

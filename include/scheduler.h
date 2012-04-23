@@ -8,7 +8,16 @@
 
 #define MAXPROC 10
 #define STACK_SIZE 4096
+
 typedef enum {RUN, BLOCK, READY, FREE} status_t;
+
+typedef struct
+{
+	char * video;
+	char color;
+	int cursor_x;
+	int cursor_y;
+} tty_t;
 
 typedef struct
 {
@@ -25,11 +34,12 @@ typedef struct
 	int priority;
 	int ss, ssize;
 	stackframe_t* sp;
-	tty_t tty;
+	tty_t *tty;
 } task_t;
 
 extern task_t process[];
 extern int current;
+extern tty_t terminals[];
 
 task_t* getProcess(int current);
 stackframe_t* initStackFrame(int (*funct)(int, char **), int argc, char** argv, int bot, void(*clean)());
