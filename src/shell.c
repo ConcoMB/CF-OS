@@ -55,7 +55,7 @@ void print_memory(){
 	printf("\n HEAP:\n %d pages used -> %d bytes\n\n", h, h*4096);
 }
 
-void shell(){
+int shell(int argc, char** argv){
 	char c;
 	char buffer[MAX_CMD_SIZE+1];
 	char last_cmd[CMD_MEMORY][MAX_CMD_SIZE+1];

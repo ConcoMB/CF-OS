@@ -4,14 +4,15 @@
 #include "stdio.h"
 #include "paging.h"
 #include "video.h"
+#include "structs.h"
 #include "heap.h"
 
 #define MAXPROC 10
 #define MAXPAGEPERPROC 10
 #define STACK_SIZE 4096
 
-typedef enum {RUN, BLOCK, READY, FREE} status_t;
 
+<<<<<<< HEAD
 typedef struct
 {
 	char * video;
@@ -37,6 +38,8 @@ typedef struct
 	stackframe_t* sp;
 	tty_t *tty;
 } task_t;
+=======
+>>>>>>> 81a0c9e5aee99ef816d9b7d0f0e4e89cd20acbde
 
 extern task_t process[];
 extern int current;
@@ -52,6 +55,7 @@ stackframe_t* getStack(task_t* proc);
 void initScheduler();
 void cleaner(void);
 int idle(int argc, char* argv[]);
-void createProcess(int (*funct)(int, char **), int p);
+void createProcess(int (*funct)(int, char **), int p, int ttyN);
+int processHasFocus();
 
 #endif

@@ -4,9 +4,10 @@
 #include "defs.h"
 #include "kernel.h"
 #include "video.h"
+#include "scheduler.h"
 #define BUFFER_SIZE 10
-#define ES 1
-#define EN 2
+#define LANG_ES 1
+#define LANG_EN 2
 
 void kb_init();
 void int_09();
