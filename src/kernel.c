@@ -103,7 +103,7 @@ void kmain()
 	initScreens();
 	initScheduler();
 	//createProcess(test2, 4);
-	//createProcess(test, 2,0);
+	createProcess(test, 2,0);
 /* Habilito interrupcion de timer tick*/
 
         _mascaraPIC1(0xFC);

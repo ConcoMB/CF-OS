@@ -17,10 +17,10 @@ void page_init(){
 	_epag();
 }
 
-void* getStackPage(int PID)
+void* getStackPage(int pid)
 {
-	int i;
-	for(i=PID; i<PID+MAXPAGEPERPROC-1; i++)
+	/*int i;
+	for(i=0; i<USER_PAGES; i++)
 	{
 		if(!page_present[i])
 		{
@@ -29,21 +29,39 @@ void* getStackPage(int PID)
 			return (void*)((i+KERNEL_PAGES)*PAGE_SIZE);
 		}
 	}
+	return 0;*/
+	if(pid!=-1)
+		printf("stack processo %d\n", pid);
+	int stack=(pid+1)*MAXPAGEPERPROC, i;
+	for(i=stack; i<stack+MAXPAGEPERPROC; i++)
+	{
+		if(!page_present[i])
+		{	
+			if(pid!=-1)
+				printf("stack pagina %d\n", i);	
+			page_present[i]=1;
+			page_table[i+KERNEL_PAGES]=(int*)((int)(page_table[i+KERNEL_PAGES])|0x00000001);
+			return (void*)((i+KERNEL_PAGES)*PAGE_SIZE);
+		}
+	}
+	//error
 	return 0;
 }
 
-void* getHeapPage(int PID)
+void* getHeapPage(int pid)
 {
-	int i;
-	for(i=PID+MAXPAGEPERPROC; i>PID; i--)
+	int heap=(pid+1)*MAXPAGEPERPROC+MAXPAGEPERPROC-1, i;
+	for(i=heap; i>heap-MAXPAGEPERPROC; i--)
 	{
 		if(!page_present[i])
 		{
+			printf("heap given %d\n", i);
 			page_present[i]=1;
 			page_table[i+KERNEL_PAGES]=(int*)((int)(page_table[i+KERNEL_PAGES])|0x00000001);
 			return (void*)((i+KERNEL_PAGES)*PAGE_SIZE);
 		}
 	}
+	//error
 	return 0;
 }
 
@@ -128,7 +146,7 @@ void* Realloc(void* dir, int pCant, int diff)
 		//ERROR
 		return 0;
 	}
-	/*for(i=0; i<USER_PAGES; i++)
+	for(i=0; i<USER_PAGES; i++)
 	{
 		if(!page_present[i])
 		{

@@ -47,7 +47,7 @@ void heapResize(head_t* heap, int size)
 	int occupied = ((int)heap+sizeof(head_t))%4096;
 	if(4096-occupied < size+CONDITION)
 	{
-		getHeapPage(process[current].pid);
+		getHeapPage(current);
 		return;
 	}
 }

@@ -9,14 +9,14 @@ int currentTTY=0;
 void initScreens()
 {
 	int i;
-	for(i=1;i<8; i++)
+	/*for(i=1;i<8; i++)
 	{
 		terminals[i].video=videos[i-1];
 		terminals[i].cursor_x=0;
 		terminals[i].cursor_y=0;
 		terminals[i].color=WHITE_TXT;
 		k_clear_screen(&terminals[i]);
-	}
+	}*/
 	terminals[0].video=VID_DIR;
 	terminals[0].color=WHITE_TXT;
 	terminals[0].cursor_x=0;
@@ -49,14 +49,14 @@ void k_clear_screen(tty_t* tty)
 void sys_print(char c)
 {
 	tty_t* tty;
-	if(current==-1)
+	/*if(current==-1)
 	{
 		return;
-	}
-	tty=process[current].tty;
-	//tty_t* tty=&terminals[0];
-    char *video = tty->video;
-    //char* video= VID_DIR;
+	}*/
+	//tty=process[current].tty;
+	tty=&terminals[0];
+   // char *video = tty->video;
+    char* video= VID_DIR;
     if(c=='\n')
     {
 		tty->cursor_y++;
