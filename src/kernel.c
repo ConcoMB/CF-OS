@@ -42,14 +42,26 @@ int test(int argc, char** argv)
 	strcpy(str[1], "como");
 	str[2]=malloc(7);
 	strcpy(str[2], "estas");
+	malloc(4000);
+	malloc(4000);
 	//free(str[2]);
 	//str[3]=malloc(15);
 	//strcpy(str[3],"todo");
 	//free(str[2]);
 	free(str[0]);
 	free(str[1]);
-	printHeap(start);
+	//printHeap(start);
+	int i=0;
+	while((i++)!=100000);
+	printf("termine");
 	return 0;
+}
+int test2(int argc, char** argv)
+{
+	while(1)
+	{
+		printf("aa");
+	}
 }
 
 void kmain() 
@@ -74,8 +86,9 @@ void kmain()
 	srand(getmin());
 	_Cli();
 	initScreens();
-	//initScheduler();
-	//createProcess(test, 4);
+	initScheduler();
+	createProcess(test2, 4);
+	createProcess(test, 2);
 /* Habilito interrupcion de timer tick*/
 
         _mascaraPIC1(0xFC);
@@ -86,7 +99,7 @@ void kmain()
 	/*Test*/
 	
 	//shell();
-	printf("initSCH\n");
+	//printf("initSCH\n");
         while(1)
         {
 			

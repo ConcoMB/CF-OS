@@ -1,6 +1,7 @@
 #ifndef __HEAP__
 #define __HEAP__
 #include "scheduler.h"
+#include "paging.h"
 
 typedef struct 
 {
@@ -17,4 +18,5 @@ int sys_free(void* dir);
 
 void initHeap(void* dir);
 
+head_t* controlRealloc(head_t* heap, int size);
 #endif

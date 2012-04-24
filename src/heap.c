@@ -1,9 +1,11 @@
 #include "../include/heap.h"
 
+int CONDITION=sizeof(head_t)+4;
+
+
 void * sys_malloc(int size)
 {
-	int CONDITION=sizeof(head_t)+4;
-	head_t* heap=(head_t*)process[current].ss;
+	head_t* heap=(head_t*)process[current].heap;
 	while(1)
 	{
 		if(heap->free)
@@ -11,6 +13,7 @@ void * sys_malloc(int size)
 			int dif=heap->front-size;
 			if(heap->front==0)
 			{
+				controlRealloc(heap, size);
 				heap->free=0;
 				heap->front=size;
 				heap=advance(heap);
@@ -36,6 +39,16 @@ void * sys_malloc(int size)
 			}
 		}
 		heap=advance(heap);
+	}
+}
+
+void controlRealloc(head_t* heap, int size)
+{
+	int occupied = ((int)heap+sizeof(head_t))%4096;
+	if(4096-occupied < size+CONDITION)
+	{
+		heapRealloc(process[current].pid);
+		return aux;
 	}
 }
 
@@ -107,8 +120,11 @@ int sys_free(void* dir)
 
 void initHeap(void* dir)
 {
+	printf("1\n");
 	head_t* heap=(head_t*)dir;
+	printf("2\n");
 	heap->front=0;
 	heap->back=0;
 	heap->free=1;
+	printf("3\n");
 }

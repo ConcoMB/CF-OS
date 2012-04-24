@@ -24,14 +24,26 @@ void printIdleStack()
 
 void saveStack(stackframe_t* sp)
 {
-	task_t* temp;
+	task_t* temp, aux;
+	aux=process[current];
 	if (!firstTime)
 	{
 		temp=getProcess(current);
 		temp->sp=sp;
 	}
 	firstTime=0;
+	stackResize(aux);
 	return;
+}
+
+void stackResize(task_t* task)
+{
+	int percent=task->sp%4096;
+	percent/=4096;
+	if(percent>=0.8)
+	{
+		pageRealloc(task->ss);
+	}
 }
 
 //Funcion que obtiene el ESP de idle para switchear entre tareas.
@@ -131,11 +143,10 @@ void initScheduler()
 	idleP.pid=-1;
 	idleP.status=READY;
 	idleP.ss=(int)getPage();
-	initHeap((void*)idleP.ss);
+	//initHeap((void*)idleP.heap);
 	//idleP.ssize=STACK_SIZE;
 	idleP.sp=initStackFrame(idle, 0, 0, idleP.ss+STACK_SIZE-1, cleaner);
 	
-	printf("inicie\n");
 }
 
 void cleaner(void)
@@ -206,8 +217,15 @@ void createProcess(int (*funct)(int, char **), int p)
 	task_t* task=&process[i];
 	task->pid=cant++;
 	task->status=READY;
-	task->ss=(int)getPage();
-	initHeap((void*)task->ss);
+	task->ss=(int)getStackPage(task->pid);
+	task->heap=(int)getHeapPage(task->pid);
+	if(task->ss==0 || task->heap==0)
+	{
+		//ERROR
+		return;
+	}
+	task->heapSize=1;
+	initHeap((void*)task->heap);
 	task->sp=initStackFrame(funct, 0, 0, task->ss+STACK_SIZE-1, cleaner);
 	task->priority=p;
 	task->tty=&terminals[0];

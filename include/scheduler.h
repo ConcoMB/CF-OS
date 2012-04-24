@@ -7,6 +7,7 @@
 #include "heap.h"
 
 #define MAXPROC 10
+#define MAXPAGEPERPROC 10
 #define STACK_SIZE 4096
 
 typedef enum {RUN, BLOCK, READY, FREE} status_t;
@@ -32,7 +33,7 @@ typedef struct
 	status_t status;
 	int pid;
 	int priority;
-	int ss, ssize;
+	int ss, ssize, heap;
 	stackframe_t* sp;
 	tty_t *tty;
 } task_t;
