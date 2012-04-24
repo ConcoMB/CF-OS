@@ -78,7 +78,7 @@ void page_fault(int fault){
 	}
 	while(1);
 }
-
+/*
 void heapRealloc(int pid)
 {
 	int heap=USER_PAGES+pid*MAXPAGEPERPROC+MAXPAGEPERPROC, i;
@@ -86,6 +86,7 @@ void heapRealloc(int pid)
 	{
 		if(!page_present[i])
 		{
+			printf("realloc\n");
 			page_present[i]=1;
 			page_table[i+KERNEL_PAGES]=(int*)((int)(page_table[i+KERNEL_PAGES])|0x00000001);
 			return;
@@ -110,7 +111,7 @@ void stackRealloc(int pid)
 	//error
 	return;
 
-}
+}*/
 /*
 void* Realloc(void* dir, int pCant, int diff)
 {

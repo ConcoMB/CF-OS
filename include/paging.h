@@ -17,8 +17,8 @@ void page_init();
 int heap_count();
 void* getStackPage();
 void* getHeapPage();
-void heapRealloc(int pid);
-void stackRealloc(int pid);
+//void heapRealloc(int pid);
+//void stackRealloc(int pid);
 //void* pageRealloc(void* heap, int pCant, int diff);
 void freePage(void* address);
 

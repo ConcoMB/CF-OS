@@ -18,5 +18,5 @@ int sys_free(void* dir);
 
 void initHeap(void* dir);
 
-head_t* controlRealloc(head_t* heap, int size);
+void heapResize(head_t* heap, int size);
 #endif

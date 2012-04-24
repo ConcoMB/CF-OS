@@ -32,8 +32,9 @@ void printHeap(void* start)
 	}
 }
 
-/*int test(int argc, char** argv)
+int test(int argc, char** argv)
 {
+	printf("empiezo\n");
 	char* str[4];
 	str[0]=malloc(10);
 	void* start=str[0];
@@ -55,8 +56,8 @@ void printHeap(void* start)
 	while((i++)!=100000);
 	printf("termine");
 	return 0;
-}*/
-
+}
+/*
 int test(int argc, char** argv)
 {
 	while(1)
@@ -69,7 +70,7 @@ int test(int argc, char** argv)
 			c='a';
 		}
 	}
-}
+}*/
 int test2(int argc, char** argv)
 {
 	while(1)
@@ -101,26 +102,17 @@ void kmain()
 	_Cli();
 	initScreens();
 	initScheduler();
-<<<<<<< HEAD
-	createProcess(test2, 4);
-	createProcess(test, 2);
-=======
->>>>>>> 81a0c9e5aee99ef816d9b7d0f0e4e89cd20acbde
+	//createProcess(test2, 4);
+	//createProcess(test, 2,0);
 /* Habilito interrupcion de timer tick*/
 
         _mascaraPIC1(0xFC);
         _mascaraPIC2(0xFF);
 	_Sti();	
 	
-	/*Test*/
-<<<<<<< HEAD
-	
+	/*Test*/	
 	//shell();
-=======
-	createProcess(test, 4, 0);
-	//createProcess(test, 4, 1);
-	createProcess(test, 4, 1);
->>>>>>> 81a0c9e5aee99ef816d9b7d0f0e4e89cd20acbde
+
 	//printf("initSCH\n");
         while(1)
         {

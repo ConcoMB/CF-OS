@@ -24,7 +24,7 @@ typedef struct
 	status_t status;
 	int pid;
 	int priority;
-	int ss, ssize;
+	int ss, ssize, heap;
 	stackframe_t* sp;
 	tty_t *tty;
 } task_t;
