@@ -32,7 +32,7 @@ void printHeap(void* start)
 	}
 }
 
-int test(int argc, char** argv)
+int test0(int argc, char** argv)
 {
 	printf("empiezo\n");
 	char* str[4];
@@ -43,7 +43,7 @@ int test(int argc, char** argv)
 	strcpy(str[1], "como");
 	str[2]=malloc(7);
 	strcpy(str[2], "estas");
-	malloc(4000);
+	malloc(5000);
 	malloc(4000);
 	//free(str[2]);
 	//str[3]=malloc(15);
@@ -72,12 +72,26 @@ int test4(int argc, char** argv)
 		}
 	}
 }
+
+int test(int argc, char** argv)
+{	
+
+	long i=0;
+	while((i++)!=5000000);
+	int max= process[current].ssize*4096;
+	int now = (max-(process[current].sp->ESP) % max);
+	printf("voy %d, ESP %d y tengo %d \n", argc++, now, max);
+	test(argc, argv);
+	return 0;
+}
+
 int test2(int argc, char** argv)
 {
 	while(1)
 	{
 		printf("aa");
 	}
+	return 0;
 }
 
 int test5(int argc, char** argv)
@@ -109,8 +123,8 @@ void kmain()
 	initScreens();
 	initScheduler();
 	//createProcess(test2, 4);
-	//createProcess(test4, 2,0);
-	//createProcess(test4, 2,0);
+	createProcess(test4, 2,1);
+	createProcess(test4, 2,0);
 /* Habilito interrupcion de timer tick*/
 
         _mascaraPIC1(0xFC);

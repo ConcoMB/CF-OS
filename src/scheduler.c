@@ -41,11 +41,19 @@ void saveStack(stackframe_t* sp)
 
 void stackResize(task_t* task)
 {
-	int percent=(int)(task->sp) %4096;
-	percent/=4096;
-	if(percent>=0.8)
+	if(task->pid!=-1)
 	{
-		getStackPage(task->pid);
+		//printf("ESP = %d\n", task->sp->ESP);
+		int max= task->ssize*4096;
+		int now = (max-(task->sp->ESP) % max);
+		double percent = (double)(now) / (double)(max);
+		//printf("num %d / den %d\n", aux, task->ssize*4096);
+		if(percent>=0.8)
+		{
+			//printf("ojo  y \n");
+			getStackPage(task->pid);
+			task->ssize++;
+		}
 	}
 }
 
@@ -135,22 +143,16 @@ stackframe_t* getStack(task_t* proc)
 
 void initScheduler()
 {
-	//printf("init\n");
 	int i;
 	for(i=0;i<MAXPROC;i++)
 	{
 		level[i]=0;
 		process[i].status=FREE;
 	}
-	//printf("a\n");
 	cant=0;
-
 	current=-1;
-
 	idleP.pid=-1;
-
 	idleP.status=READY;
-
 	idleP.ss=(int)getStackPage(idleP.pid);
 	//initHeap((void*)idleP.heap);
 	//idleP.ssize=STACK_SIZE;
@@ -229,6 +231,7 @@ void createProcess(int (*funct)(int, char **), int p, int ttyN)
 		//printf("tnego pid %d\n", task->pid);
 
 	task->ss=(int)getStackPage(task->pid);
+	task->ssize=1;
 	task->heap=(int)getHeapPage(task->pid);
 	if(task->ss==0 || task->heap==0)
 	{
@@ -237,6 +240,7 @@ void createProcess(int (*funct)(int, char **), int p, int ttyN)
 	}
 	initHeap((void*)task->heap);
 	task->sp=initStackFrame(funct, 0, 0, task->ss+STACK_SIZE-1, cleaner);
+	task->sp->ESP=(int)(task->sp);
 	task->priority=p;
 	_Sti();
 }

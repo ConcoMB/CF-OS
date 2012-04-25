@@ -45,10 +45,10 @@ void * sys_malloc(int size)
 void heapResize(head_t* heap, int size)
 {
 	int occupied = ((int)heap+sizeof(head_t))%4096;
+	printf("ocupado %d\n",occupied);
 	if(4096-occupied < size+CONDITION)
 	{
 		getHeapPage(current);
-		return;
 	}
 }
 

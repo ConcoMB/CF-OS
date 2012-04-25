@@ -16,8 +16,6 @@ int head=0;
 int tail=0;
 char* current_scan_code;
 char* current_shifted_scan_code;
-char *video = (char *) 0xb8000;
-int kb_index=(24*80)*2;
 
 void kb_init(){
 	sys_set_scancode(LANG_ES);
@@ -59,13 +57,6 @@ int caps=0;
 void int_09(){
 	//_Cli();
 	char scanCode=_IO_in(0x60);
-	if(scanCode>=0x3b &&scanCode<=0x42)
-	{
-		//printf("\nSwap %d\n",scanCode-0x3b);
-		//while(1);
-		swapTTY(scanCode-0x3b);
-		return;
-	}
 	if(scanCode & 0x80){
 		/*RELEASED KEY*/
 		if(scanCode==(char)0xAA||scanCode==(char)0xB6){
@@ -75,6 +66,14 @@ void int_09(){
 		
 	} else {
 		/*PRESSED KEY*/
+		if(scanCode>=0x3b &&scanCode<=0x42)
+		{
+			/* FUNCTION KEY*/
+			//printf("\nSwap %d\n",scanCode-0x3b);
+			//while(1);
+			swapTTY(scanCode-0x3b);
+			return;
+		}
 		if(scanCode==0x2a||scanCode==0x36){
 			/*SHIFT*/
 			shift=1;
@@ -123,15 +122,11 @@ void sys_set_scancode(int i){
 	if(i==LANG_ES){
 		current_scan_code=ESP_SCAN_CODES;
 		current_shifted_scan_code=SHIFT_ESP_SCAN_CODES;
-		video[kb_index]='E';
-		video[kb_index+2]='S';
-		video[kb_index+4]='P';
+		printScancode();
 	}else if(i==LANG_EN){
 		current_scan_code=ENG_SCAN_CODES;
 		current_shifted_scan_code=SHIFT_ENG_SCAN_CODES;
-		video[kb_index]='E';
-		video[kb_index+2]='N';
-		video[kb_index+4]='G';
+		printScancode();
 	}
 	
 }
