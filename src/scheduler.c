@@ -85,9 +85,9 @@ task_t* getNextTask (void)
 	int cantChecked=0;
 	//printf("%d ",current);
 	//printf("%d ", current);
-	while(cantChecked<cant+1)
+	while(cantChecked<MAXPROC+1)
 	{
-		if(k==cant)
+		if(k==MAXPROC)
 		{
 			k=0;
 		}
@@ -119,7 +119,7 @@ task_t* getNextTaskFF()
 	_Cli();
 	while(1)
 	{
-		for(i=0; i<cant; i++)
+		for(i=0; i<MAXPROC; i++)
 		{
 			if(process[i].status==READY)
 			{
@@ -163,12 +163,13 @@ void initScheduler()
 void cleaner(void)
 {
 	//printf("clean");
-	process[current].status=FREE;
+	/*process[current].status=FREE;
 	freePage((void*)process[current].ss);
-	swap(cant, current);
+	//swap(cant, current);
 	cant--;
 	//YIELD
-	while(1);
+	while(1);*/
+	//kill(process[current]);
 }
 
 int idle(int argc, char* argv[])
