@@ -32,7 +32,7 @@ void printHeap(void* start)
 	}
 }
 
-int test(int argc, char** argv)
+/*int test(int argc, char** argv)
 {
 	printf("empiezo\n");
 	char* str[4];
@@ -43,7 +43,7 @@ int test(int argc, char** argv)
 	strcpy(str[1], "como");
 	str[2]=malloc(7);
 	strcpy(str[2], "estas");
-	malloc(4000);
+	malloc(5000);
 	malloc(4000);
 	//free(str[2]);
 	//str[3]=malloc(15);
@@ -56,27 +56,26 @@ int test(int argc, char** argv)
 	while((i++)!=100000);
 	printf("termine");
 	return 0;
-}
-/*
-int test(int argc, char** argv)
-{
-	while(1)
-	{
-		char c='a';
-		//c=getchar();
-		printf("%c",c++);
-		if(c>'Z')
-		{
-			c='a';
-		}
-	}
 }*/
+
+int test(int argc, char** argv)
+{	
+
+	long i=0;
+	while((i++)!=5000000);
+	int max= process[current].ssize*4096;
+	int now = (max-(process[current].sp->ESP) % max);
+	printf("voy %d, ESP %d y tengo %d \n", argc++, now, max);
+	test(argc, argv);
+	return 0;
+}
 int test2(int argc, char** argv)
 {
 	while(1)
 	{
 		printf("aa");
 	}
+	return 0;
 }
 
 void kmain() 
