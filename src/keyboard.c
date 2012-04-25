@@ -61,8 +61,9 @@ void int_09(){
 	char scanCode=_IO_in(0x60);
 	if(scanCode>=0x3b &&scanCode<=0x42)
 	{
+		//printf("\nSwap %d\n",scanCode-0x3b);
+		//while(1);
 		swapTTY(scanCode-0x3b);
-		//printf("Swap\n");
 		return;
 	}
 	if(scanCode & 0x80){

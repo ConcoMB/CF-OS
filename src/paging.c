@@ -30,15 +30,15 @@ void* getStackPage(int pid)
 		}
 	}
 	return 0;*/
-	if(pid!=-1)
-		printf("stack processo %d\n", pid);
+	/*if(pid!=-1)
+		printf("stack processo %d\n", pid);*/
 	int stack=(pid+1)*MAXPAGEPERPROC, i;
 	for(i=stack; i<stack+MAXPAGEPERPROC; i++)
 	{
 		if(!page_present[i])
 		{	
-			if(pid!=-1)
-				printf("stack pagina %d\n", i);	
+			/*if(pid!=-1)
+				printf("stack pagina %d\n", i);	*/
 			page_present[i]=1;
 			page_table[i+KERNEL_PAGES]=(int*)((int)(page_table[i+KERNEL_PAGES])|0x00000001);
 			return (void*)((i+KERNEL_PAGES)*PAGE_SIZE);
@@ -55,7 +55,7 @@ void* getHeapPage(int pid)
 	{
 		if(!page_present[i])
 		{
-			printf("heap given %d\n", i);
+			//printf("heap given %d\n", i);
 			page_present[i]=1;
 			page_table[i+KERNEL_PAGES]=(int*)((int)(page_table[i+KERNEL_PAGES])|0x00000001);
 			return (void*)((i+KERNEL_PAGES)*PAGE_SIZE);

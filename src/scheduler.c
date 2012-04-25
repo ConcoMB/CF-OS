@@ -135,14 +135,14 @@ stackframe_t* getStack(task_t* proc)
 
 void initScheduler()
 {
-	printf("init\n");
+	//printf("init\n");
 	int i;
 	for(i=0;i<MAXPROC;i++)
 	{
 		level[i]=0;
 		process[i].status=FREE;
 	}
-	printf("a\n");
+	//printf("a\n");
 	cant=0;
 
 	current=-1;
@@ -155,7 +155,7 @@ void initScheduler()
 	//initHeap((void*)idleP.heap);
 	//idleP.ssize=STACK_SIZE;
 	idleP.sp=initStackFrame(idle, 0, 0, idleP.ss+STACK_SIZE-1, cleaner);
-	//idleP.tty=&terminals[7];	
+	idleP.tty=&terminals[7];	
 }
 
 void cleaner(void)
@@ -226,7 +226,7 @@ void createProcess(int (*funct)(int, char **), int p, int ttyN)
 	task->tty=&terminals[ttyN];
 	task->pid=cant++;
 	task->status=READY;
-		printf("tnego pid %d\n", task->pid);
+		//printf("tnego pid %d\n", task->pid);
 
 	task->ss=(int)getStackPage(task->pid);
 	task->heap=(int)getHeapPage(task->pid);
