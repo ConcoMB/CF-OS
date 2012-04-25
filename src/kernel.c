@@ -32,7 +32,7 @@ void printHeap(void* start)
 	}
 }
 
-/*int test(int argc, char** argv)
+int test0(int argc, char** argv)
 {
 	printf("empiezo\n");
 	char* str[4];
@@ -56,7 +56,22 @@ void printHeap(void* start)
 	while((i++)!=100000);
 	printf("termine");
 	return 0;
-}*/
+}
+
+int test4(int argc, char** argv)
+{
+	char c='a';
+	while(1)
+	{
+		
+		//c=getchar();
+		printf("%c",c++);
+		if(c>'z')
+		{
+			c='a';
+		}
+	}
+}
 
 int test(int argc, char** argv)
 {	
@@ -69,6 +84,7 @@ int test(int argc, char** argv)
 	test(argc, argv);
 	return 0;
 }
+
 int test2(int argc, char** argv)
 {
 	while(1)
@@ -76,6 +92,11 @@ int test2(int argc, char** argv)
 		printf("aa");
 	}
 	return 0;
+}
+
+int test5(int argc, char** argv)
+{
+	while(1);
 }
 
 void kmain() 
@@ -102,7 +123,8 @@ void kmain()
 	initScreens();
 	initScheduler();
 	//createProcess(test2, 4);
-	createProcess(test, 2,0);
+	createProcess(test4, 2,1);
+	createProcess(test4, 2,0);
 /* Habilito interrupcion de timer tick*/
 
         _mascaraPIC1(0xFC);

@@ -157,7 +157,7 @@ void initScheduler()
 	//initHeap((void*)idleP.heap);
 	//idleP.ssize=STACK_SIZE;
 	idleP.sp=initStackFrame(idle, 0, 0, idleP.ss+STACK_SIZE-1, cleaner);
-	//idleP.tty=&terminals[7];	
+	idleP.tty=&terminals[7];	
 }
 
 void cleaner(void)
@@ -229,7 +229,7 @@ void createProcess(int (*funct)(int, char **), int p, int ttyN)
 	task->tty=&terminals[ttyN];
 	task->pid=cant++;
 	task->status=READY;
-		printf("tnego pid %d\n", task->pid);
+		//printf("tnego pid %d\n", task->pid);
 
 	task->ss=(int)getStackPage(task->pid);
 	task->ssize=1;

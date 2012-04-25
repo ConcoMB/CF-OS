@@ -35,8 +35,6 @@ void* getHeapPage(int pid)
 	{
 		if(!page_present[i])
 		{	
-			
-			printf("heap pagina %d\n", i);	
 			page_present[i]=1;
 			page_table[i+KERNEL_PAGES]=(int*)((int)(page_table[i+KERNEL_PAGES])|0x00000001);
 			return (void*)((i+KERNEL_PAGES)*PAGE_SIZE);
@@ -55,9 +53,6 @@ void* getStackPage(int pid)
 	{
 		if(!page_present[i])
 		{
-				if(pid!=-1)
-
-			printf("stack given %d\n", i);
 			page_present[i]=1;
 			page_table[i+KERNEL_PAGES]=(int*)((int)(page_table[i+KERNEL_PAGES])|0x00000001);
 			return (void*)((i+KERNEL_PAGES)*PAGE_SIZE);

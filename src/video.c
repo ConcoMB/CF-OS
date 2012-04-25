@@ -5,26 +5,28 @@ tty_t terminals[8];
 char videos[7][80*25*2];
 int currentTTY=0;
 
+char auxv[160*25];
 
 void initScreens()
 {
 	int i;
-	/*for(i=1;i<8; i++)
+	for(i=1;i<8; i++)
 	{
 		terminals[i].video=videos[i-1];
 		terminals[i].cursor_x=0;
 		terminals[i].cursor_y=0;
 		terminals[i].color=WHITE_TXT;
-		k_clear_screen(&terminals[i]);
-	}*/
+		clear_screen(&terminals[i]);
+	}
 	terminals[0].video=VID_DIR;
 	terminals[0].color=WHITE_TXT;
 	terminals[0].cursor_x=0;
 	terminals[0].cursor_y=0;
-	k_clear_screen(&terminals[0]);
+	clear_screen(&terminals[0]);
+	printBar();
 }
 
-void k_clear_screen(tty_t* tty) 
+void clear_screen(tty_t* tty) 
 {
 	char *vidmem =  tty->video;
 	//char* vidmem = VID_DIR;
@@ -36,6 +38,21 @@ void k_clear_screen(tty_t* tty)
 		vidmem[i]=WHITE_TXT;
 		i++;
 	};
+}
+
+void printScancode()
+{
+	char* vidmem=VID_DIR;
+	int i=80*24*2;
+	vidmem[i]='E';
+	vidmem[i+2]='S';
+	vidmem[i+4]='P';
+}
+
+void printBar()
+{
+	char* vidmem=VID_DIR;
+	int i=80*24*2;
 	while(i < (80*25*2))
 	{
 		vidmem[i]=' ';
@@ -43,20 +60,21 @@ void k_clear_screen(tty_t* tty)
 		vidmem[i]=BLACK_TXT;
 		i++;
 	};
+	printScancode();
 }
 
 
 void sys_print(char c)
 {
 	tty_t* tty;
-	/*if(current==-1)
+	if(current==-1)
 	{
 		return;
-	}*/
-	//tty=process[current].tty;
-	tty=&terminals[0];
-   // char *video = tty->video;
-    char* video= VID_DIR;
+	}
+	tty=process[current].tty;
+	//tty=&terminals[0];
+    char *video = tty->video;
+    //char* video= VID_DIR;
     if(c=='\n')
     {
 		tty->cursor_y++;
@@ -124,6 +142,7 @@ void update_cursor(tty_t* tty)
 {
     int index;
 	index= cursor_index(tty);
+	
     _IO_out(0x3D4, 14);
     _IO_out(0x3D5, index >> 8);
     _IO_out(0x3D4, 15);
@@ -134,7 +153,6 @@ void swapTTY(int num)
 {
 	if(currentTTY!=num)
 	{
-		char auxv[160*25];
 		memcpy(auxv, VID_DIR, 160*25);
 		memcpy(VID_DIR, terminals[num].video, 160*25);
 		memcpy(terminals[num].video, auxv, 160*25);
