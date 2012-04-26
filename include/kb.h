@@ -9,6 +9,8 @@
 #define LANG_ES 1
 #define LANG_EN 2
 
+int scancode_lang;
+
 void kb_init();
 void int_09();
 char buffer_getchar();

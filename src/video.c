@@ -44,9 +44,14 @@ void printScancode()
 {
 	char* vidmem=VID_DIR;
 	int i=80*24*2;
-	vidmem[i]='E';
-	vidmem[i+2]='S';
-	vidmem[i+4]='P';
+	if(scancode_lang==LANG_ES)
+	{
+		printOnVideo("ESP", 0, 24);
+	}
+	if(scancode_lang==LANG_EN)
+	{
+		printOnVideo("ENG", 0, 24);
+	}
 }
 
 void printBar()
@@ -61,8 +66,45 @@ void printBar()
 		i++;
 	};
 	printScancode();
+	printTerminal();
+	printTime();
 }
 
+void printTerminal()
+{
+	char str[11];
+	strcpy(str, "Terminal  ");
+	str[9]=currentTTY+'0'+1;
+	printOnVideo(str, 9, 24);
+}
+
+void printOnVideo(char* str, int x, int y)
+{
+	char* vidmem=VID_DIR;
+	int i=(80*y+x)*2;
+	int j;
+	for(j=0; str[j]; j++)
+	{
+		vidmem[i]=str[j];
+		i+=2;
+	}
+}
+
+void printTime()
+{
+	char *video = (char *) 0xb8000;
+	int clock_index=(24*80+74)*2;
+	
+	char hour,min;
+	sys_hour(&hour);
+	sys_min(&min);
+		
+	video[clock_index+=2]=(hour/10+'0');
+	video[clock_index+=2]=(hour%10+'0');
+	video[clock_index+=2]=(':');
+	video[clock_index+=2]=(min/10+'0');
+	video[clock_index+=2]=(min%10+'0');
+}
 
 void sys_print(char c)
 {
@@ -153,13 +195,14 @@ void swapTTY(int num)
 {
 	if(currentTTY!=num)
 	{
-		memcpy(auxv, VID_DIR, 160*25);
-		memcpy(VID_DIR, terminals[num].video, 160*25);
-		memcpy(terminals[num].video, auxv, 160*25);
+		memcpy(auxv, VID_DIR, 160*24);
+		memcpy(VID_DIR, terminals[num].video, 160*24);
+		memcpy(terminals[num].video, auxv, 160*24);
 		terminals[currentTTY].video=terminals[num].video;
 		terminals[num].video=VID_DIR;
 		currentTTY=num;
 		update_cursor(&terminals[currentTTY]);
+		printTerminal();
 	}
 }
 

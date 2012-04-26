@@ -66,6 +66,7 @@ void* getIdleStack(void)
 //Funcion que devuelve el PROCESS* siguiente a ejecutar
 task_t* getNextProcess (void)
 {
+	tick();
 	//printf("a");
 	task_t* temp;
 	//selecciona la tarea
@@ -222,7 +223,6 @@ int getFreeTask(void)
 
 void createProcess(int (*funct)(int, char **), int p, int ttyN)
 {
-	_Cli();
 	int i=getFreeTask();
 	task_t* task=&process[i];
 	task->tty=&terminals[ttyN];
@@ -242,11 +242,37 @@ void createProcess(int (*funct)(int, char **), int p, int ttyN)
 	task->sp=initStackFrame(funct, 0, 0, task->ss+STACK_SIZE-1, cleaner);
 	task->sp->ESP=(int)(task->sp);
 	task->priority=p;
-	_Sti();
 }
 
 int processHasFocus()
 {
 	//printf("focus %d\n", process[current].tty==&terminals[currentTTY]);
 	return process[current].tty==&terminals[currentTTY];
+}
+
+void sys_sleep(int ms)
+{
+	process[current].status=BLOCK;
+	process[current].ticks=ms%TICK_FREQUENCY==0?ms/TICK_FREQUENCY:ms/TICK_FREQUENCY+1;
+	_sys_yield();
+}
+
+void tick()
+{
+	int i;
+	for(i=0;i<MAXPROC;i++)
+	{
+		if(process[i].status==BLOCK)
+		{
+			if(process[i].ticks>0)
+			{
+				process[i].ticks--;
+			}
+			else
+			{
+				process[i].status=READY;
+			}
+		}
+	}
+	printTime();
 }

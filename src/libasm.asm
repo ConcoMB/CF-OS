@@ -22,6 +22,8 @@ GLOBAL _epag
 GLOBAL _fill_page1
 GLOBAL __stack_count
 GLOBAL _sys_stack_count
+GLOBAL _sys_yield
+GLOBAL __sleep
 
 EXTERN getIP
 EXTERN  printIdleStack
@@ -242,6 +244,16 @@ __heap_count:
 __stack_count:
 	mov ebx, 11
 	int 080h
+	ret
+
+__sleep:
+	mov ebx, 14
+	mov ecx, [esp+4]
+	int 080h
+	ret
+	
+_sys_yield:
+	int 08h;
 	ret
 	
 _sys_stack_count:

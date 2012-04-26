@@ -73,3 +73,8 @@ int pageprint(int page){
 	}
 	return 1;
 }
+
+void sleep(int ms)
+{
+	__sleep( ms);
+}

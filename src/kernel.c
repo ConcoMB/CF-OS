@@ -69,6 +69,7 @@ int test4(int argc, char** argv)
 		if(c>'z')
 		{
 			c='a';
+			sleep(500);
 		}
 	}
 }
@@ -123,8 +124,10 @@ void kmain()
 	initScreens();
 	initScheduler();
 	//createProcess(test2, 4);
-	createProcess(test4, 2,1);
-	createProcess(test4, 2,0);
+	//createProcess(test4, 2,1);
+	//createProcess(test4, 2,0);
+	createProcess(shell, 2,2);
+	createProcess(shell, 2,3);
 /* Habilito interrupcion de timer tick*/
 
         _mascaraPIC1(0xFC);

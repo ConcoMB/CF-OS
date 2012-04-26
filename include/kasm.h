@@ -26,6 +26,7 @@ void		_lcr3(int* adress);
 void		_epag();
 void		_fill_page1();
 int		_sys_stack_count();
+void _sys_yield();
 
 void		_debug (void);
 

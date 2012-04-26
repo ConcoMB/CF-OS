@@ -11,6 +11,8 @@
 #define MAXPAGEPERPROC 10
 #define STACK_SIZE 4096
 
+#define TICK_FREQUENCY 55
+
 
 extern task_t process[];
 extern int current;
@@ -29,6 +31,7 @@ int idle(int argc, char* argv[]);
 void createProcess(int (*funct)(int, char **), int p, int ttyN);
 int processHasFocus();
 void stackResize(task_t* task);
-
+void sys_sleep(int ms);
+void tick();
 
 #endif
