@@ -261,27 +261,33 @@ int sys_kill(int pid)
 
 void * sys_top()
 {
-	void * processInfo = malloc(sizeof(int)+cant*sizeof(int)*2);
+	printf("ayudaaa\n" );
+	int processInfo[1+cant*2];
+		printf("ayudaaa\n" );
+
 	((int*)processInfo)[0] = cant;
+		printf("ayudaaa\n" );
+
 	task_t proc;
-	int i=1,j=1,aux=0;
+	int i=1,j=1,k=1,aux=0;
 	while(i < MAXPROC)
 	{
 		proc = process[i];
 		if(proc.status != FREE)
 		{
-			((int*)processInfo)[i] = proc.pid;
-			((int*)processInfo)[i+1] = proc.timeBlocks;
+			((int*)processInfo)[k] = proc.pid;
+			((int*)processInfo)[k+1] = proc.timeBlocks;
 			aux += proc.timeBlocks;
-			i+=2;
+			k+=2;
 		}
+		i++;
 	}
 	while(j<i)
 	{
-		((int*)processInfo)[i+1] = (((int*)processInfo)[i+1] / aux) * 100;
+		((int*)processInfo)[j+1] = (((int*)processInfo)[j+1] / aux) * 100;
 		j+=2;
 	}
-	return processInfo;
+	return ((void*)processInfo);
 }
 
 int processHasFocus()
