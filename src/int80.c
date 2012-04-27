@@ -65,9 +65,12 @@ void int_80(REG registers)
 			i=registers.ecx;
 			registers.eax=sys_kill(i);
 			break;
+		case 13:
+			_Cli();
+			registers.eax=(int)sys_top();
+			_Sti();
 	}  
 }
-
 
 /* BUFFER FUNCTIONS */
 

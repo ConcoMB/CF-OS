@@ -11,6 +11,7 @@ void __setcolor(char* colorp);
 void __set_scancode(int i);
 int __heap_count();
 int __kill(int pID);
+void* __top();
 
 /* __write
 *

@@ -18,13 +18,14 @@ GLOBAL __free
 GLOBAL __heap_count
 GLOBAL  __set_scancode
 GLOBAL __kill
+GLOBAL __top
 GLOBAL _lcr3
 GLOBAL _epag
 GLOBAL _fill_page1
 GLOBAL __stack_count
 GLOBAL _sys_stack_count
 
-EXTERN getIP
+EXTERN  getIP
 EXTERN  printIdleStack
 EXTERN  int_08
 EXTERN  eokl
@@ -247,6 +248,11 @@ __stack_count:
 
 __kill:
 	mov ebx, 12
+	int 080h
+	ret
+
+__top:
+	mov ebx, 13
 	int 080h
 	ret
 	

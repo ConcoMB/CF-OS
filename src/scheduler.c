@@ -227,7 +227,8 @@ void createProcess(int (*funct)(int, char **), int p, int ttyN)
 	int i=getFreeTask();
 	task_t* task=&process[i];
 	task->tty=&terminals[ttyN];
-	task->pid=cant++;
+	task->pid=i;
+	cant++;
 	task->status=READY;
 		//printf("tnego pid %d\n", task->pid);
 
@@ -246,13 +247,41 @@ void createProcess(int (*funct)(int, char **), int p, int ttyN)
 	_Sti();
 }
 
-int sys_kill(int pID){
-	if( pID > cant || process[pID].status==FREE ){
+int sys_kill(int pid)
+{
+	if( process[pid].status==FREE ){
 		return 1;
 	}
+	freeStackPages(pid);
+	freeHeapPages(pid);
 	cant--;
-	process[pID].status = FREE;
+	process[pid].status = FREE;
 	return 0;
+}
+
+void * sys_top()
+{
+	void * processInfo = malloc(sizeof(int)+cant*sizeof(int)*2);
+	((int*)processInfo)[0] = cant;
+	task_t proc;
+	int i=1,j=1,aux=0;
+	while(i < MAXPROC)
+	{
+		proc = process[i];
+		if(proc.status != FREE)
+		{
+			((int*)processInfo)[i] = proc.pid;
+			((int*)processInfo)[i+1] = proc.timeBlocks;
+			aux += proc.timeBlocks;
+			i+=2;
+		}
+	}
+	while(j<i)
+	{
+		((int*)processInfo)[i+1] = (((int*)processInfo)[i+1] / aux) * 100;
+		j+=2;
+	}
+	return processInfo;
 }
 
 int processHasFocus()

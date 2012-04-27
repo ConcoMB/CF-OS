@@ -37,7 +37,7 @@ int test0(int argc, char** argv)
 	printf("empiezo\n");
 	char* str[4];
 	str[0]=malloc(10);
-	void* start=str[0];
+	//void* start=str[0];
 	strcpy(str[0], "hola");
 	str[1]=malloc(20);
 	strcpy(str[1], "como");
@@ -123,8 +123,12 @@ void kmain()
 	initScreens();
 	initScheduler();
 	//createProcess(test2, 4);
-	createProcess(test4, 2,1);
-	createProcess(test4, 2,0);
+	createProcess(shell, 2,1);
+	createProcess(test4, 2,2);
+	createProcess(test4, 2,3);
+	createProcess(test4, 2,4);
+
+	//createProcess(test4, 2,0);
 /* Habilito interrupcion de timer tick*/
 
     _mascaraPIC1(0xFC);

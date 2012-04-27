@@ -216,10 +216,10 @@ int shell(int argc, char** argv){
 			i=atoi(buffer+5);
 			switch(kill(i)){
 				case 0:
-					printf("Procces killed succefully");
+					printf("Procces killed succefully\n");
 					break;
 				case 1:
-					printf("PID invalid");
+					printf("PID invalid\n");
 					break;
 			}
 		}

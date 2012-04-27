@@ -22,6 +22,7 @@ typedef struct
 typedef struct
 {
 	status_t status;
+	int timeBlocks;
 	int pid;
 	int priority;
 	int ss, ssize, heap;
