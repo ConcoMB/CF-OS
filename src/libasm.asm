@@ -248,6 +248,7 @@ __stack_count:
 
 __kill:
 	mov ebx, 12
+	mov ecx, [esp+4]
 	int 080h
 	ret
 

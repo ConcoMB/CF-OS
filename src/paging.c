@@ -68,36 +68,12 @@ void freePage(void* address)
 	page_table[i+KERNEL_PAGES]=(int*)((int)(page_table[i+KERNEL_PAGES])&0xFFFFFFFE);
 }
 
-void freeStackPages(int pid)
-{
-	int i, stack = (pid+1)*MAXPAGEPERPROC+MAXPAGEPERPROC-1;
-	for(i=stack ; i>stack-MAXPAGEPERPROC ; i--)
-	{
-		if(page_present[i])
-		{
-			page_present[i]=0;
-			page_table[i+KERNEL_PAGES]=(int*)((int)(page_table[i+KERNEL_PAGES])&0xFFFFFFFE);
-		}
-		else
-		{
-			return;
-		}
-	}
-}
-
-void freeHeapPages(int pid){
+void freeProcesPages(int pid){
 	int i, heap = (pid+1)*MAXPAGEPERPROC;
-	for(i=heap ; i>heap+MAXPAGEPERPROC ; i++)
+	for(i=heap ; i<heap+MAXPAGEPERPROC ; i++)
 	{
-		if(page_present[i])
-		{
-			page_present[i]=0;
-			page_table[i+KERNEL_PAGES]=(int*)((int)(page_table[i+KERNEL_PAGES])&0xFFFFFFFE);
-		}
-		else
-		{
-			return;
-		}
+		page_present[i]=0;			
+		page_table[i+KERNEL_PAGES]=(int*)((int)(page_table[i+KERNEL_PAGES])&0xFFFFFFFE);
 	}
 }
 

@@ -221,6 +221,9 @@ int shell(int argc, char** argv){
 				case 1:
 					printf("PID invalid\n");
 					break;
+				case 2:
+					printf("Already free\n");
+					break;
 			}
 		}
 		else if(strcmp("top", buffer)==0){
@@ -235,6 +238,8 @@ int shell(int argc, char** argv){
 
 void help(){
   printf("/*** COMMAND LIST ***/\n\n"
+	 " -top (show the current running process)\n"
+	 " -kill <procesid> (kill the process)\n"
 	 " -time  (prints the localtime)\n"
 	 " -who  (info about the developers)\n"
 	 " -echo <message>  (prints message)\n"

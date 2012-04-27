@@ -230,7 +230,7 @@ void createProcess(int (*funct)(int, char **), int p, int ttyN)
 	task->pid=i;
 	cant++;
 	task->status=READY;
-		//printf("tnego pid %d\n", task->pid);
+	//printf("tnego pid %d\n", task->pid);
 
 	task->ss=(int)getStackPage(task->pid);
 	task->ssize=1;
@@ -244,16 +244,22 @@ void createProcess(int (*funct)(int, char **), int p, int ttyN)
 	task->sp=initStackFrame(funct, 0, 0, task->ss+STACK_SIZE-1, cleaner);
 	task->sp->ESP=(int)(task->sp);
 	task->priority=p;
+	task->timeBlocks=5;
 	_Sti();
 }
 
 int sys_kill(int pid)
 {
-	if( process[pid].status==FREE ){
-		return 1;
+	int i=0;
+	for(i=0 ; i < MAXPROC ; i++)
+	{
+		if(process[i].status!=FREE)
+			printf("pid: %d\n", process[i].pid);
 	}
-	freeStackPages(pid);
-	freeHeapPages(pid);
+	if( process[pid].status==FREE ){
+		return 2;
+	}
+	freeProcesPages(pid);
 	cant--;
 	process[pid].status = FREE;
 	return 0;
@@ -261,18 +267,14 @@ int sys_kill(int pid)
 
 void * sys_top()
 {
-	printf("ayudaaa\n" );
 	int processInfo[1+cant*2];
-		printf("ayudaaa\n" );
-
+	//int * processInfo = malloc(sizeof(int)+sizeof(int)*2*cant);
 	((int*)processInfo)[0] = cant;
-		printf("ayudaaa\n" );
-
 	task_t proc;
 	int i=1,j=1,k=1,aux=0;
 	while(i < MAXPROC)
 	{
-		proc = process[i];
+		proc = process[i-1];
 		if(proc.status != FREE)
 		{
 			((int*)processInfo)[k] = proc.pid;
@@ -284,8 +286,15 @@ void * sys_top()
 	}
 	while(j<i)
 	{
-		((int*)processInfo)[j+1] = (((int*)processInfo)[j+1] / aux) * 100;
+		processInfo[j+1] = (int)(processInfo[j+1] *100 / aux);
 		j+=2;
+	}
+	int h=0;
+	printf("cant proc %d\n", processInfo[h]);
+	for(h=1 ; h<cant*2 ; ){
+		printf("%d    ", processInfo[h]);
+		printf("%d\n", processInfo[h+1]);
+		h+=2;
 	}
 	return ((void*)processInfo);
 }

@@ -21,7 +21,6 @@ void* getHeapPage(int pid);
 //void stackRealloc(int pid);
 //void* pageRealloc(void* heap, int pCant, int diff);
 void freePage(void* address);
-void freeStackPages(int pid);
-void freeHeapPages(int pid);
+void freeProcesPages(int pid);
 
 #endif
