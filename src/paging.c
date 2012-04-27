@@ -1,10 +1,4 @@
-#define MEM_START 0x00200000
-#define PAGE_SIZE 4096
-#define KERNEL_PAGES 530
-#define USER_PAGES 1024-KERNEL_PAGES
-
-#include "../include/kasm.h"
-#include "../include/int80.h"
+#include "../include/paging.h"
 
 int* dir = (void*)MEM_START;
 int** page_table = (void*)MEM_START + PAGE_SIZE;
@@ -23,9 +17,9 @@ void page_init(){
 	_epag();
 }
 
-void* getPage()
+void* getHeapPage(int pid)
 {
-	int i;
+	/*int i;
 	for(i=0; i<USER_PAGES; i++)
 	{
 		if(!page_present[i])
@@ -35,6 +29,36 @@ void* getPage()
 			return (void*)((i+KERNEL_PAGES)*PAGE_SIZE);
 		}
 	}
+	return 0;*/
+	int stack=(pid+1)*MAXPAGEPERPROC, i;
+	for(i=stack; i<stack+MAXPAGEPERPROC; i++)
+	{
+		if(!page_present[i])
+		{	
+			page_present[i]=1;
+			page_table[i+KERNEL_PAGES]=(int*)((int)(page_table[i+KERNEL_PAGES])|0x00000001);
+			return (void*)((i+KERNEL_PAGES)*PAGE_SIZE);
+		}
+	}
+	//error
+	return 0;
+}
+
+void* getStackPage(int pid)
+{
+	int heap=(pid+1)*MAXPAGEPERPROC+MAXPAGEPERPROC-1, i;
+	if(pid!=-1)
+		printf("pid %d\n", pid);
+	for(i=heap; i>heap-MAXPAGEPERPROC; i--)
+	{
+		if(!page_present[i])
+		{
+			page_present[i]=1;
+			page_table[i+KERNEL_PAGES]=(int*)((int)(page_table[i+KERNEL_PAGES])|0x00000001);
+			return (void*)((i+KERNEL_PAGES)*PAGE_SIZE);
+		}
+	}
+	//error
 	return 0;
 }
 
@@ -52,7 +76,8 @@ void * sys_calloc(int bytes){
 int sys_heap_count(){
 	int count=0;
 	int i;
-	for(i=0; i<USER_PAGES; i++){
+	for(i=0; i<USER_PAGES; i++)
+	{
 		if(page_present[i]){
 			count++;
 		}
@@ -68,4 +93,83 @@ void page_fault(int fault){
 	}
 	while(1);
 }
+/*
+void heapRealloc(int pid)
+{
+	int heap=USER_PAGES+pid*MAXPAGEPERPROC+MAXPAGEPERPROC, i;
+	for(i=heap; i>heap-MAXPAGEPERPROC; i--)
+	{
+		if(!page_present[i])
+		{
+			printf("realloc\n");
+			page_present[i]=1;
+			page_table[i+KERNEL_PAGES]=(int*)((int)(page_table[i+KERNEL_PAGES])|0x00000001);
+			return;
+		}
+	}
+	//error
+	return;
+}
 
+void stackRealloc(int pid)
+{
+	int stack=USER_PAGES+pid*MAXPAGEPERPROC, i;
+	for(i=stack; i<stack+MAXPAGEPERPROC; i++)
+	{
+		if(!page_present[i])
+		{
+			page_present[i]=1;
+			page_table[i+KERNEL_PAGES]=(int*)((int)(page_table[i+KERNEL_PAGES])|0x00000001);
+			return;
+		}
+	}
+	//error
+	return;
+
+}*/
+/*
+void* Realloc(void* dir, int pCant, int diff)
+{
+	printf("REALLOC\n");
+	int i, cant=0;
+	int page=(int)dir&PAGE_SIZE;
+	if(!page_present[page+1])
+	{
+		page_present[page+1]=1;
+		return (void*)((int)dir+diff);
+	}
+	else
+	{
+		//ERROR
+		return 0;
+	}
+	for(i=0; i<USER_PAGES; i++)
+	{
+		if(!page_present[i])
+		{
+			cant++;
+		}
+		else
+		{
+			cant=0;
+		}
+		if(cant==pCant+1)
+		{
+			int j;
+			for(j=i-cant; cant>=0; j++, cant--)
+			{
+				page_present[j]=1;
+				page_table[j+KERNEL_PAGES]=(int*)((int)(page_table[j+KERNEL_PAGES])|0x00000001);
+			}
+			printf("MEMCPY REALLOC\n");
+			memcpy(page_table[i-cant], dir, PAGE_SIZE*pCant);
+
+			for(j=0; j<pCant-1; j++)
+			{
+				freePage((void*)((int)dir +j*PAGE_SIZE));
+			}
+			return (void*)((i-pCant-1+KERNEL_PAGES)*PAGE_SIZE + diff);
+		}
+	}
+	return 0;
+}*/

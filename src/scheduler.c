@@ -24,14 +24,37 @@ void printIdleStack()
 
 void saveStack(stackframe_t* sp)
 {
-	task_t* temp;
+	task_t* temp, * aux;
+	if(current!=-1)
+		aux= &(process[current]);
+	else
+		aux=&idleP;
 	if (!firstTime)
 	{
 		temp=getProcess(current);
 		temp->sp=sp;
 	}
 	firstTime=0;
+	stackResize(aux);
 	return;
+}
+
+void stackResize(task_t* task)
+{
+	if(task->pid!=-1)
+	{
+		//printf("ESP = %d\n", task->sp->ESP);
+		int max= task->ssize*4096;
+		int now = (max-(task->sp->ESP) % max);
+		double percent = (double)(now) / (double)(max);
+		//printf("num %d / den %d\n", aux, task->ssize*4096);
+		if(percent>=0.8)
+		{
+			//printf("ojo  y \n");
+			getStackPage(task->pid);
+			task->ssize++;
+		}
+	}
 }
 
 //Funcion que obtiene el ESP de idle para switchear entre tareas.
@@ -62,9 +85,9 @@ task_t* getNextTask (void)
 	int cantChecked=0;
 	//printf("%d ",current);
 	//printf("%d ", current);
-	while(cantChecked<cant+1)
+	while(cantChecked<MAXPROC+1)
 	{
-		if(k==cant)
+		if(k==MAXPROC)
 		{
 			k=0;
 		}
@@ -96,7 +119,7 @@ task_t* getNextTaskFF()
 	_Cli();
 	while(1)
 	{
-		for(i=0; i<cant; i++)
+		for(i=0; i<MAXPROC; i++)
 		{
 			if(process[i].status==READY)
 			{
@@ -130,24 +153,23 @@ void initScheduler()
 	current=-1;
 	idleP.pid=-1;
 	idleP.status=READY;
-	idleP.ss=(int)getPage();
-	idleP.tty=&terminals[7];
-	initHeap((void*)idleP.ss);
+	idleP.ss=(int)getStackPage(idleP.pid);
+	//initHeap((void*)idleP.heap);
 	//idleP.ssize=STACK_SIZE;
 	idleP.sp=initStackFrame(idle, 0, 0, idleP.ss+STACK_SIZE-1, cleaner);
-	
-	//printf("inicie\n");
+	idleP.tty=&terminals[7];	
 }
 
 void cleaner(void)
 {
 	//printf("clean");
-	process[current].status=FREE;
+	/*process[current].status=FREE;
 	freePage((void*)process[current].ss);
-	swap(cant, current);
+	//swap(cant, current);
 	cant--;
 	//YIELD
-	while(1);
+	while(1);*/
+	//kill(process[current]);
 }
 
 int idle(int argc, char* argv[])
@@ -204,24 +226,30 @@ void createProcess(int (*funct)(int, char **), int p, int ttyN)
 	_Cli();
 	int i=getFreeTask();
 	task_t* task=&process[i];
+	task->tty=&terminals[ttyN];
 	task->pid=cant++;
 	task->status=READY;
-	task->ss=(int)getPage();
-	initHeap((void*)task->ss);
+		//printf("tnego pid %d\n", task->pid);
+
+	task->ss=(int)getStackPage(task->pid);
+	task->ssize=1;
+	task->heap=(int)getHeapPage(task->pid);
+	if(task->ss==0 || task->heap==0)
+	{
+		//ERROR
+		return;
+	}
+	initHeap((void*)task->heap);
 	task->sp=initStackFrame(funct, 0, 0, task->ss+STACK_SIZE-1, cleaner);
+	task->sp->ESP=(int)(task->sp);
 	task->priority=p;
-	task->tty=&terminals[ttyN];
 	_Sti();
 }
 
 int sys_kill(int pID){
-	//task_t * proces;
-	//task_t * child;
-	//task_t * father;
 	if( pID > cant || process[pID].status==FREE ){
 		return 1;
 	}
-	//proces=&process[pID];
 	cant--;
 	process[pID].status = FREE;
 	return 0;

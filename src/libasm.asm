@@ -147,7 +147,7 @@ _int_80_hand:				; Handler de INT 80 ( System calls)
         call    int_80
 		mov esp,ebp
 		pop ebp
-        sti
+        
         iret
         
 _int_09_hand:				; Handler de INT 09 (Teclado)
