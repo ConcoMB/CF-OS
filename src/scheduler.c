@@ -86,9 +86,9 @@ task_t* getNextTask (void)
 	int cantChecked=0;
 	//printf("%d ",current);
 	//printf("%d ", current);
-	while(cantChecked<cant+1)
+	while(cantChecked<MAXPROC+1)
 	{
-		if(k==cant)
+		if(k==MAXPROC)
 		{
 			k=0;
 		}
@@ -120,7 +120,7 @@ task_t* getNextTaskFF()
 	_Cli();
 	while(1)
 	{
-		for(i=0; i<cant; i++)
+		for(i=0; i<MAXPROC; i++)
 		{
 			if(process[i].status==READY)
 			{
@@ -164,12 +164,13 @@ void initScheduler()
 void cleaner(void)
 {
 	//printf("clean");
-	process[current].status=FREE;
+	/*process[current].status=FREE;
 	freePage((void*)process[current].ss);
-	swap(cant, current);
+	//swap(cant, current);
 	cant--;
 	//YIELD
-	while(1);
+	while(1);*/
+	//kill(process[current]);
 }
 
 int idle(int argc, char* argv[])
@@ -226,9 +227,10 @@ void createProcess(int (*funct)(int, char **), int p, int ttyN)
 	int i=getFreeTask();
 	task_t* task=&process[i];
 	task->tty=&terminals[ttyN];
-	task->pid=cant++;
+	task->pid=i;
+	cant++;
 	task->status=READY;
-		//printf("tnego pid %d\n", task->pid);
+	//printf("tnego pid %d\n", task->pid);
 
 	task->ss=(int)getStackPage(task->pid);
 	task->ssize=1;
@@ -242,6 +244,58 @@ void createProcess(int (*funct)(int, char **), int p, int ttyN)
 	task->sp=initStackFrame(funct, 0, 0, task->ss+STACK_SIZE-1, cleaner);
 	task->sp->ESP=(int)(task->sp);
 	task->priority=p;
+	task->timeBlocks=5;
+}
+
+int sys_kill(int pid)
+{
+	int i=0;
+	for(i=0 ; i < MAXPROC ; i++)
+	{
+		if(process[i].status!=FREE)
+			printf("pid: %d\n", process[i].pid);
+	}
+	if( process[pid].status==FREE ){
+		return 2;
+	}
+	freeProcesPages(pid);
+	cant--;
+	process[pid].status = FREE;
+	return 0;
+}
+
+void * sys_top()
+{
+	int processInfo[1+cant*2];
+	//int * processInfo = malloc(sizeof(int)+sizeof(int)*2*cant);
+	((int*)processInfo)[0] = cant;
+	task_t proc;
+	int i=1,j=1,k=1,aux=0;
+	while(i < MAXPROC)
+	{
+		proc = process[i-1];
+		if(proc.status != FREE)
+		{
+			((int*)processInfo)[k] = proc.pid;
+			((int*)processInfo)[k+1] = proc.timeBlocks;
+			aux += proc.timeBlocks;
+			k+=2;
+		}
+		i++;
+	}
+	while(j<i)
+	{
+		processInfo[j+1] = (int)(processInfo[j+1] *100 / aux);
+		j+=2;
+	}
+	int h=0;
+	printf("cant proc %d\n", processInfo[h]);
+	for(h=1 ; h<cant*2 ; ){
+		printf("%d    ", processInfo[h]);
+		printf("%d\n", processInfo[h+1]);
+		h+=2;
+	}
+	return ((void*)processInfo);
 }
 
 int processHasFocus()

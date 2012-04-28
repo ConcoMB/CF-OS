@@ -17,6 +17,8 @@ GLOBAL __calloc
 GLOBAL __free
 GLOBAL __heap_count
 GLOBAL  __set_scancode
+GLOBAL __kill
+GLOBAL __top
 GLOBAL _lcr3
 GLOBAL _epag
 GLOBAL _fill_page1
@@ -25,7 +27,7 @@ GLOBAL _sys_stack_count
 GLOBAL _sys_yield
 GLOBAL __sleep
 
-EXTERN getIP
+EXTERN  getIP
 EXTERN  printIdleStack
 EXTERN  int_08
 EXTERN  eokl
@@ -254,6 +256,17 @@ __sleep:
 	
 _sys_yield:
 	int 08h;
+	ret
+
+__kill:
+	mov ebx, 12
+	mov ecx, [esp+4]
+	int 080h
+	ret
+
+__top:
+	mov ebx, 13
+	int 080h
 	ret
 	
 _sys_stack_count:

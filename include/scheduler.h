@@ -30,6 +30,8 @@ void cleaner(void);
 int idle(int argc, char* argv[]);
 void createProcess(int (*funct)(int, char **), int p, int ttyN);
 int processHasFocus();
+int sys_kill(int pID);
+void * sys_top();
 void stackResize(task_t* task);
 void sys_sleep(int ms);
 void tick();
