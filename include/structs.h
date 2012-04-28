@@ -24,6 +24,7 @@ typedef struct
 	status_t status;
 	int timeBlocks;
 	int pid;
+	int parentPid;
 	int priority;
 	int ss, ssize, heap;
 	stackframe_t* sp;

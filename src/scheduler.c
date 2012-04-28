@@ -248,6 +248,11 @@ void createProcess(int (*funct)(int, char **), int p, int ttyN)
 	_Sti();
 }
 
+void createChild(int (*funct)(int, char **), int p)
+{
+	create
+}
+
 int sys_kill(int pid)
 {
 	int i=0;
