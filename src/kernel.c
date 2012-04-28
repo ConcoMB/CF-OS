@@ -94,7 +94,7 @@ int test(int argc, char** argv)
 	int max= process[current].ssize*4096;
 	int now = (max-(process[current].sp->ESP) % max);
 	printf("voy %d, ESP %d y tengo %d \n", argc++, now, max);
-	test(argc, argv);
+	//test(argc, argv);
 	return 0;
 }
 
@@ -138,9 +138,10 @@ void kmain()
 	//createProcess(test2, 4);
 	//createProcess(test4, 2,1);
 	//createProcess(test4, 2,0);
-	createProcess(shell, "SHELL", 1,1);
-	createProcess(shell, "YPF", 0,0);
-	//createProcess(testO, "O", 3, 3);
+	createProcess(shell, 0,0, "SHELL",  0,0,10);
+	createProcess(shell, 0,0,"YPF", 1,1,10);
+	createProcess(shell, 0,0,"ESSO", 2,2,10);
+	//createProcess(test,0,0, "O", 2,2, 10);
 	//createProcess(testX, "X", 0, 3);
 /* Habilito interrupcion de timer tick*/
 

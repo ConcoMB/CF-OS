@@ -26,6 +26,7 @@ GLOBAL __stack_count
 GLOBAL _sys_stack_count
 GLOBAL _sys_yield
 GLOBAL __sleep
+GLOBAL __createChild
 
 EXTERN  getIP
 EXTERN  printIdleStack
@@ -179,6 +180,14 @@ __min:
 	mov ebx, 4
 	int 080h
 	ret
+
+__createChild:
+  mov ebx, 15
+  mov eax, [esp+12]
+  mov ecx, [esp+8]
+  mov edx, [esp+4]
+  int 080h
+  ret
 
 __setcolor:
 	mov ecx, [esp+4]

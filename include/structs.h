@@ -7,6 +7,7 @@ typedef enum {RUN, BLOCK, READY, FREE} status_t;
 
 typedef struct
 {
+	int num;
 	char * video;
 	char color;
 	int cursor_x;
@@ -28,6 +29,7 @@ typedef struct
 	int ticks;
 	int timeBlocks;
 	int pid;
+	int parentid;
 	int priority;
 	int ss, ssize, heap;
 	stackframe_t* sp;

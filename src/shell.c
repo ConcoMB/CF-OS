@@ -88,7 +88,7 @@ int shell(int argc, char** argv){
 		{
 			background=1;
 		}
-		if(strcmp("who",buffer)==0){
+		if(substr("who",buffer)){
 			func=who;
 			argc=0;
 			argv[0]=(char*)0;
@@ -106,7 +106,7 @@ int shell(int argc, char** argv){
 		    argv[1]=(char*)&user_color;
 		    argv[2]=(char*)0;
 		}
-		else if(strcmp("time",buffer)==0){
+		else if(substr("time",buffer)){
 			func=time;
 			argc=0;
 			argv[0]=(char*)0;
@@ -118,22 +118,22 @@ int shell(int argc, char** argv){
 			argv[1]=(char*)0;
 		}
 		
-		else if(strcmp("lostquote", buffer)==0){
+		else if(substr("lostquote", buffer)){
 			func=lost;
 			argc=0;
 			argv[0]=(char*)0;
 		}
-		else if(strcmp("mastersword", buffer)==0){
+		else if(substr("mastersword", buffer)){
 			func=mastersword;
 			argc=0;
 			argv[0]=(char*)0;
 		}
-		else if(strcmp("mario", buffer)==0){
+		else if(substr("mario", buffer)){
 			func=mario;
 			argc=0;
 			argv[0]=(char*)0;
 		}
-		else if(strcmp("help", buffer)==0){
+		else if(substr("help", buffer)){
 			func=help;
 			argc=0;
 			argv[0]=(char*)0;	
@@ -144,7 +144,7 @@ int shell(int argc, char** argv){
 			argv[1]=(char*)0;
 			argv[0]=buffer+5;
 		}
-		else if(strcmp("top", buffer)==0){
+		else if(substr("top", buffer)){
 			func=top;
 			argc=0;
 			argv[0]=(char*)0;	
@@ -157,7 +157,7 @@ int shell(int argc, char** argv){
 		{
 			if(background)
 			{
-				//createChild(func, argc,argv);
+				__createChild(func, argc,argv);
 			}
 			else
 			{

@@ -166,14 +166,16 @@ void initScheduler()
 
 void cleaner(void)
 {
-	//printf("clean");
 	/*process[current].status=FREE;
 	freePage((void*)process[current].ss);
 	//swap(cant, current);
 	cant--;
 	//YIELD
+
 	while(1);*/
-	sys_kill(process[current].pid);
+	//_Cli();
+	//sys_kill(current);
+	//_sys_yield();
 }
 
 int idle(int argc, char* argv[])
@@ -225,7 +227,7 @@ int getFreeTask(void)
 	return 0;
 }
 
-void createProcess(int (*funct)(int, char **), char* name, int p, int ttyN)
+void createProcess(int (*funct)(int, char **), int argc, char** argv, char* name, int p, int ttyN, int parid)
 {
 	int i=getFreeTask();
 	task_t* task=&process[i];
@@ -233,6 +235,7 @@ void createProcess(int (*funct)(int, char **), char* name, int p, int ttyN)
 	task->pid=i;
 	cant++;
 	task->status=READY;
+	task->parentid=parid;
 	//printf("tnego pid %d\n", task->pid);
 
 	task->ss=(int)getStackPage(task->pid);
@@ -244,28 +247,30 @@ void createProcess(int (*funct)(int, char **), char* name, int p, int ttyN)
 		return;
 	}
 	initHeap((void*)task->heap);
-	task->sp=initStackFrame(funct, 0, 0, task->ss+STACK_SIZE-1, cleaner);
+	task->sp=initStackFrame(funct, argc, argv, task->ss+STACK_SIZE-1, cleaner);
 	task->sp->ESP=(int)(task->sp);
 	task->priority=p;
 	task->timeBlocks=0;
 	task->name=name;
 }
 
+void createChild(int (*funct)(int, char **), int argc, char ** argv)
+{
+    task_t * task = &process[current];
+    createProcess(funct,argc,argv,task->name,task->priority,task->tty->num, task->pid);
+}
+
 int sys_kill(int pid)
 {
-	int i=0;
-	for(i=0 ; i < MAXPROC ; i++)
-	{
-		if(process[i].status!=FREE)
-			printf("pid: %d\n", process[i].pid);
-	}
-	if( process[pid].status==FREE )
+	_Cli();
+	if(process[pid].status==FREE)
 	{
 		return 2;
 	}
 	freeProcessPages(pid);
 	cant--;
 	process[pid].status = FREE;
+	_Sti();
 	return 0;
 }
 

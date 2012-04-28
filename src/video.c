@@ -16,6 +16,7 @@ void initScreens()
 		terminals[i].cursor_x=0;
 		terminals[i].cursor_y=0;
 		terminals[i].color=WHITE_TXT;
+		terminals[i].num=i;
 		clear_screen(&terminals[i]);
 	}
 	terminals[0].video=VID_DIR;
@@ -42,8 +43,6 @@ void clear_screen(tty_t* tty)
 
 void printScancode()
 {
-	char* vidmem=VID_DIR;
-	int i=80*24*2;
 	if(scancode_lang==LANG_ES)
 	{
 		printOnVideo("ESP", 0, 24);

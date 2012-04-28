@@ -35,6 +35,7 @@ void* getHeapPage(int pid)
 	{
 		if(!page_present[i])
 		{	
+			printf("heap %d\n",i);
 			page_present[i]=1;
 			page_table[i+KERNEL_PAGES]=(int*)((int)(page_table[i+KERNEL_PAGES])|0x00000001);
 			return (void*)((i+KERNEL_PAGES)*PAGE_SIZE);
@@ -47,12 +48,11 @@ void* getHeapPage(int pid)
 void* getStackPage(int pid)
 {
 	int stack=(pid+1)*MAXPAGEPERPROC+MAXPAGEPERPROC-1, i;
-	if(pid!=-1)
-		printf("pid %d\n", pid);
 	for(i=stack; i>stack-MAXPAGEPERPROC; i--)
 	{
 		if(!page_present[i])
 		{
+			printf("Stack %d\n", i);
 			page_present[i]=1;
 			page_table[i+KERNEL_PAGES]=(int*)((int)(page_table[i+KERNEL_PAGES])|0x00000001);
 			return (void*)((i+KERNEL_PAGES)*PAGE_SIZE);
@@ -70,10 +70,14 @@ void freePage(void* address)
 */
 void freeProcessPages(int pid){
 	int i, page = (pid+1)*MAXPAGEPERPROC;
-	for(i=page ; i<page+MAXPAGEPERPROC ; i++)
+	for(i=page ; i<(page+MAXPAGEPERPROC) ; i++)
 	{
-		page_present[i]=0;			
-		page_table[i+KERNEL_PAGES]=(int*)((int)(page_table[i+KERNEL_PAGES])&0xFFFFFFFE);
+		printf("libero pagina %d\n", i);
+		if(page_present[i])
+		{
+			//page_table[i+KERNEL_PAGES]=(int*)((int)(page_table[i+KERNEL_PAGES])&0xFFFFFFFE);		
+			page_present[i]=0;			
+		}
 	}
 }
 
