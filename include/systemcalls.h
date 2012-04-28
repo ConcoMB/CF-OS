@@ -13,6 +13,7 @@ int __heap_count();
 void __sleep(int ms);
 int __kill(int pID);
 void* __top();
+void __createChild(int (*funct)(int, char **), int argc, char ** argv);
 
 /* __write
 *

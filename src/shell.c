@@ -150,7 +150,11 @@ int shell(int argc, char** argv){
 			argv[0]=(char*)0;	
 		}
 		else{
+<<<<<<< HEAD
 			nothing=1;
+=======
+			__createChild(shell,0,0);
+>>>>>>> 853507b1bc371f5b323785f1f64d9db098c11cfd
 			printf("Command not found\n");
 		}
 		if(!nothing)
