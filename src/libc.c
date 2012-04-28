@@ -14,19 +14,7 @@ int pow(int b,int e){
 	return ans;
 }
 
-void top()
-{
-	int i=0;
-	topInfo_t ti;
-	__top(&ti);
-	printf("===================TOP========================\n\n"
-	  "   PID             %%             process name\n---------------------------------------------------\n");
-	for(;i<ti.cant; i++)
-	{
-		printf("   %d               %d             %s\n", ti.pids[i],ti.percent[i],ti.names[i]);
-	}
-	printf("\n");
-}
+
 
 char gethour(){
 	char h;

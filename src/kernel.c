@@ -140,8 +140,8 @@ void kmain()
 	//createProcess(test4, 2,0);
 	createProcess(shell, "SHELL", 1,1);
 	createProcess(shell, "YPF", 0,0);
-	createProcess(testO, "O", 3, 3);
-	createProcess(testX, "X", 0, 3);
+	//createProcess(testO, "O", 3, 3);
+	//createProcess(testX, "X", 0, 3);
 /* Habilito interrupcion de timer tick*/
 
     _mascaraPIC1(0xFC);

@@ -17,6 +17,5 @@ void set_scancode(int i);
 int pageprint(int page);
 void sleep(int ms);
 int kill(int pID);
-void top();
 
 #endif
