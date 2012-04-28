@@ -32,6 +32,18 @@ void printHeap(void* start)
 	}
 }
 
+int testO(int argc, char** argv)
+{
+	while(1)
+	printf("O");
+}
+
+int testX(int argc, char** argv)
+{
+	while(1)
+	printf("X");
+}
+
 int test0(int argc, char** argv)
 {
 	printf("empiezo\n");
@@ -69,6 +81,7 @@ int test4(int argc, char** argv)
 		if(c>'z')
 		{
 			c='a';
+			sleep(500);
 		}
 	}
 }
@@ -123,11 +136,12 @@ void kmain()
 	initScreens();
 	initScheduler();
 	//createProcess(test2, 4);
-	createProcess(shell, 2,0);
-	createProcess(shell, 3,1);
-	createProcess(shell, 4,2);
-
+	//createProcess(test4, 2,1);
 	//createProcess(test4, 2,0);
+	createProcess(shell, "SHELL", 1,1);
+	createProcess(shell, "YPF", 0,0);
+	createProcess(testO, "O", 3, 3);
+	createProcess(testX, "X", 0, 3);
 /* Habilito interrupcion de timer tick*/
 
     _mascaraPIC1(0xFC);

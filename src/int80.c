@@ -17,7 +17,8 @@ void int_80(REG registers)
 			if(i==1)
 			{
 				sys_print(*c);
-			}else if(i==4)
+			}
+			else if(i==4)
 			{
 				/*sys_print(*c);*/
 				sys_speak(*c);
@@ -61,14 +62,17 @@ void int_80(REG registers)
 		case 11:
 			registers.eax=_sys_stack_count();
 			break;
+		case 14:
+			/*SLEEP*/
+			i=registers.ecx;
+			sys_sleep(i);
+			break;
 		case 12:
 			i=registers.ecx;
 			registers.eax=sys_kill(i);
 			break;
 		case 13:
-			_Cli();
-			registers.eax=(int)sys_top();
-			_Sti();
+			sys_top((topInfo_t*)registers.ecx);
 	}  
 }
 

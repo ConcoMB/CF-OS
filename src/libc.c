@@ -14,7 +14,19 @@ int pow(int b,int e){
 	return ans;
 }
 
-
+void top()
+{
+	int i=0;
+	topInfo_t ti;
+	__top(&ti);
+	printf("===================TOP========================\n\n"
+	  "   PID             %%             process name\n---------------------------------------------------\n");
+	for(;i<ti.cant; i++)
+	{
+		printf("   %d               %d             %s\n", ti.pids[i],ti.percent[i],ti.names[i]);
+	}
+	printf("\n");
+}
 
 char gethour(){
 	char h;
@@ -74,19 +86,13 @@ int pageprint(int page){
 	return 1;
 }
 
+void sleep(int ms)
+{
+	__sleep( ms);
+}
+
 int kill(int pID)
 {
 	return __kill(pID);
 }
 
-void top()
-{
-	void * processInfo = __top();
-	int i=0;
-	for(i=0 ; i<((int)(*((int*)processInfo))) ; i++)
-	{
-		//primer valor de processInfo es la cantidad de procesos a imprimir
-		//dsps viene pid y %de procesador usado en tamanos de 1 int
-	}
-
-}
