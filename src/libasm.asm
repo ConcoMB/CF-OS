@@ -94,29 +94,10 @@ _epag:
 		
 		
 _int_08_hand:				; Handler de INT 8 ( Timer tick)
-        ;push ebp
-		;mov ebp,esp
-        ;push ds
-        ;push es
-        ;pusha                         ; Carga de DS y ES con el valor del selector
-        ;mov     ax, 10h			; a utilizar.
-        ;mov     ds, ax
-        ;mov     es, ax                  
-        ;call    int_08 
-        
-        ;popa
-        ;pop es
-        ;pop ds
         cli
   		pushad
 		mov eax, esp
 		push eax
-		;pusha                         ; Carga de DS y ES con el valor del selector
-        ;mov     ax, 10h			; a utilizar.
-        ;mov     ds, ax
-        ;mov     es, ax                  
-        ;call    int_08 
-        ;popa
 		call saveStack
 		pop eax
 		call getIdleStack
@@ -125,10 +106,6 @@ _int_08_hand:				; Handler de INT 8 ( Timer tick)
 		push eax
 		call getStack
 		pop ebx
-		;push 0
-		;push 0x08
-		;call getIP
-		;push eax
 		mov esp,eax
 
 		mov	al,20h			; Envio de EOI generico al PIC
@@ -266,6 +243,7 @@ __kill:
 
 __top:
 	mov ebx, 13
+	mov ecx, [esp+4]
 	int 080h
 	ret
 	

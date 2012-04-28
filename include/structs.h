@@ -1,5 +1,7 @@
 #ifndef __STRUCTS__
 #define __STRUCTS__
+#define MAXPROC 10
+
 
 typedef enum {RUN, BLOCK, READY, FREE} status_t;
 
@@ -21,6 +23,7 @@ typedef struct
 
 typedef struct
 {
+	char * name;
 	status_t status;
 	int ticks;
 	int timeBlocks;
@@ -30,5 +33,13 @@ typedef struct
 	stackframe_t* sp;
 	tty_t *tty;
 } task_t;
+
+typedef struct 
+{
+	char * names[MAXPROC];
+	int pids[MAXPROC];
+	int percent[MAXPROC];
+	int cant;
+}topInfo_t;
 
 #endif

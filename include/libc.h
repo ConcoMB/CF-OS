@@ -2,6 +2,7 @@
 #define __LIBC__
 #include "systemcalls.h"
 #include "stdio.h"
+#include "structs.h"
 
 int stack_count();
 int pow(int b,int e);

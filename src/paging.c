@@ -61,16 +61,16 @@ void* getStackPage(int pid)
 	//error
 	return 0;
 }
-
+/*
 void freePage(void* address)
 {
 	int i=(int)address/PAGE_SIZE - KERNEL_PAGES;
 	page_table[i+KERNEL_PAGES]=(int*)((int)(page_table[i+KERNEL_PAGES])&0xFFFFFFFE);
 }
-
-void freeProcesPages(int pid){
-	int i, heap = (pid+1)*MAXPAGEPERPROC;
-	for(i=heap ; i<heap+MAXPAGEPERPROC ; i++)
+*/
+void freeProcessPages(int pid){
+	int i, page = (pid+1)*MAXPAGEPERPROC;
+	for(i=page ; i<page+MAXPAGEPERPROC ; i++)
 	{
 		page_present[i]=0;			
 		page_table[i+KERNEL_PAGES]=(int*)((int)(page_table[i+KERNEL_PAGES])&0xFFFFFFFE);

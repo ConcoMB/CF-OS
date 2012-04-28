@@ -17,7 +17,8 @@ void int_80(REG registers)
 			if(i==1)
 			{
 				sys_print(*c);
-			}else if(i==4)
+			}
+			else if(i==4)
 			{
 				/*sys_print(*c);*/
 				sys_speak(*c);
@@ -71,7 +72,7 @@ void int_80(REG registers)
 			registers.eax=sys_kill(i);
 			break;
 		case 13:
-			registers.eax=(int)sys_top();
+			sys_top((topInfo_t*)registers.ecx);
 	}  
 }
 

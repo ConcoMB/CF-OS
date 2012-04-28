@@ -63,6 +63,7 @@ void* getIdleStack(void)
 task_t* getNextProcess (void)
 {
 	tick();
+	process[current].status=READY;
 	//printf("a");
 	task_t* temp;
 	//selecciona la tarea
@@ -72,11 +73,17 @@ task_t* getNextProcess (void)
 	current=temp->pid;
 	//last100[counter100]=CurrentPID;
 	//counter100=(counter100+1)%100;
+	temp->timeBlocks++;
+	temp->status=RUN;
 	return temp;
 	
 }
+task_t* getCurrentProcess()
+{
+	return &process[current];
+}
 
-task_t* getNextTask (void)
+task_t* getNextTaskNFF (void)
 {
 	int k=current+1;
 	int cantChecked=0;
@@ -106,7 +113,7 @@ void swap(int a, int b)
 	process[b]=aux;
 }
 
-task_t* getNextTaskFF()
+task_t* getNextTask()
 {
 	int i;
 	if(cant==0)
@@ -218,7 +225,7 @@ int getFreeTask(void)
 	return 0;
 }
 
-void createProcess(int (*funct)(int, char **), int p, int ttyN)
+void createProcess(int (*funct)(int, char **), char* name, int p, int ttyN)
 {
 	int i=getFreeTask();
 	task_t* task=&process[i];
@@ -240,7 +247,8 @@ void createProcess(int (*funct)(int, char **), int p, int ttyN)
 	task->sp=initStackFrame(funct, 0, 0, task->ss+STACK_SIZE-1, cleaner);
 	task->sp->ESP=(int)(task->sp);
 	task->priority=p;
-	task->timeBlocks=5;
+	task->timeBlocks=0;
+	task->name=name;
 }
 
 int sys_kill(int pid)
@@ -251,47 +259,38 @@ int sys_kill(int pid)
 		if(process[i].status!=FREE)
 			printf("pid: %d\n", process[i].pid);
 	}
-	if( process[pid].status==FREE ){
+	if( process[pid].status==FREE )
+	{
 		return 2;
 	}
-	freeProcesPages(pid);
+	freeProcessPages(pid);
 	cant--;
 	process[pid].status = FREE;
 	return 0;
 }
 
-void * sys_top()
+void sys_top(topInfo_t * topInfo)
 {
-	int processInfo[1+cant*2];
 	//int * processInfo = malloc(sizeof(int)+sizeof(int)*2*cant);
-	((int*)processInfo)[0] = cant;
 	task_t proc;
-	int i=1,j=1,k=1,aux=0;
-	while(i < MAXPROC)
+	int i=0, k=0,aux=0;
+	for(;i < MAXPROC;i++)
 	{
-		proc = process[i-1];
+		proc = process[i];
 		if(proc.status != FREE)
 		{
-			((int*)processInfo)[k] = proc.pid;
-			((int*)processInfo)[k+1] = proc.timeBlocks;
+			topInfo->names[k]=proc.name;
+			topInfo->pids[k]=proc.pid;
+			topInfo->percent[k]= proc.timeBlocks;
 			aux += proc.timeBlocks;
-			k+=2;
+			k++;
 		}
-		i++;
 	}
-	while(j<i)
+	topInfo->cant=k;
+	for(i=0;i<k;i++)
 	{
-		processInfo[j+1] = (int)(processInfo[j+1] *100 / aux);
-		j+=2;
+		topInfo->percent[i] *= 100.0 / aux;
 	}
-	int h=0;
-	printf("cant proc %d\n", processInfo[h]);
-	for(h=1 ; h<cant*2 ; ){
-		printf("%d    ", processInfo[h]);
-		printf("%d\n", processInfo[h+1]);
-		h+=2;
-	}
-	return ((void*)processInfo);
 }
 
 int processHasFocus()
@@ -326,3 +325,5 @@ void tick()
 	}
 	printTime();
 }
+
+

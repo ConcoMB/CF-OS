@@ -57,6 +57,7 @@ void print_memory(){
 
 int shell(int argc, char** argv){
 	char c;
+	int background=0;
 	char buffer[MAX_CMD_SIZE+1];
 	char last_cmd[CMD_MEMORY][MAX_CMD_SIZE+1];
 	int i,mem;
@@ -67,6 +68,7 @@ int shell(int argc, char** argv){
 		last_cmd[mem][0]=0;
 	}													
 	while(1){
+		background=0;
 		__setcolor(&shell_color);
 		printf("Shell->: ");
 		__setcolor(&user_color);
@@ -125,12 +127,18 @@ int shell(int argc, char** argv){
 		}
 		strcpy(last_cmd[0],buffer);
 		
+		int len=strlen(buffer);
 		
-		if(strlen(buffer)==0){
+		if(len==0)
+		{
 			/*VACIO*/
 		}
-		else if(strcmp("who",buffer)==0){
-			printf("\n************\nF Alderete\nF Ramundo\nC Mader Blanco\n************\n\n");
+		if(buffer[len-1]=='&')
+		{
+			background=1;
+		}
+		if(strcmp("who",buffer)==0){
+			printf("\n************\nT Mehdi\nF Ramundo\nC Mader Blanco\n************\n\n");
 		}
 		else if(substr("echo ", buffer)){
 			printf("%s\n",buffer+5);

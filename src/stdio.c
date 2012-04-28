@@ -57,6 +57,9 @@ void printf(char * format, ...)
 				case 'X':
 					prints(xtoa(va_arg(args, int), buffer));
 					break;
+				case '%':
+					putchar('%');
+					break;
 			}
 		}
 		else
