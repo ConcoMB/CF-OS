@@ -21,5 +21,8 @@ void update_cursor(tty_t* tty);
 void swapTTY(int num);
 void printScancode();
 void printBar();
+void printTerminal();
+void printOnVideo(char* str, int x, int y);
+void printTime();
 
 #endif

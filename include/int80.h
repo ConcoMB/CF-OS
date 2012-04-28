@@ -10,6 +10,7 @@
 #include "kernel.h"
 #include "kb.h"
 #include "heap.h"
+#include "scheduler.h"
 
 
 

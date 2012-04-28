@@ -73,3 +73,24 @@ int pageprint(int page){
 	}
 	return 1;
 }
+
+void sleep(int ms)
+{
+	__sleep( ms);
+}
+
+int kill(int pID)
+{
+	return __kill(pID);
+}
+
+void top()
+{
+	void * processInfo = __top();
+	int i=0;
+	for(i=0 ; i<((int)(*((int*)processInfo))) ; i++)
+	{
+		//primer valor de processInfo es la cantidad de procesos a imprimir
+		//dsps viene pid y %de procesador usado en tamanos de 1 int
+	}
+}
