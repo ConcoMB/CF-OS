@@ -75,7 +75,7 @@ void int_80(REG registers)
 			sys_sleep(i);
 			break;
 		case 15:
-			createChild( (int (*)(int, char **)) registers.eax,(int)registers.ecx,(char **)registers.edx);
+			createChild( (int (*)(int, char **)) registers.edx,(int)registers.ecx,(char **)registers.eax);
 			break;
 
 	}  

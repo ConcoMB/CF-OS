@@ -1,6 +1,7 @@
 #include "stdio.h"
 #include "systemcalls.h"
 #include "extras.h"
+#include "kasm.h"
 #include "string.h"
 #include "libc.h"
 

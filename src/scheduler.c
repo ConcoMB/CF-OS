@@ -66,11 +66,8 @@ task_t* getNextProcess (void)
 {
 	tick();
 	process[current].status=READY;
-	//printf("a");
 	task_t* temp;
-	//selecciona la tarea
 	temp=getNextTask();
-	//printf("task: %d, current %d\n", temp->pid, current);
 	//temp->lastCalled=0;
 	current=temp->pid;
 	//last100[counter100]=CurrentPID;
@@ -91,8 +88,6 @@ task_t* getNextTask(void)
 {
 	int k=current+1;
 	int cantChecked=0;
-	//printf("%d ",current);
-	//printf("%d ", current);
 	while(cantChecked<MAXPROC+1)
 	{
 		if(k==MAXPROC)
@@ -173,9 +168,10 @@ void cleaner(void)
 	//YIELD
 
 	while(1);*/
-	//_Cli();
-	//sys_kill(current);
-	//_sys_yield();
+	_Cli();
+	sys_kill(current);
+	_Sti();
+	_sys_yield();
 }
 
 int idle(int argc, char* argv[])
@@ -262,7 +258,7 @@ void createChild(int (*funct)(int, char **), int argc, char ** argv)
 
 int sys_kill(int pid)
 {
-	_Cli();
+	int i;
 	if(process[pid].status==FREE)
 	{
 		return 2;
@@ -270,7 +266,13 @@ int sys_kill(int pid)
 	freeProcessPages(pid);
 	cant--;
 	process[pid].status = FREE;
-	_Sti();
+	for(i=0; i<MAXPROC; i++)
+	{
+		if(process[i].status!=FREE && process[i].parentid==pid)
+		{
+			sys_kill(i);
+		}
+	}
 	return 0;
 }
 

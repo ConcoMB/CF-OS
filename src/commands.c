@@ -3,6 +3,7 @@
 int who(int argc, char** argv)
 {
 	printf("\n************\nT Mehdi\nF Ramundo\nC Mader Blanco\n************\n\n");
+	while(1);
 	return 0;
 }
 
@@ -134,6 +135,9 @@ int help(int argc, char** argv)
 
 int Kill(int argc, char** argv)
 {
+	printf("mato la %d\n", atoi(argv[0]));
+	_Cli();
+
 	switch(kill(atoi(argv[0])))
 	{
 		case 0:
@@ -146,6 +150,7 @@ int Kill(int argc, char** argv)
 			printf("Already free\n");
 			break;
 	}
+	_Sti();
 	return 0;
 }
 
