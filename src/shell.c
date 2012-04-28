@@ -157,8 +157,10 @@ int shell(int argc, char** argv){
 		{
 			if(background)
 			{
-				
-			}else{
+				//createChild(func, argc,argv);
+			}
+			else
+			{
 				func(argc,argv);
 			}
 		}

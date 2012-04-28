@@ -40,7 +40,7 @@ void* getHeapPage(int pid)
 			return (void*)((i+KERNEL_PAGES)*PAGE_SIZE);
 		}
 	}
-	//error
+	page_fault(0);
 	return 0;
 }
 
@@ -58,7 +58,7 @@ void* getStackPage(int pid)
 			return (void*)((i+KERNEL_PAGES)*PAGE_SIZE);
 		}
 	}
-	//error
+	page_fault(0);
 	return 0;
 }
 /*
@@ -77,7 +77,7 @@ void freeProcessPages(int pid){
 	}
 }
 
-
+/*
 void * sys_calloc(int bytes){
 	return 0;
 }
@@ -93,7 +93,7 @@ int sys_heap_count(){
 	}
 	return count;
 }
-
+*/
 void page_fault(int fault){
 	char* s="\npage fault";
 	int i;

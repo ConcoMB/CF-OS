@@ -152,5 +152,5 @@ void kmain()
 	//shell();
 
 	//printf("initSCH\n");
-    while(1){}
+    while(1);
 }

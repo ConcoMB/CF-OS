@@ -1,5 +1,7 @@
 #include "../include/scheduler.h"
 
+#define __PRIOR__
+
 int firstTime=1;
 task_t process[MAXPROC]; 
 int level[MAXPROC];
@@ -83,7 +85,9 @@ task_t* getCurrentProcess()
 	return &process[current];
 }
 
-task_t* getNextTaskNFF (void)
+#ifndef __PRIOR__
+
+task_t* getNextTask(void)
 {
 	int k=current+1;
 	int cantChecked=0;
@@ -106,12 +110,7 @@ task_t* getNextTaskNFF (void)
 	return &idleP;	
 }
 
-void swap(int a, int b)
-{
-	task_t aux=process[a];
-	process[a]=process[b];
-	process[b]=aux;
-}
+#else
 
 task_t* getNextTask()
 {
@@ -139,6 +138,7 @@ task_t* getNextTask()
 	}
 }
 
+#endif
 //Funcion que devuelve el ESP del proceso actual.
 stackframe_t* getStack(task_t* proc)
 {
@@ -173,7 +173,7 @@ void cleaner(void)
 	cant--;
 	//YIELD
 	while(1);*/
-	//kill(process[current]);
+	sys_kill(process[current].pid);
 }
 
 int idle(int argc, char* argv[])
@@ -182,7 +182,7 @@ int idle(int argc, char* argv[])
 	while(1)
 	{
 		//printf("idle %d", count++);
-		//YIELD
+		_sys_yield();
 	}
 }
 

@@ -44,17 +44,17 @@ void int_80(REG registers)
 			i=registers.ecx;
 			registers.eax=(int)sys_malloc(i);
 			break;
-		case 7:
+		/*case 7:
 			i=registers.ecx;
 			registers.eax=(int)sys_calloc(i);
-			break;
+			break;*/
 		case 8:
 			i=registers.ecx;
 			registers.eax=sys_free((void*)i);
 			break;
-		case 9:
+		/*case 9:
 			registers.eax=sys_heap_count();
-			break;
+			break;*/
 		case 10:
 			i=registers.ecx;
 			sys_set_scancode(i);
