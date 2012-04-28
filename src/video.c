@@ -42,8 +42,6 @@ void clear_screen(tty_t* tty)
 
 void printScancode()
 {
-	char* vidmem=VID_DIR;
-	int i=80*24*2;
 	if(scancode_lang==LANG_ES)
 	{
 		printOnVideo("ESP", 0, 24);

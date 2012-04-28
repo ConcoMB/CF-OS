@@ -33,6 +33,7 @@ typedef struct
 	int ss, ssize, heap;
 	stackframe_t* sp;
 	tty_t *tty;
+	int ttyN;
 } task_t;
 
 typedef struct 

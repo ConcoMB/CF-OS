@@ -62,17 +62,21 @@ void int_80(REG registers)
 		case 11:
 			registers.eax=_sys_stack_count();
 			break;
-		case 14:
-			/*SLEEP*/
-			i=registers.ecx;
-			sys_sleep(i);
-			break;
 		case 12:
 			i=registers.ecx;
 			registers.eax=sys_kill(i);
 			break;
 		case 13:
 			sys_top((topInfo_t*)registers.ecx);
+			break;
+		case 14:
+			/*SLEEP*/
+			i=registers.ecx;
+			sys_sleep(i);
+			break;
+		case 15:
+			createChild( (int (*)(int, char **)) registers.eax,(int)registers.ecx,(char **)registers.edx);
+			break;
 	}  
 }
 

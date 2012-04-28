@@ -225,13 +225,14 @@ int getFreeTask(void)
 	return 0;
 }
 
-void createProcess(int (*funct)(int, char **), char* name, int p, int ttyN)
+void createProcess(int (*funct)(int, char **), int argc, char ** argv, char* name, int p, int ttyN)
 {
 	int i=getFreeTask();
 	task_t* task=&process[i];
 	task->tty=&terminals[ttyN];
 	task->pid=i;
 	cant++;
+	task->ttyN = ttyN;
 	task->status=READY;
 	//printf("tnego pid %d\n", task->pid);
 
@@ -244,16 +245,17 @@ void createProcess(int (*funct)(int, char **), char* name, int p, int ttyN)
 		return;
 	}
 	initHeap((void*)task->heap);
-	task->sp=initStackFrame(funct, 0, 0, task->ss+STACK_SIZE-1, cleaner);
+	task->sp=initStackFrame(funct, argc, argv, task->ss+STACK_SIZE-1, cleaner);
 	task->sp->ESP=(int)(task->sp);
 	task->priority=p;
 	task->timeBlocks=0;
 	task->name=name;
 }
 
-void createChild(int (*funct)(int, char **), int p)
+void createChild(int (*funct)(int, char **), int argc, char ** argv)
 {
-	create
+	task_t * task = &process[current];
+	createProcess(funct,argc,argv,task->name,task->priority,task->ttyN);
 }
 
 int sys_kill(int pid)

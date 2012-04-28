@@ -238,6 +238,7 @@ int shell(int argc, char** argv){
 			top();
 		}
 		else{
+			__createChild(shell,0,0);
 			printf("Command not found\n");
 		}
 		
