@@ -24,11 +24,7 @@ void printIdleStack()
 
 void saveStack(stackframe_t* sp)
 {
-	task_t* temp, * aux;
-	if(current!=-1)
-		aux= &(process[current]);
-	else
-		aux=&idleP;
+	task_t* temp, * aux=getProcess(current);
 	if (!firstTime)
 	{
 		temp=getProcess(current);
