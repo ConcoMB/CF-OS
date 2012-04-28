@@ -28,12 +28,10 @@ typedef struct
 	int ticks;
 	int timeBlocks;
 	int pid;
-	int parentPid;
 	int priority;
 	int ss, ssize, heap;
 	stackframe_t* sp;
 	tty_t *tty;
-	int ttyN;
 } task_t;
 
 typedef struct 

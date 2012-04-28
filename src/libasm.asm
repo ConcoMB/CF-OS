@@ -26,7 +26,6 @@ GLOBAL __stack_count
 GLOBAL _sys_stack_count
 GLOBAL _sys_yield
 GLOBAL __sleep
-GLOBAL __createChild
 
 EXTERN  getIP
 EXTERN  printIdleStack
@@ -239,14 +238,6 @@ _sys_yield:
 __kill:
 	mov ebx, 12
 	mov ecx, [esp+4]
-	int 080h
-	ret
-
-__createChild:
-	mov ebx, 15
-	mov eax, [esp+12]
-	mov ecx, [esp+8]
-	mov edx, [esp+4]
 	int 080h
 	ret
 
