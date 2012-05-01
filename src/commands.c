@@ -9,20 +9,20 @@ int who(int argc, char** argv)
 
 int echo(int argc, char** argv)
 {
-	printf("%s\n",argv[0]);
+	printf("%s\n",argv[1]);
 	return 0;
 }
 
 int chColor(int argc, char** argv)
 {
-	char tmp= color(argv[0]);
+	char tmp= color(argv[1]);
 	if(tmp==0)
 	{
 		printf("Invalid color name\n");
 	}
 	else
 	{
-		*(argv[1])=tmp;
+		*(argv[2])=tmp;
 	}
 	return 0;	
 }
@@ -79,9 +79,9 @@ int time(int argc, char** argv)
 
 int keyboard(int argc, char** argv)
 {
-	if(strcmp("ESP", argv[0])==0){
+	if(strcmp("ESP", argv[1])==0){
 		set_scancode(1);
-	}else if(strcmp("ENG", argv[0])==0){
+	}else if(strcmp("ENG", argv[1])==0){
 		set_scancode(2);
 	}else{
 		printf("Unsuported layout\n");
@@ -135,10 +135,9 @@ int help(int argc, char** argv)
 
 int Kill(int argc, char** argv)
 {
-	printf("mato la %d\n", atoi(argv[0]));
 	_Cli();
 
-	switch(kill(atoi(argv[0])))
+	switch(kill(atoi(argv[1])))
 	{
 		case 0:
 			printf("Procces killed succefully\n");

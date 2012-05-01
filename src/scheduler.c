@@ -13,7 +13,7 @@ int count=0;
 
 task_t* getProcess(int current)
 {
-	if(current>=0 && current<cant)
+	if(current>=0 && current<MAXPROC)
 		return &process[current];
 	return &idleP;
 }
@@ -39,7 +39,7 @@ void saveStack(stackframe_t* sp)
 
 void stackResize(task_t* task)
 {
-	if(task->pid!=-1)
+	if(task->pid!=-1 && task->status!=FREE)
 	{
 		//printf("ESP = %d\n", task->sp->ESP);
 		int max= task->ssize*4096;
@@ -64,8 +64,12 @@ void* getIdleStack(void)
 //Funcion que devuelve el PROCESS* siguiente a ejecutar
 task_t* getNextProcess (void)
 {
-	tick();
-	process[current].status=READY;
+	
+	if(process[current].status!=FREE)
+	{
+		tick();
+		process[current].status=READY;
+	}
 	task_t* temp;
 	temp=getNextTask();
 	//temp->lastCalled=0;
@@ -88,6 +92,10 @@ task_t* getNextTask(void)
 {
 	int k=current+1;
 	int cantChecked=0;
+	if(cant==0)
+	{
+		return &idleP;
+	}
 	while(cantChecked<MAXPROC+1)
 	{
 		if(k==MAXPROC)
@@ -145,7 +153,7 @@ void initScheduler()
 	int i;
 	for(i=0;i<MAXPROC;i++)
 	{
-		level[i]=0;
+		//level[i]=0;
 		process[i].status=FREE;
 	}
 	cant=0;
@@ -159,20 +167,7 @@ void initScheduler()
 	idleP.tty=&terminals[7];	
 }
 
-void cleaner(void)
-{
-	/*process[current].status=FREE;
-	freePage((void*)process[current].ss);
-	//swap(cant, current);
-	cant--;
-	//YIELD
 
-	while(1);*/
-	_Cli();
-	sys_kill(current);
-	_Sti();
-	_sys_yield();
-}
 
 int idle(int argc, char* argv[])
 {
@@ -227,6 +222,7 @@ void createProcess(int (*funct)(int, char **), int argc, char** argv, char* name
 {
 	int i=getFreeTask();
 	task_t* task=&process[i];
+	level[i]=0;
 	task->tty=&terminals[ttyN];
 	task->pid=i;
 	cant++;
@@ -253,8 +249,27 @@ void createProcess(int (*funct)(int, char **), int argc, char** argv, char* name
 void createChild(int (*funct)(int, char **), int argc, char ** argv)
 {
     task_t * task = &process[current];
-    createProcess(funct,argc,argv,task->name,task->priority,task->tty->num, task->pid);
+    createProcess(funct,argc,argv,argv[0],task->priority,task->tty->num, task->pid);
 }
+
+
+void cleaner(void)
+{
+	/*process[current].status=FREE;
+	freePage((void*)process[current].ss);
+	//swap(cant, current);
+	cant--;
+	//YIELD
+
+	while(1);*/
+	_Cli();
+	char* vi= (char*)0xb8000;
+	vi[0]='?';
+	sys_kill(current);
+	_Sti();
+	//_sys_yield();
+}
+
 
 int sys_kill(int pid)
 {
@@ -263,9 +278,14 @@ int sys_kill(int pid)
 	{
 		return 2;
 	}
+	if(pid<0 || pid>=MAXPROC)
+	{
+		return 1;
+	}
+	printf("libero el %d\n",pid);
 	freeProcessPages(pid);
-	cant--;
 	process[pid].status = FREE;
+	cant--;
 	for(i=0; i<MAXPROC; i++)
 	{
 		if(process[i].status!=FREE && process[i].parentid==pid)

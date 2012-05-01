@@ -72,6 +72,7 @@ void freeProcessPages(int pid){
 	{
 		if(page_present[i])
 		{
+			printf("libero la %d\n", i);
 			page_table[i+KERNEL_PAGES]=(int*)((int)(page_table[i+KERNEL_PAGES])&0xFFFFFFFE);		
 			page_present[i]=0;			
 		}

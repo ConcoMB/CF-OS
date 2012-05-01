@@ -79,7 +79,7 @@ int shell(int argc, char** argv){
 		int len=strlen(buffer);
 		int (*func)(int, char**);
 		int argc;
-		char* argv[3];
+		char* argv[4];
 		if(len==0)
 		{
 			/*VACIO*/
@@ -90,64 +90,75 @@ int shell(int argc, char** argv){
 		}
 		if(substr("who",buffer)){
 			func=who;
-			argc=0;
-			argv[0]=(char*)0;
+			argc=1;
+			argv[0]="who";
+			argv[1]=(char*)0;
 		}
 		else if(substr("echo ", buffer)){
 			func=echo;
-			argc=1;
-			argv[0]=buffer+5;
+			argc=2;
+			argv[0]="echo";
+			argv[1]=buffer+5;
 			argv[2]=(char*)0;
 		}
 		else if(substr("color ", buffer)){
 		    func=chColor;
-		    argc=2;
-		    argv[0]=buffer+6;
-		    argv[1]=(char*)&user_color;
-		    argv[2]=(char*)0;
+		    argc=3;
+		    argv[1]=buffer+6;
+		    argv[2]=(char*)&user_color;
+		    argv[3]=(char*)0;
+		    argv[0]="color";
 		}
 		else if(substr("time",buffer)){
 			func=time;
-			argc=0;
-			argv[0]=(char*)0;
+			argc=1;
+			argv[0]="time";
+			argv[1]=(char*)0;
 		}	
 		else if(substr("keyboard ", buffer)){
 			func=keyboard;
-			argc=1;
-			argv[0]=buffer+9;
-			argv[1]=(char*)0;
+			argc=2;
+			argv[1]=buffer+9;
+			argv[2]=(char*)0;
+			argv[0]="keyboard";
 		}
 		
 		else if(substr("lostquote", buffer)){
 			func=lost;
-			argc=0;
-			argv[0]=(char*)0;
+			argc=1;
+			argv[0]="lostquote";
+			argv[1]=(char*)0;
 		}
 		else if(substr("mastersword", buffer)){
 			func=mastersword;
-			argc=0;
-			argv[0]=(char*)0;
+			argc=1;
+			argv[0]="mastersword";
+			argv[1]=(char*)0;
 		}
 		else if(substr("mario", buffer)){
 			func=mario;
-			argc=0;
-			argv[0]=(char*)0;
+			argc=1;
+			argv[0]="mario";
+			argv[1]=(char*)0;
 		}
 		else if(substr("help", buffer)){
 			func=help;
-			argc=0;
-			argv[0]=(char*)0;	
+			argc=1;
+			argv[0]="help";
+			argv[1]=(char*)0;	
 		}
 		else if(substr("kill ", buffer)){
 			func=Kill;
-			argc=1;
-			argv[1]=(char*)0;
-			argv[0]=buffer+5;
+			argc=2;
+			argv[2]=(char*)0;
+			argv[1]=buffer+5;
+			argv[0]="kill";
 		}
 		else if(substr("top", buffer)){
 			func=top;
-			argc=0;
-			argv[0]=(char*)0;	
+			argc=1;
+			argv[1]=(char*)0;	
+			argv[0]="top";
 		}
 		else{
 			nothing=1;
