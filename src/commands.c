@@ -159,7 +159,7 @@ int top(int argc, char** argv)
 	topInfo_t ti;
 	__top(&ti);
 	printf("===================TOP========================\n\n"
-	  "   PID             %%             process name\n---------------------------------------------------\n");
+	  "   PID             %%CPU             process name\n---------------------------------------------------\n");
 	for(;i<ti.cant; i++)
 	{
 		printf("   %d               %d             %s\n", ti.pids[i],ti.percent[i],ti.names[i]);

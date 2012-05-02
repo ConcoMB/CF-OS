@@ -282,7 +282,6 @@ int sys_kill(int pid)
 	{
 		return 1;
 	}
-	printf("libero el %d\n",pid);
 	freeProcessPages(pid);
 	process[pid].status = FREE;
 	cant--;

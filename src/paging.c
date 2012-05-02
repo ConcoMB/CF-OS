@@ -30,7 +30,7 @@ void* getHeapPage(int pid)
 		}
 	}
 	return 0;*/
-	int heap=(pid+1)*MAXPAGEPERPROC, i;
+	int heap=1+(pid*MAXPAGEPERPROC), i;
 	for(i=heap; i<heap+MAXPAGEPERPROC; i++)
 	{
 		if(!page_present[i])
@@ -46,7 +46,7 @@ void* getHeapPage(int pid)
 
 void* getStackPage(int pid)
 {
-	int stack=(pid+1)*MAXPAGEPERPROC+MAXPAGEPERPROC-1, i;
+	int stack=pid*MAXPAGEPERPROC+MAXPAGEPERPROC, i;
 	for(i=stack; i>stack-MAXPAGEPERPROC; i--)
 	{
 		if(!page_present[i])
@@ -67,7 +67,7 @@ void freePage(void* address)
 }
 */
 void freeProcessPages(int pid){
-	int i, page = (pid+1)*MAXPAGEPERPROC;
+	int i, page = 1+(pid*MAXPAGEPERPROC);
 	for(i=page ; i<(page+MAXPAGEPERPROC) ; i++)
 	{
 		if(page_present[i])
