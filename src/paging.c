@@ -35,7 +35,6 @@ void* getHeapPage(int pid)
 	{
 		if(!page_present[i])
 		{	
-			printf("le doy la %d", i);
 			page_present[i]=1;
 			page_table[i+KERNEL_PAGES]=(int*)((int)(page_table[i+KERNEL_PAGES])|0x00000001);
 			return (void*)((i+KERNEL_PAGES)*PAGE_SIZE);
@@ -73,7 +72,6 @@ void freeProcessPages(int pid){
 	{
 		if(page_present[i])
 		{
-			printf("libero la %d\n", i);
 			page_table[i+KERNEL_PAGES]=(int*)((int)(page_table[i+KERNEL_PAGES])&0xFFFFFFFE);		
 			page_present[i]=0;			
 		}
