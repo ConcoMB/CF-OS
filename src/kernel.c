@@ -57,12 +57,16 @@ int test0(int argc, char** argv)
 	strcpy(str[2], "estas");
 	malloc(5000);
 	malloc(4000);
+	while(1){ 	
+		malloc(3000);
+	}
+
 	//free(str[2]);
 	//str[3]=malloc(15);
 	//strcpy(str[3],"todo");
 	//free(str[2]);
-	free(str[0]);
-	free(str[1]);
+	//free(str[0]);
+	//free(str[1]);
 	//printHeap(start);
 	int i=0;
 	while((i++)!=100000);
@@ -141,7 +145,7 @@ void kmain()
 	createProcess(shell, 0,0, "SHELL",  0,0,10);
 	createProcess(shell, 0,0,"YPF", 1,1,10);
 	createProcess(shell, 0,0,"ESSO", 2,2,10);
-
+	createProcess(test0, 0,0, "test", 0 , 0 , 10);
 	//createProcess(test,0,0, "O", 2,2, 10);
 	//createProcess(testX, "X", 0, 3);
 /* Habilito interrupcion de timer tick*/

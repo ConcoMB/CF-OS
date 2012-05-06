@@ -267,12 +267,13 @@ void cleaner(void)
 	vi[0]='?';
 	sys_kill(current);
 	_Sti();
-	//_sys_yield();
+	_sys_yield();
 }
 
 
 int sys_kill(int pid)
 {
+	printf("MUERTE\n");
 	int i;
 	if(process[pid].status==FREE)
 	{
@@ -292,6 +293,7 @@ int sys_kill(int pid)
 			sys_kill(i);
 		}
 	}
+	_sys_yield();
 	return 0;
 }
 
