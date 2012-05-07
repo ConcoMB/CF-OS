@@ -20,7 +20,8 @@ char* current_shifted_scan_code;
 void kb_init(){
 	sys_set_scancode(LANG_ES);
 }
-void buffer_putchar(char c){
+void buffer_putchar(char c)
+{
 	buffer[head++]=c;
 	if(head==BUFFER_SIZE){
 		head=0;
@@ -29,17 +30,14 @@ void buffer_putchar(char c){
 
 char buffer_getchar(){
 	_Cli();
-	if(!processHasFocus())
+	if(!processHasFocus() || head==tail)
 	{
-		//Lo bloqueo TODO
-		return 0;
-	}
-	char next;
-	if(head==tail){
-		/*VACIO*/
 		_Sti();
 		return 0;
+		//blockInput();
 	}
+	char next;
+	
 	next=buffer[tail++];
 	if(tail==BUFFER_SIZE){
 		tail=0;
@@ -56,6 +54,7 @@ int caps=0;
 
 void int_09(){
 	//_Cli();
+
 	char scanCode=_IO_in(0x60);
 	if(scanCode & 0x80){
 		/*RELEASED KEY*/
@@ -98,6 +97,7 @@ void int_09(){
 					ascii=to_lower(ascii);
 				}
 			}
+			//awake();
 			buffer_putchar(ascii);
 		}
 	}

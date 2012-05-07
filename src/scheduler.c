@@ -11,81 +11,6 @@ int current, cant;
 
 int count=0;
 
-task_t* getProcess(int current)
-{
-	if(current>=0 && current<MAXPROC)
-		return &process[current];
-	return &idleP;
-}
-
-void printIdleStack()
-{
-	//printf("\nstack  %d ", count++);
-	printf("\nip %d , CD %d, flags %d", (int)idleP.sp->EIP, (int)idleP.sp->CS,(int)idleP.sp->EFLAGS);
-}
-
-void saveStack(stackframe_t* sp)
-{
-	task_t* temp, * aux=getProcess(current);
-	if (!firstTime)
-	{
-		temp=getProcess(current);
-		temp->sp=sp;
-	}
-	firstTime=0;
-	stackResize(aux);
-	return;
-}
-
-void stackResize(task_t* task)
-{
-	if(task->pid!=-1 && task->status!=FREE)
-	{
-		//printf("ESP = %d\n", task->sp->ESP);
-		int max= task->ssize*4096;
-		int now = (max-(task->sp->ESP) % max);
-		double percent = (double)(now) / (double)(max);
-		//printf("num %d / den %d\n", aux, task->ssize*4096);
-		if(percent>=0.8)
-		{
-			//printf("ojo  y \n");
-			getStackPage(task->pid);
-			task->ssize++;
-		}
-	}
-}
-
-//Funcion que obtiene el ESP de idle para switchear entre tareas.
-void* getIdleStack(void)
-{
-	return idleP.sp;
-}
-
-//Funcion que devuelve el PROCESS* siguiente a ejecutar
-task_t* getNextProcess (void)
-{
-	
-	if(process[current].status!=FREE)
-	{
-		tick();
-		process[current].status=READY;
-	}
-	task_t* temp;
-	temp=getNextTask();
-	//temp->lastCalled=0;
-	current=temp->pid;
-	//last100[counter100]=CurrentPID;
-	//counter100=(counter100+1)%100;
-	temp->timeBlocks++;
-	temp->status=RUN;
-	return temp;
-	
-}
-task_t* getCurrentProcess()
-{
-	return &process[current];
-}
-
 #ifndef __PRIOR__
 
 task_t* getNextTask(void)
@@ -142,6 +67,82 @@ task_t* getNextTask()
 }
 
 #endif
+
+task_t* getProcess(int current)
+{
+	if(current>=0 && current<MAXPROC)
+		return &process[current];
+	return &idleP;
+}
+
+void printIdleStack()
+{
+	//printf("\nstack  %d ", count++);
+	printf("\nip %d , CD %d, flags %d", (int)idleP.sp->EIP, (int)idleP.sp->CS,(int)idleP.sp->EFLAGS);
+}
+
+void saveStack(stackframe_t* sp)
+{
+	task_t* temp, * aux=getProcess(current);
+	if (!firstTime)
+	{
+		temp=getProcess(current);
+		temp->sp=sp;
+	}
+	firstTime=0;
+	stackResize(aux);
+	return;
+}
+
+void stackResize(task_t* task)
+{
+	if(task->pid!=-1 && task->status!=FREE)
+	{
+		//printf("ESP = %d\n", task->sp->ESP);
+		int max= task->ssize*4096;
+		int now = (max-(task->sp->ESP) % max);
+		double percent = (double)(now) / (double)(max);
+		//printf("num %d / den %d\n", aux, task->ssize*4096);
+		if(percent>=0.8)
+		{
+			//printf("ojo  y \n");
+			getStackPage(task->pid);
+			task->ssize++;
+		}
+	}
+}
+
+//Funcion que obtiene el ESP de idle para switchear entre tareas.
+void* getIdleStack(void)
+{
+	return idleP.sp;
+}
+
+//Funcion que devuelve el PROCESS* siguiente a ejecutar
+task_t* getNextProcess (void)
+{
+	if(process[current].status==RUN)
+	{
+		process[current].status=READY;
+	}
+	task_t* temp;
+	temp=getNextTask();
+	//temp->lastCalled=0;
+	current=temp->pid;
+	//last100[counter100]=CurrentPID;
+	//counter100=(counter100+1)%100;
+	temp->timeBlocks++;
+	temp->status=RUN;
+	tick();
+	return temp;
+	
+}
+task_t* getCurrentProcess()
+{
+	return &process[current];
+}
+
+
 //Funcion que devuelve el ESP del proceso actual.
 stackframe_t* getStack(task_t* proc)
 {
@@ -243,6 +244,7 @@ void createProcess(int (*funct)(int, char **), int argc, char** argv, char* name
 	task->sp->ESP=(int)(task->sp);
 	task->priority=p;
 	task->timeBlocks=0;
+	task->input=0;
 	task->name=name;
 }
 
@@ -255,16 +257,8 @@ void createChild(int (*funct)(int, char **), int argc, char ** argv)
 
 void cleaner(void)
 {
-	/*process[current].status=FREE;
-	freePage((void*)process[current].ss);
-	//swap(cant, current);
-	cant--;
-	//YIELD
 
-	while(1);*/
 	_Cli();
-	char* vi= (char*)0xb8000;
-	vi[0]='?';
 	sys_kill(current);
 	_Sti();
 	_sys_yield();
@@ -273,7 +267,6 @@ void cleaner(void)
 
 int sys_kill(int pid)
 {
-	printf("MUERTE\n");
 	int i;
 	if(process[pid].status==FREE)
 	{
@@ -299,7 +292,6 @@ int sys_kill(int pid)
 
 void sys_top(topInfo_t * topInfo)
 {
-	//int * processInfo = malloc(sizeof(int)+sizeof(int)*2*cant);
 	task_t proc;
 	int i=0, k=0,aux=0;
 	for(;i < MAXPROC;i++)
@@ -339,7 +331,7 @@ void tick()
 	int i;
 	for(i=0;i<MAXPROC;i++)
 	{
-		if(process[i].status==BLOCK)
+		if(process[i].status==BLOCK && !process[i].input)
 		{
 			if(process[i].ticks>0)
 			{
@@ -354,4 +346,22 @@ void tick()
 	printTime();
 }
 
+void awake()
+{
+	int i;
+	for(i=0; i<MAXPROC; i++)
+	{
+		if(process[i].status==BLOCK && process[i].input && process[i].tty==&terminals[currentTTY])
+		{
+			process[i].status=READY;
+			process[i].input=0;
+		}
+	}
+}
 
+void blockInput()
+{
+	process[current].input=1;
+	process[current].status=BLOCK;
+	_sys_yield();
+}

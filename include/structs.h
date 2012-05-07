@@ -28,6 +28,7 @@ typedef struct
 	status_t status;
 	int ticks;
 	int timeBlocks;
+	int input;
 	int pid;
 	int parentid;
 	int priority;

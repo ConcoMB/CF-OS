@@ -10,6 +10,7 @@
 #define BLACK_TXT 0x70
 
 extern int currentTTY;
+extern tty_t terminals[];
 
 void initScreens();
 void clear_screen(tty_t* tty);

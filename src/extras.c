@@ -85,3 +85,33 @@ void print_mario()
     "       \\`--'         _,-'                    \n"
     "        `-..___..--''                        \n");
 }
+
+int print3(int argc, char** argv)
+{
+  int i=0;
+  while(1)
+  {
+    printf("%d\n", i);
+    i+=3;
+    sleep(2000);
+  }
+}
+
+int printO(int argc, char** argv)
+{
+  while(1)
+  {
+    printf("O");
+    sleep(500);
+  }
+}
+
+int printX(int argc, char** argv)
+{
+  while(1)
+  {
+    printf("X");
+    sleep(500);
+
+  }
+}

@@ -36,5 +36,8 @@ void stackResize(task_t* task);
 task_t* getCurrentProcess();
 void sys_sleep(int ms);
 void tick();
+void awake();
+void blockInput();
+
 
 #endif
