@@ -81,12 +81,6 @@ task_t* getProcess(int current)
 	return &idleP;
 }
 
-void printIdleStack()
-{
-	//printf("\nstack  %d ", count++);
-	printf("\nip %d , CD %d, flags %d", (int)idleP.sp->EIP, (int)idleP.sp->CS,(int)idleP.sp->EFLAGS);
-}
-
 void saveStack(stackframe_t* sp)
 {
 	task_t* temp, * aux=getProcess(current);
@@ -271,31 +265,6 @@ void cleaner(void)
 }
 
 
-int sys_kill(int pid)
-{
-	int i;
-	if(process[pid].status==FREE)
-	{
-		return 2;
-	}
-	if(pid<0 || pid>=MAXPROC)
-	{
-		return 1;
-	}
-	freeProcessPages(pid);
-	process[pid].status = FREE;
-	cant--;
-	for(i=0; i<MAXPROC; i++)
-	{
-		if(process[i].status!=FREE && process[i].parentid==pid)
-		{
-			sys_kill(i);
-		}
-	}
-	_sys_yield();
-	return 0;
-}
-
 void sys_top(topInfo_t * topInfo)
 {
 	task_t proc;
@@ -325,51 +294,29 @@ int processHasFocus()
 	return process[current].tty==&terminals[currentTTY];
 }
 
-void sys_sleep(int ms)
-{
-	process[current].status=BLOCK;
-	process[current].ticks=ms%TICK_FREQUENCY==0?ms/TICK_FREQUENCY:ms/TICK_FREQUENCY+1;
-	_sys_yield();
-}
 
-void tick()
+int sys_kill(int pid)
 {
 	int i;
-	for(i=0;i<MAXPROC;i++)
+	if(process[pid].status==FREE)
 	{
-		if(process[i].status==BLOCK && !process[i].input)
-		{
-			if(process[i].ticks>0)
-			{
-				process[i].ticks--;
-			}
-			else
-			{
-				process[i].status=READY;
-			}
-		}
+		return 2;
 	}
-	printTime();
-}
-
-void awake()
-{
-	int i;
+	if(pid<0 || pid>=MAXPROC)
+	{
+		return 1;
+	}
+	freeProcessPages(pid);
+	process[pid].status = FREE;
+	cant--;
 	for(i=0; i<MAXPROC; i++)
 	{
-		if(process[i].status==BLOCK && process[i].input && process[i].tty==&terminals[currentTTY])
+		if(process[i].status!=FREE && process[i].parentid==pid)
 		{
-			process[i].status=READY;
-			process[i].input=0;
+			sys_kill(i);
 		}
 	}
+	_sys_yield();
+	return 0;
 }
 
-void blockInput()
-{
-	process[current].input=1;
-	process[current].status=BLOCK;
-	_sys_yield();
-	//_Sti();
-	//while(1);
-}

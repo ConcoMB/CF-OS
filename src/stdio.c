@@ -11,10 +11,8 @@ void putc(int outstream, char c){
 }
 char getchar(){
 	char c;
-	do{
-		__read(0,&c,1);
+	__read(0,&c,1);
 		//sleep(500);
-	}while(c==0);
 	return c;
 }
 

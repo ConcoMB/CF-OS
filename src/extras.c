@@ -112,7 +112,6 @@ int printX(int argc, char** argv)
   {
     printf("X");
     sleep(1500);
-	getchar();
   }
 }
 

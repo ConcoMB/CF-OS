@@ -161,6 +161,12 @@ int shell(int argc, char** argv){
 			argv[1]=(char*)0;	
 			argv[0]="top";
 		}
+		else if(substr("multiply3", buffer)){
+			func=print3;
+			argc=1;
+			argv[0]="multiply 3";
+			argv[1]=(char*)0;
+		}
 		else{
 			nothing=1;
 			printf("Command not found\n");

@@ -9,6 +9,7 @@
 #include "speaker.h"
 #include "kernel.h"
 #include "kb.h"
+#include "status.h"
 #include "heap.h"
 #include "scheduler.h"
 

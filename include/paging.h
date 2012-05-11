@@ -9,6 +9,7 @@
 #include "kasm.h"
 #include "int80.h"
 #include "stdio.h"
+#include "status.h"
 #include "scheduler.h"
 
 void * sys_calloc(int bytes);

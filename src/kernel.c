@@ -36,7 +36,7 @@ void kmain()
 	createProcess(shell, 0,0,"YPF", 1,1,10);
 	//createProcess(print3, 0,0,"tabla del 3", 2,2,0);
 	createProcess(printX, 0, 0, "X", 4, 2, 1);
-	createProcess(printO, 0, 0, "O", 0, 3, 1);
+	createProcess(printO, 0, 0, "O", 0, 2, 1);
 	//createProcess(kbTest, 0, 0, "kbtest", 1, 0,0);
 
 

@@ -5,6 +5,7 @@
 #include "paging.h"
 #include "video.h"
 #include "structs.h"
+#include "status.h"
 #include "heap.h"
 
 #define MAXPAGEPERPROC 10
@@ -30,14 +31,11 @@ int idle(int argc, char* argv[]);
 void createProcess(int (*funct)(int, char **), int argc, char** argv, char* name, int p, int ttyN, int parid);
 void createChild(int (*funct)(int, char **), int argc, char ** argv);
 int processHasFocus();
-int sys_kill(int pID);
 void sys_top();
 void stackResize(task_t* task);
 task_t* getCurrentProcess();
-void sys_sleep(int ms);
-void tick();
-void awake();
-void blockInput();
+int sys_kill(int pID);
+
 
 
 #endif
