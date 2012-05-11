@@ -31,11 +31,7 @@ task_t* getNextTask(void)
 		{
 			return &process[k];
 		}
-<<<<<<< HEAD
-		k++;
-=======
 		//printf("-%d",k);
->>>>>>> 808dccb60f81d3e5a0ea5e966c33c62ad598ae75
 		cantChecked++;
 		k++;
 	}
@@ -51,11 +47,7 @@ task_t* getNextTask()
 	{
 		return &idleP;
 	}
-<<<<<<< HEAD
-	_Cli();
-=======
 	//_Cli();
->>>>>>> 808dccb60f81d3e5a0ea5e966c33c62ad598ae75
 	while(1)
 	{
 		nobody=1;
@@ -68,7 +60,7 @@ task_t* getNextTask()
 				{
 					level[i]=0;
 					current=1;
-					_Sti();
+					//_Sti();
 					return &process[i];
 				}
 			}
