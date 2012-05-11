@@ -21,7 +21,7 @@ task_t* getNextTask(void)
 	{
 		return &idleP;
 	}
-	while(cantChecked<=MAXPROC+1)
+	while(cantChecked<MAXPROC+1)
 	{
 		if(k==MAXPROC)
 		{
@@ -31,10 +31,14 @@ task_t* getNextTask(void)
 		{
 			return &process[k];
 		}
+<<<<<<< HEAD
 		k++;
+=======
+		//printf("-%d",k);
+>>>>>>> 808dccb60f81d3e5a0ea5e966c33c62ad598ae75
 		cantChecked++;
+		k++;
 	}
-	sys_print('I');
 	return &idleP;	
 }
 
@@ -47,7 +51,11 @@ task_t* getNextTask()
 	{
 		return &idleP;
 	}
+<<<<<<< HEAD
 	_Cli();
+=======
+	//_Cli();
+>>>>>>> 808dccb60f81d3e5a0ea5e966c33c62ad598ae75
 	while(1)
 	{
 		nobody=1;
@@ -369,9 +377,6 @@ void blockInput()
 {
 	process[current].input=1;
 	process[current].status=BLOCK;
-	sys_print('B');
-	sys_print(current+'0');
-	sys_print(' ');
 	_sys_yield();
 	//_Sti();
 	//while(1);
