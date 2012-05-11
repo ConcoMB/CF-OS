@@ -1,6 +1,6 @@
 #include "../include/scheduler.h"
 
-//#define __PRIOR__
+#define __PRIOR__
 
 int firstTime=1;
 task_t process[MAXPROC]; 
@@ -31,6 +31,7 @@ task_t* getNextTask(void)
 		{
 			return &process[k];
 		}
+		k++;
 		cantChecked++;
 	}
 	sys_print('I');
@@ -41,19 +42,21 @@ task_t* getNextTask(void)
 
 task_t* getNextTask()
 {
-	int i;
+	int i, nobody=1;
 	if(cant==0)
 	{
 		return &idleP;
 	}
-	//_Cli();
-	//while(1)
+	_Cli();
+	while(1)
 	{
+		nobody=1;
 		for(i=0; i<MAXPROC; i++)
 		{
 			if(process[i].status==READY)
 			{
-				if((level[i]+=process[i].priority+1)>=100)
+				nobody=0;
+				if((level[i]+=(5-process[i].priority))>=100)
 				{
 					level[i]=0;
 					current=1;
@@ -61,6 +64,10 @@ task_t* getNextTask()
 					return &process[i];
 				}
 			}
+		}
+		if(nobody)
+		{
+			return &idleP;
 		}
 	}
 }
