@@ -24,6 +24,7 @@ int shell(int argc, char** argv){
 		i=0;
 		mem=-1;
 		do{
+			//sleep(500);
 			c=getchar();
 			if(c=='\b'){
 				if(i>0){

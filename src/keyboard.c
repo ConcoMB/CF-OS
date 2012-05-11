@@ -26,15 +26,18 @@ void buffer_putchar(char c)
 	if(head==BUFFER_SIZE){
 		head=0;
 	}
+	awake();
 }
 
 char buffer_getchar(){
 	_Cli();
-	if(!processHasFocus() || head==tail)
+	//sys_sleep(500);
+	while(!processHasFocus() || head==tail)
 	{
+		blockInput();
 		_Sti();
-		return 0;
-		//blockInput();
+		//return 0;
+		//_sys_yield();
 	}
 	char next;
 	

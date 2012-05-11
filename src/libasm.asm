@@ -3,6 +3,7 @@ GLOBAL  _int_08_hand
 GLOBAL  _int_80_hand
 GLOBAL  _int_09_hand
 GLOBAL  _int_0E_hand
+GLOBAL  _scheduler
 GLOBAL  _IO_in
 GLOBAL	_IO_out
 GLOBAL  __write
@@ -95,7 +96,11 @@ _epag:
 		
 		
 _int_08_hand:				; Handler de INT 8 ( Timer tick)
-        cli
+        call _scheduler
+        iret
+  
+_scheduler:
+		cli
   		pushad
 		mov eax, esp
 		push eax
@@ -117,8 +122,7 @@ _int_08_hand:				; Handler de INT 8 ( Timer tick)
 		;mov esp,ebp
 		;pop ebp
 		sti
-        iret
-    
+		ret
 
 _int_80_hand:				; Handler de INT 80 ( System calls)
 		cli
@@ -241,7 +245,9 @@ __sleep:
 	ret
 	
 _sys_yield:
-	int 08h;
+	;call _scheduler
+	sti
+	int 08
 	ret
 
 __kill:

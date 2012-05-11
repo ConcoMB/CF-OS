@@ -4,6 +4,7 @@
 #include "systemcalls.h"
 #include "stdarg.h"
 #include "string.h"
+#include "libc.h"
 
 void printf(char * format, ...);
 void putchar(char c);

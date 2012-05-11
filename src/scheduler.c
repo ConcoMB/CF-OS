@@ -1,6 +1,6 @@
 #include "../include/scheduler.h"
 
-#define __PRIOR__
+//#define __PRIOR__
 
 int firstTime=1;
 task_t process[MAXPROC]; 
@@ -21,20 +21,19 @@ task_t* getNextTask(void)
 	{
 		return &idleP;
 	}
-	while(cantChecked<MAXPROC+1)
+	while(cantChecked<=MAXPROC+1)
 	{
 		if(k==MAXPROC)
 		{
 			k=0;
 		}
-		//printf("%d %d",k, current);
 		if(process[k].status==READY)
 		{
-			//printf("Proceso %d ready %d\n", k,current);
 			return &process[k];
 		}
 		cantChecked++;
 	}
+	sys_print('I');
 	return &idleP;	
 }
 
@@ -47,8 +46,8 @@ task_t* getNextTask()
 	{
 		return &idleP;
 	}
-	_Cli();
-	while(1)
+	//_Cli();
+	//while(1)
 	{
 		for(i=0; i<MAXPROC; i++)
 		{
@@ -165,7 +164,7 @@ void initScheduler()
 	//initHeap((void*)idleP.heap);
 	//idleP.ssize=STACK_SIZE;
 	idleP.sp=initStackFrame(idle, 0, 0, idleP.ss+STACK_SIZE-1, cleaner);
-	idleP.tty=&terminals[7];	
+	idleP.tty=&terminals[2];	
 }
 
 
@@ -175,8 +174,8 @@ int idle(int argc, char* argv[])
 	
 	while(1)
 	{
-		//printf("idle %d", count++);
-		_sys_yield();
+		//_sys_yield();
+		_Sti();
 	}
 }
 
@@ -363,5 +362,10 @@ void blockInput()
 {
 	process[current].input=1;
 	process[current].status=BLOCK;
+	sys_print('B');
+	sys_print(current+'0');
+	sys_print(' ');
 	_sys_yield();
+	//_Sti();
+	//while(1);
 }

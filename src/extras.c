@@ -111,7 +111,16 @@ int printX(int argc, char** argv)
   while(1)
   {
     printf("X");
-    sleep(500);
-
+    sleep(1500);
+	getchar();
   }
+}
+
+int kbTest(int argc, char** argv)
+{
+	while(1)
+	{
+		sleep(300);
+		//putchar(getchar());
+	}
 }

@@ -10,5 +10,6 @@ void print_mario();
 int print3(int argc, char** argv);
 int printO(int argc, char** argv);
 int printX(int argc, char** argv);
+int kbTest(int argc, char** argv);
 
 #endif
