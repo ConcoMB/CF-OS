@@ -32,7 +32,7 @@ typedef struct
 	int pid;
 	int parentid;
 	int priority;
-	int ss, ssize, heap;
+	int ss, ssize, heap, hsize;
 	stackframe_t* sp;
 	tty_t *tty;
 } task_t;
@@ -42,6 +42,8 @@ typedef struct
 	char * names[MAXPROC];
 	int pids[MAXPROC];
 	int percent[MAXPROC];
+	int mem[MAXPROC];
+	status_t stats[MAXPROC];
 	int cant;
 }topInfo_t;
 

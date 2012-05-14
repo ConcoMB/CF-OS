@@ -157,13 +157,48 @@ int top(int argc, char** argv)
 {
 	int i=0;
 	topInfo_t ti;
-	__top(&ti);
-	printf("===================TOP========================\n\n"
-	  "   PID             %%CPU             process name\n---------------------------------------------------\n");
-	for(;i<ti.cant; i++)
+	while(1)
 	{
-		printf("   %d               %d             %s\n", ti.pids[i],ti.percent[i],ti.names[i]);
+		clearScreen();
+		resetCursor();
+		i=0;
+		__top(&ti);
+		printf("==========================TOP===============================\n\n"
+		  "   PID         %%CPU      memory pages       status        process name\n-----------------------------------------------------------------\n");
+		for(;i<ti.cant; i++)
+		{
+			int perc=ti.percent[i];
+			char * status;
+			switch(ti.stats[i]){
+				case RUN:
+					status="Running";
+					break;
+				case READY:
+					status="Ready  ";
+					break;
+				case BLOCK:
+					status="Blocked";
+					break;
+				default:
+					status="-";
+			}
+			if(perc<10){
+				printf("   %d            0%d             %d           %s          %s\n", ti.pids[i],perc, ti.mem[i], status, ti.names[i]);
+			}else{
+				printf("   %d            %d             %d           %s         %s\n", ti.pids[i],perc, ti.mem[i], status,ti.names[i]);
+			}
+		}
+		printf("\n");
+		i=0;
+		while(i<500000)
+		{
+			if(getCharNB()=='q')
+			{
+				return 0;
+			}
+			i++;
+		}
+		//sleep(2000);
 	}
-	printf("\n");
 	return 0;
 }

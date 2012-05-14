@@ -16,6 +16,13 @@ char getchar(){
 	return c;
 }
 
+char getCharNB()
+{
+	char c;
+	__readNB(0,&c,1);
+	return c;
+}
+
 void prints(char* string){
 	int i;
 	for(i=0;string[i];i++){
@@ -117,4 +124,14 @@ int scanf(const char* format, ...){
 
 void set_out_stream(int i){
 	out_stream=i;
+}
+
+void clearScreen()
+{
+	clear_screen(process[current].tty);
+}
+
+void resetCursor()
+{
+	reset_cursor(process[current].tty);
 }

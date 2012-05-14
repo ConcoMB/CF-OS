@@ -26,7 +26,7 @@ typedef struct {
 } time_t;
 
 
-
+void sys_readNB(char *c);
 void sys_print(char c);
 void sys_read(char *c);
 void sys_hour(char* hp);

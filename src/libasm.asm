@@ -8,6 +8,7 @@ GLOBAL  _IO_in
 GLOBAL	_IO_out
 GLOBAL  __write
 GLOBAL  __read
+GLOBAL  __readNB
 GLOBAL  __hour
 GLOBAL  __min
 GLOBAL  __setcolor
@@ -170,6 +171,12 @@ __write:
 __read:
 	mov ecx, [esp+8]
 	mov ebx, 2
+	int 080h
+	ret
+
+__readNB:
+	mov ecx, [esp+8]
+	mov ebx, 20
 	int 080h
 	ret
 	

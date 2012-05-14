@@ -28,6 +28,10 @@ void int_80(REG registers)
 			c=(char*)registers.ecx;
 			sys_read(c);
 			break;
+		case 20:
+			c=(char*)registers.ecx;
+			sys_readNB(c);
+			break;
 		case 3:
 			c=(char*)registers.ecx;
 			sys_hour(c);
@@ -88,6 +92,10 @@ void sys_read(char *c)
 	*c=buffer_getchar();
 }
 
+void sys_readNB(char *c)
+{
+	*c=buffer_getchar_nb();
+}
 /* TIME FUNCTIONS */
 
 void sys_hour(char* hp)

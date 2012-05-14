@@ -233,6 +233,7 @@ void createProcess(int (*funct)(int, char **), int argc, char** argv, char* name
 
 	task->ss=(int)getStackPage(task->pid);
 	task->ssize=1;
+	task->hsize=1;
 	task->heap=(int)getHeapPage(task->pid);
 	if(task->ss==0 || task->heap==0)
 	{
@@ -277,6 +278,8 @@ void sys_top(topInfo_t * topInfo)
 			topInfo->names[k]=proc.name;
 			topInfo->pids[k]=proc.pid;
 			topInfo->percent[k]= proc.timeBlocks;
+			topInfo->mem[k]=proc.ssize+proc.hsize;
+			topInfo->stats[k]=proc.status;
 			aux += proc.timeBlocks;
 			k++;
 		}
@@ -286,6 +289,42 @@ void sys_top(topInfo_t * topInfo)
 	{
 		topInfo->percent[i] *= 100.0 / aux;
 	}
+	sortTop(topInfo);
+}
+
+void sortTop(topInfo_t * topInfo)
+{
+	int i,j, n=topInfo->cant;
+    for(i=0;i<(n-1);i++)
+   {
+        for(j=0;j<(n-(i+1));j++)
+        {
+            if(topInfo->percent[j] < topInfo->percent[j+1])
+            {
+                swapTop(topInfo, j);
+            }
+        }
+    }
+}
+
+void swapTop(topInfo_t * topInfo, int j)
+{
+	char * nameAux;
+	nameAux= topInfo->names[j];
+	topInfo->names[j]=topInfo->names[j+1];
+	topInfo->names[j+1]=nameAux;
+	int pidAux=topInfo->pids[j];
+	topInfo->pids[j]=topInfo->pids[j+1];
+	topInfo->pids[j+1]=pidAux;
+	int percentAux=topInfo->percent[j];
+	topInfo->percent[j]=topInfo->percent[j+1];
+	topInfo->percent[j+1]=percentAux;
+	int memAux=topInfo->mem[j];
+	topInfo->mem[j]=topInfo->mem[j+1];
+	topInfo->mem[j+1]=memAux;
+	status_t statAux=topInfo->stats[j];
+	topInfo->stats[j]=topInfo->stats[j+1];
+	topInfo->stats[j+1]=statAux;
 }
 
 int processHasFocus()

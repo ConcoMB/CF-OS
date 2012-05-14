@@ -205,3 +205,8 @@ void swapTTY(int num)
 	}
 }
 
+void reset_cursor(tty_t* tty)
+{
+	tty->cursor_x=0;
+	tty->cursor_y=0;
+}

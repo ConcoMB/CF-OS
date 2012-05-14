@@ -29,6 +29,26 @@ void buffer_putchar(char c)
 	awake();
 }
 
+char buffer_getchar_nb()
+{
+	_Cli();
+	//sys_sleep(500);
+
+	if(head==tail || !processHasFocus())
+	{
+		return 0;
+	}
+	char next;
+	
+	next=buffer[tail++];
+	if(tail==BUFFER_SIZE){
+		tail=0;
+	}
+	//printf("f(%d)", processHasFocus());
+	_Sti();
+	return next;
+}
+
 char buffer_getchar(){
 	_Cli();
 	//sys_sleep(500);

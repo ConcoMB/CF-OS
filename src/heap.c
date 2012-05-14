@@ -48,6 +48,7 @@ void heapResize(head_t* heap, int size)
 	if(4096-occupied < size+CONDITION)
 	{
 		getHeapPage(current);
+		process[current].hsize++;
 	}
 }
 

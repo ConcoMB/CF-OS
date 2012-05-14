@@ -19,5 +19,7 @@ void sys_set_scancode(int i);
 void update_leds(char status);
 char to_upper(char c);
 char to_lower(char c);
+char buffer_getchar_nb();
+
 
 #endif

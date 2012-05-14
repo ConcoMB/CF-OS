@@ -35,6 +35,8 @@ void sys_top();
 void stackResize(task_t* task);
 task_t* getCurrentProcess();
 int sys_kill(int pID);
+void sortTop(topInfo_t * topInfo);
+void swapTop(topInfo_t * topInfo, int j);
 
 
 

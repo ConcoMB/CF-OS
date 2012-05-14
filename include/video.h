@@ -25,5 +25,6 @@ void printBar();
 void printTerminal();
 void printOnVideo(char* str, int x, int y);
 void printTime();
+void reset_cursor(tty_t* tty);
 
 #endif
