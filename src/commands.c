@@ -162,6 +162,11 @@ int Malloc(int argc, char** argv){
 
 int Free(int argc, char** argv)
 {
+	if(NaN(argv[1]))
+	{
+		printf("NaN\n");
+		return 1;
+	}
 	int mem = atoi(argv[1]);
 	free((void*)mem);
 	printf("memory freed\n");

@@ -14,6 +14,18 @@ int pow(int b,int e){
 	return ans;
 }
 
+int NaN(char* string)
+{
+	int  i;
+	for(i=0; string[i]!=0; i++)
+	{
+		if(string[i]<'0' || string[i]>'9')
+		{
+			return 1;
+		}
+	}
+	return 0;
+}
 
 
 char gethour(){
