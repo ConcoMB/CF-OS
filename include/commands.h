@@ -28,3 +28,7 @@ int help(int argc, char** argv);
 int Kill(int argc, char** argv);
 
 int top(int argc, char** argv);
+
+int Malloc(int argc, char** argv);
+
+int Free(int argc, char** argv);

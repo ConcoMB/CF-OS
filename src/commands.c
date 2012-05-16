@@ -153,6 +153,22 @@ int Kill(int argc, char** argv)
 	return 0;
 }
 
+int Malloc(int argc, char** argv){
+	int bytes = atoi(argv[1]);
+	void* mem = malloc(bytes);
+	printf("memory allocated at: %d\n", (int)mem);
+	return 0;
+}
+
+int Free(int argc, char** argv)
+{
+	int mem = atoi(argv[1]);
+	free((void*)mem);
+	printf("memory freed\n");
+	return 0;
+}
+
+
 int top(int argc, char** argv)
 {
 	int i=0;

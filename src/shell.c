@@ -167,6 +167,20 @@ int shell(int argc, char** argv){
 			argv[0]="multiply 3";
 			argv[1]=(char*)0;
 		}
+		else if(substr("malloc ", buffer)){
+			func=Malloc;
+			argc=2;
+			argv[0]="malloc";
+			argv[2]=(char*)0;
+			argv[1]=buffer+7;
+		}
+		else if(substr("free ", buffer)){
+			func=Free;
+			argc=2;
+			argv[0]="free";
+			argv[2]=(char*)0;
+			argv[1]=buffer+5;
+		}
 		else{
 			nothing=1;
 			printf("Command not found\n");
