@@ -154,6 +154,11 @@ int Kill(int argc, char** argv)
 }
 
 int Malloc(int argc, char** argv){
+	if(NaN(argv[1]))
+	{
+		printf("NaN\n");
+		return 1;
+	}
 	int bytes = atoi(argv[1]);
 	void* mem = malloc(bytes);
 	printf("memory allocated at: %d\n", (int)mem);
