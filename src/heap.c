@@ -2,6 +2,21 @@
 
 int CONDITION=sizeof(head_t)+4;
 
+void printHeap()
+{
+	head_t* heap=(head_t*)process[current].heap;
+	do{
+		printf("back %d ", heap->back);
+		printf("front %d ", heap->front);
+		printf(" free %s \n",  (heap->free)?"yes":"no");
+		if(heap->front!=0)
+		{
+			heap=advance(heap);
+		}else{
+			return;
+		}
+	}while(1);
+}
 
 void * sys_malloc(int size)
 {
@@ -44,8 +59,9 @@ void * sys_malloc(int size)
 
 void heapResize(head_t* heap, int size)
 {
-	int occupied = ((int)heap+sizeof(head_t))%4096;
-	if(4096-occupied < size+CONDITION)
+	int occupied = ((int)heap+sizeof(head_t))-(1+(current*MAXPAGEPERPROC)+KERNEL_PAGES)*4096;
+
+	if(process[current].hsize*4096 - occupied < size+CONDITION)
 	{
 		getHeapPage(current);
 		process[current].hsize++;

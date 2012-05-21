@@ -97,10 +97,7 @@ _epag:
 		
 		
 _int_08_hand:				; Handler de INT 8 ( Timer tick)
-        call _scheduler
-        iret
-  
-_scheduler:
+        
 		cli
   		pushad
 		mov eax, esp
@@ -123,7 +120,7 @@ _scheduler:
 		;mov esp,ebp
 		;pop ebp
 		sti
-		ret
+		iret
 
 _int_80_hand:				; Handler de INT 80 ( System calls)
 		cli

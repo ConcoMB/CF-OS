@@ -19,4 +19,7 @@ int sys_free(void* dir);
 void initHeap(void* dir);
 
 void heapResize(head_t* heap, int size);
+
+void printHeap();
+
 #endif

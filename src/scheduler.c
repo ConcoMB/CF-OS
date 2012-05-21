@@ -100,8 +100,10 @@ void stackResize(task_t* task)
 	{
 		//printf("ESP = %d\n", task->sp->ESP);
 		int max= task->ssize*4096;
-		int now = (max-(task->sp->ESP) % max);
+		int now = (4096*(current*MAXPAGEPERPROC+MAXPAGEPERPROC+KERNEL_PAGES+1)-task->sp->ESP);
 		double percent = (double)(now) / (double)(max);
+		//printf("max %d, now %d\n", max, now);
+		//printf("percent %d\n", (int)percent*100);
 		//printf("num %d / den %d\n", aux, task->ssize*4096);
 		if(percent>=0.8)
 		{
@@ -287,7 +289,8 @@ void sys_top(topInfo_t * topInfo)
 	topInfo->cant=k;
 	for(i=0;i<k;i++)
 	{
-		topInfo->infos[k].percent *= 100.0 / aux;
+		topInfo->infos[i].percent *= 100;
+		topInfo->infos[i].percent /= aux;
 	}
 	sortTop(topInfo);
 }
