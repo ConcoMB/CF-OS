@@ -34,5 +34,7 @@ int __write(int fd, const void* buffer, int count);
 *
 **/
 int __read(int fd, void* buffer, int count);
+int __readNB(int fd, void* buffer, int count);
+
 
 #endif

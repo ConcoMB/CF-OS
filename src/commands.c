@@ -193,9 +193,9 @@ int top(int argc, char** argv)
 		  "   PID         %%CPU      memory pages       status        process name\n-----------------------------------------------------------------\n");
 		for(;i<ti.cant; i++)
 		{
-			int perc=ti.percent[i];
+			int perc=ti.infos[i].percent;
 			char * status;
-			switch(ti.stats[i]){
+			switch(ti.infos[i].stat){
 				case RUN:
 					status="Running";
 					break;
@@ -209,9 +209,9 @@ int top(int argc, char** argv)
 					status="-";
 			}
 			if(perc<10){
-				printf("   %d            0%d             %d           %s          %s\n", ti.pids[i],perc, ti.mem[i], status, ti.names[i]);
+				printf("   %d            0%d             %d           %s          %s\n", ti.infos[i].pid, perc, ti.infos[i].mem, status, ti.infos[i].name);
 			}else{
-				printf("   %d            %d             %d           %s         %s\n", ti.pids[i],perc, ti.mem[i], status,ti.names[i]);
+				printf("   %d            %d             %d           %s         %s\n", ti.infos[i].pid, perc, ti.infos[i].mem, status, ti.infos[i].name);
 			}
 		}
 		printf("\n");

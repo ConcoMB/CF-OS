@@ -275,11 +275,11 @@ void sys_top(topInfo_t * topInfo)
 		proc = process[i];
 		if(proc.status != FREE)
 		{
-			topInfo->names[k]=proc.name;
-			topInfo->pids[k]=proc.pid;
-			topInfo->percent[k]= proc.timeBlocks;
-			topInfo->mem[k]=proc.ssize+proc.hsize;
-			topInfo->stats[k]=proc.status;
+			topInfo->infos[k].name=proc.name;
+			topInfo->infos[k].pid=proc.pid;
+			topInfo->infos[k].percent= proc.timeBlocks;
+			topInfo->infos[k].mem=proc.ssize+proc.hsize;
+			topInfo->infos[k].stat=proc.status;
 			aux += proc.timeBlocks;
 			k++;
 		}
@@ -287,7 +287,7 @@ void sys_top(topInfo_t * topInfo)
 	topInfo->cant=k;
 	for(i=0;i<k;i++)
 	{
-		topInfo->percent[i] *= 100.0 / aux;
+		topInfo->infos[k].percent *= 100.0 / aux;
 	}
 	sortTop(topInfo);
 }
@@ -299,7 +299,7 @@ void sortTop(topInfo_t * topInfo)
    {
         for(j=0;j<(n-(i+1));j++)
         {
-            if(topInfo->percent[j] < topInfo->percent[j+1])
+            if(topInfo->infos[j].percent < topInfo->infos[j+1].percent)
             {
                 swapTop(topInfo, j);
             }
@@ -309,22 +309,9 @@ void sortTop(topInfo_t * topInfo)
 
 void swapTop(topInfo_t * topInfo, int j)
 {
-	char * nameAux;
-	nameAux= topInfo->names[j];
-	topInfo->names[j]=topInfo->names[j+1];
-	topInfo->names[j+1]=nameAux;
-	int pidAux=topInfo->pids[j];
-	topInfo->pids[j]=topInfo->pids[j+1];
-	topInfo->pids[j+1]=pidAux;
-	int percentAux=topInfo->percent[j];
-	topInfo->percent[j]=topInfo->percent[j+1];
-	topInfo->percent[j+1]=percentAux;
-	int memAux=topInfo->mem[j];
-	topInfo->mem[j]=topInfo->mem[j+1];
-	topInfo->mem[j+1]=memAux;
-	status_t statAux=topInfo->stats[j];
-	topInfo->stats[j]=topInfo->stats[j+1];
-	topInfo->stats[j+1]=statAux;
+	procTopInfo_t aux = topInfo->infos[j];
+	topInfo->infos[j]=topInfo->infos[j+1];
+	topInfo->infos[j+1]=aux;
 }
 
 int processHasFocus()

@@ -37,14 +37,20 @@ typedef struct
 	tty_t *tty;
 } task_t;
 
+typedef struct{
+	char * name;
+	int pid;
+	int percent;
+	int mem;
+	status_t stat;
+}procTopInfo_t;
+
 typedef struct 
 {
-	char * names[MAXPROC];
-	int pids[MAXPROC];
-	int percent[MAXPROC];
-	int mem[MAXPROC];
-	status_t stats[MAXPROC];
+	procTopInfo_t infos[MAXPROC];
 	int cant;
 }topInfo_t;
+
+
 
 #endif
