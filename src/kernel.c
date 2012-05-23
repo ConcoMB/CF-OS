@@ -4,11 +4,10 @@ DESCR_INT idt[0xFF];			/* IDT de 10 entradas*/
 IDTR idtr;				/* IDTR */
 
 int stackTest(int argc, char** argv){
-	while(1){
-		printf("Voy %d\n", argc);
-		sleep(100);
-		stackTest(argc+1,0);
-	}
+	printf("Voy %d\n", argc);
+	sleep(100);
+	stackTest(argc+1,0);
+	return 1;
 }
 
 int heapTest(int argc, char** argcv){
@@ -34,7 +33,12 @@ int heapTest(int argc, char** argcv){
 		sleep(500);
 	}
 	printHeap();
-	//while(1);
+	return 0;
+}
+
+int test(int a, char** v){
+	printf("argc %d, argv0 %s", a, v[0]);
+	return 0;
 }
 
 /**********************************************
@@ -67,8 +71,8 @@ void kmain()
 
 	createProcess(shell, 0,0, "SHELL",  0,0,10);
 	createProcess(shell, 0,0,"YPF", 1,1,10);
-	//createProcess(stackTest, 512,0, "stack", 4,4,10);
-	createProcess(heapTest, 0,0, "heap", 3,3,10);	
+	createProcess(stackTest, 0,0, "stack", 4,4,10);
+	//createProcess(heapTest, 0,0, "heap", 3,3,10);	
 	createProcess(printX, 0, 0, "X", 4, 2, 1);
 	createProcess(printO, 0, 0, "O", 0, 2, 1);
 	//createProcess(kbTest, 0, 0, "kbtest", 1, 0,0);
