@@ -60,11 +60,17 @@ void * sys_malloc(int size)
 void heapResize(head_t* heap, int size)
 {
 	int occupied = ((int)heap+sizeof(head_t))-(1+(current*MAXPAGEPERPROC)+KERNEL_PAGES)*4096;
-
-	if(process[current].hsize*4096 - occupied < size+CONDITION)
+	int dif = process[current].hsize*4096 - occupied;
+	if(dif < size+CONDITION)
 	{
-		getHeapPage(current);
-		process[current].hsize++;
+		int needed=(size-dif)/4096;
+		(size-dif)%4096!=0?needed++:1;
+		printf("i need %d\n", needed);
+		while(needed!=0){
+			getHeapPage(current);
+			process[current].hsize++;
+			needed--;
+		}
 	}
 }
 

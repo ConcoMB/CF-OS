@@ -1,45 +1,9 @@
 #include "../include/kernel.h"
+#include "test.c"
 
 DESCR_INT idt[0xFF];			/* IDT de 10 entradas*/
 IDTR idtr;				/* IDTR */
 
-int stackTest(int argc, char** argv){
-	printf("Voy %d\n", argc);
-	sleep(100);
-	stackTest(argc+1,0);
-	return 1;
-}
-
-int heapTest(int argc, char** argcv){
-	int i=1;
-	void* mem, *aux;
-	while(i<20){
-		if(i%3==0){
-			mem=malloc(100);
-			printf("malloc de 100 dio %d\n", (int)mem);
-		}else if(i%3==1){
-			mem= malloc(250);
-			printf("malloc de 250 dio %d\n", (int)mem);
-		}else if(i%3==2){
-			mem= malloc(600);
-			printf("malloc de 600 dio %d\n", (int)mem);
-		}
-		if(i%5==0){
-			printf("libere %d\n", (int)aux);
-			free(aux);
-		}
-		aux=mem;
-		i++;
-		sleep(500);
-	}
-	printHeap();
-	return 0;
-}
-
-int test(int a, char** v){
-	printf("argc %d, argv0 %s", a, v[0]);
-	return 0;
-}
 
 /**********************************************
 kmain() 
@@ -71,7 +35,7 @@ void kmain()
 
 	createProcess(shell, 0,0, "SHELL",  0,0,10);
 	createProcess(shell, 0,0,"YPF", 1,1,10);
-	createProcess(stackTest, 0,0, "stack", 4,4,10);
+	//createProcess(test, 0,0, "stack", 4,4,10);
 	//createProcess(heapTest, 0,0, "heap", 3,3,10);	
 	createProcess(printX, 0, 0, "X", 4, 2, 1);
 	createProcess(printO, 0, 0, "O", 0, 2, 1);

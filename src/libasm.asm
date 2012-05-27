@@ -6,6 +6,8 @@ GLOBAL  _int_0E_hand
 GLOBAL  _scheduler
 GLOBAL  _IO_in
 GLOBAL	_IO_out
+GLOBAL  _IO_out_w
+GLOBAL  _IO_in_w
 GLOBAL  __write
 GLOBAL  __read
 GLOBAL  __readNB
@@ -213,6 +215,19 @@ _IO_out:
 	mov dx, [esp+4]
 	out dx,al
 	ret
+
+_IO_out_w:
+	mov ax, [esp+8]
+	mov dx, [esp+4]
+	out dx,ax
+	ret
+
+_IO_in_w:
+	mov dx, [esp+4]
+	in ax, dx
+	ret
+
+
 
 __malloc:
 	mov ebx, 6

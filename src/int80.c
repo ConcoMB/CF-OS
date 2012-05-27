@@ -18,11 +18,6 @@ void int_80(REG registers)
 			{
 				sys_print(*c);
 			}
-			else if(i==4)
-			{
-				/*sys_print(*c);*/
-				sys_speak(*c);
-			}
 			break;
 		case 2:
 			c=(char*)registers.ecx;

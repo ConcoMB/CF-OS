@@ -17,6 +17,7 @@
 #include "stdio.h"
 #include "extras.h"
 #include "scheduler.h"
+#include "disc.h"
 #include "video.h"
 #define OS_PID	0
 
@@ -29,5 +30,7 @@ typedef enum eUSER {U_KERNEL=0, U_NORMAL} tUSERS;
 
 char _IO_in(int port);
 void _IO_out(int port, char data);
+char _IO_in_w(int port);
+void _IO_out_w(int port, char data);
 
 #endif
