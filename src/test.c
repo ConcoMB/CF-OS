@@ -33,16 +33,25 @@ int heapTest(int argc, char** argcv){
 }
 
 int test(int a, char** v){
-	printf("aa\n");
-	_Cli();
-	_disk_write(0x1f0, "prueba", 1,0);
-	_Sti();
-	printf("escribi\n");
-	char ans[100];
-	_Cli();
-	_disk_read(0x1f0, ans, 1, 0);
-	_Sti();
-	printf("%s\n", ans);
-	
+
+	char buffer2[1024], buffer[1024];
+	buffer[512]=0;
+	int i;
+	for(i=0;i<511;i++){
+		buffer[i]=i%10+'0';
+	}
+	buffer[511]='x';
+	_disk_write(0, buffer, 1, 1);
+	_disk_read(0, buffer2, 2, 1);
+	printf("primero\n");
+	for(i=0 ; i<512 ;i++){
+			printf("%c", buffer[i]);
+
+	}
+	printf("\nsegundo\n");
+	for(i=0 ; i<1024 ;i++){
+		printf("%c", buffer2[i]);
+
+	}
 	return 0;
 }

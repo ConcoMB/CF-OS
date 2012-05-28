@@ -54,6 +54,7 @@ int _mkdir(char* name, char* parent)
 		return -1;
 	}
 	entry.inode.sector[0]=sector;
+	//ESCRIBIR EN EL DISCO
 	return 0;
 }
 

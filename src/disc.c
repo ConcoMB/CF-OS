@@ -61,9 +61,13 @@ void _400ns() {
 //Waits 400 nanoseconds to make sure the drive gets info before taking further actions.
 int _drq_wait() {
 
-   // _400ns();
+
+   _400ns();
+
    int test;
+   int i=0;
    while ((test = _IO_in(0x1F7)) && 1) {
+      printf("%d\n",i);
       if(!(test & BSY))
       {
          if(test & DRQ) {
