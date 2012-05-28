@@ -3,7 +3,6 @@
 
 #define MAXFILES 100
 #define MAXSIZE 4096
-#define MAXNAME 20
 #define MAXPATH 100
 #define MAXSECTOR 10
 #define MAXSNAPSHOTS 15
@@ -12,21 +11,22 @@
 #define GET(n) ((bitMap[n/8]>>(n%8))&0x01)
 #define FREE(n) (bitMap[n/8]&= ~(0x01<<(n%8)))
 
+typedef enum {DIR, FILE, LINK} fileType_t;
 
 typedef struct{
 	int sector[MAXSECTOR];
 	int size;
-	int link;
 }inode_t;
 
 typedef struct{
-	char path[MAXPATH];
-	inode_t inode;
 	char name[MAXNAME];
+	int parent;
+	inode_t inode;
 	fileEntry_t snapshots[MAXSNAPSHOTS];
-	char isDir;
+	fileType_t type;
 	char free;		
 }fileEntry_t;
+
 
 typedef struct{
 	fileEntry_t files[MAXFILES];

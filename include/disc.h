@@ -4,6 +4,7 @@
 
 //#include "kernel.h"
 #include "stdio.h"
+#include "libc.h"
 // Many of the declarations of this header file are deprecated and the important ones are declared in the .c
 
 #define ATA0 0x1f0

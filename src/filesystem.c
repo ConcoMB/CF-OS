@@ -1,6 +1,5 @@
 #include "../include/filesystem.h"
 
-fileTable_t table;
 /*
 void printMap(){
 	printf("%x\t", bitMap[0]);
@@ -21,13 +20,6 @@ int main(){
 }
 */
 
-void initTable(){
-	//table=?
-	int i;
-	for(i=0; i<MAXFILES; i++){
-		table[i].free=0;
-	}
-}
 
 int getSector()
 {
@@ -48,18 +40,14 @@ int getSector()
 	return -1;
 }
 
-int mkdir(char* path, char* name)
+int _mkdir(char* name, char* parent)
 {
-	fileEntry_t entry = getFreeEntry();
-	if( entry==-1){
-		return -2;
-	}
-	entry.free=0;
-	entry.path=path;
-	entry.name=name;
-	entry.isDir=1;
-	entry.inode.link=1;
-	entry.inode.size=0;
+	fileTree_t* myTree = malloc(sizeof(fileTree_t));
+	myTree.name=name;
+	myTree.type=DIR;
+	myTree.inode.size=0;
+	myTree.cantChilds=0;
+	setParent(myTree, parent);
 	int sector = getSector();
 	if(sector==-1){
 		//error
@@ -69,13 +57,41 @@ int mkdir(char* path, char* name)
 	return 0;
 }
 
-void ln(char* path, char* name)
+void setParent(fileTree_t* newTree, char* parent){
+	char nodes[MAXNAME][MAXFILES]= split(parent, "/");
+	setParentW(newTree, nodes, 0, tree);
+}
+
+void setParentW(fileTree_t* newTree, char** nodes, int index, fileTree_t* thisTree)
 {
-	fileEntry_t entry=getEntryByName(name);
-	if(entry==0){
+	if(nodes[index]=='\0'){
+		thisTree->childs[tree->cantChilds++]=newTree;
 		return;
 	}
-	entry.inode.link++;
+	int i;
+	for(i=0; i<thisTree->cantChilds; i++){
+		if(strcmp(nodes[index], thisTree->childs[i]->name)==0){
+			setParentW(newTree, nodes, index+1, thisTree->childs[i]);
+			return;
+		}
+	}
+}
+
+void ln(char* file, char* name)
+{
+	fileEntry_t entry=getEntryByName(file);
+	if(entry==-1){
+		return;
+	}
+	fileEntry_t newEntry=getFreeEntry();
+	if(newEntry==-1){
+		//no hay mas
+		return;
+	}
+	newEntry.free=1;
+	newEntry.name=name;
+	newEntry.type=LINK;
+	newEntry.inode=entry.inode;
 }
 
 fileEntry_t getFreeEntry()
@@ -98,6 +114,73 @@ fileEntry_t getEntryByName(char* name)
 			return table.files[i];
 		}
 	}
+	return -1;
+}
+
+char** ls(char* path)
+{
+	char[MAXPATH][MAXFILES] ans;
+	int i=0, k=0;
+	char thisPath[MAXPATH];
+	for(i=0; i<MAXFILES; i++){
+		thisPath=splitPath(table[i].path);
+		if(strcmp(thisPath,path)==0){
+			ans[k++]=thisPath;
+		}
+	}
+	return ans;
+}
+
+char* splitPath(char* path)
+{
+	int len = strlen(path);
+	char ans[MAXPATH];
+	for(len--;len>=0; len--){
+		if(path[len]=='/'){
+			int i=0;
+			for(;i<len; i++){
+				ans[i]=path[i];
+			}
+			ans[i]=0;
+			return ans;
+		}
+	}
 	return 0;
 }
 
+int rm(char* path)
+{
+	fileEntry_t entry = getEntryByName(path);
+	if(entry==-1){
+		return -1;
+	}
+	_rm(entry);
+}
+
+void _rm(fileEntry_t entry){
+	switch (entry.type){
+		case  DIR:
+			rmRecursive(path);
+		case FILE:
+		case LINK:
+			entry.free=1;
+			entry.snapshots[0]=0;
+			break;
+	}
+}
+
+void rmRecursive(char* path)
+{
+	int i=0;
+	for(i=0; i<MAXFILES; i++){
+		if(!table[i].free && substr(path, table[i].entry.path)){
+			_rm(table[i].entry);
+		}
+	}
+}
+
+
+int mv(char* to, char* from)
+{
+
+}

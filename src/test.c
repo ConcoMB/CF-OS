@@ -33,10 +33,16 @@ int heapTest(int argc, char** argcv){
 }
 
 int test(int a, char** v){
+	printf("aa\n");
+	_Cli();
 	_disk_write(0x1f0, "prueba", 1,0);
+	_Sti();
 	printf("escribi\n");
 	char ans[100];
+	_Cli();
 	_disk_read(0x1f0, ans, 1, 0);
+	_Sti();
 	printf("%s\n", ans);
+	
 	return 0;
 }

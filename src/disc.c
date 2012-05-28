@@ -62,7 +62,6 @@ void _400ns() {
 int _drq_wait() {
 
    // _400ns();
-
    int test;
    while ((test = _IO_in(0x1F7)) && 1) {
       if(!(test & BSY))

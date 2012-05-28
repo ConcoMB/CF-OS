@@ -207,7 +207,7 @@ __setcolor:
 
 _IO_in:
 	mov dx, [esp+4]
-	in al, dx
+	in byte al, dx
 	ret
 	
 _IO_out:
@@ -219,12 +219,12 @@ _IO_out:
 _IO_out_w:
 	mov ax, [esp+8]
 	mov dx, [esp+4]
-	out dx,ax
+	out word dx,ax
 	ret
 
 _IO_in_w:
 	mov dx, [esp+4]
-	in ax, dx
+	in word ax, dx
 	ret
 
 
