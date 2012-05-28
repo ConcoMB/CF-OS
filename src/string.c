@@ -1,30 +1,27 @@
 #include "../include/string.h"
 
-char **split ( char *string, const char sep) 
+char **split ( char *string, const char sep, char list[][]) 
 {
-
-    char list[MAXFILE][MAXNAME];
     char *p = string;
     int  i = 0;
     int  pos=0;
     const int len = strlen (string);
-    list[0] = 0;
+    list[0][0] = '\0';
     while (i <len) {
         while ((p[i] == sep) && (i <len))
             i++;
         if (i <len) {
        
-            list[pos + 1] = 0;
+            list[pos + 1][0] = '\0';
             int j = 0;
             for (i; ((p[i] != sep) && (i <len)); i++) {
                 list[pos][j] = p[i];
                 j++;
             }
-            lista[pos][j] = '\0';
+            list[pos][j] = '\0';
             pos++;
         }
     }
-    return list;
 }
 
 int strcmp(char* str1, char* str2){

@@ -4,6 +4,8 @@
 #define MAXFILES 100
 #define MAXSIZE 4096
 #define MAXPATH 100
+#define MAXNAME 20
+
 #define MAXSECTOR 10
 #define MAXSNAPSHOTS 15
 
@@ -22,7 +24,7 @@ typedef struct{
 	char name[MAXNAME];
 	int parent;
 	inode_t inode;
-	fileEntry_t snapshots[MAXSNAPSHOTS];
+	struct fileEntry_t snapshots[MAXSNAPSHOTS];
 	fileType_t type;
 	char free;		
 }fileEntry_t;

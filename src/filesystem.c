@@ -59,7 +59,8 @@ int _mkdir(char* name, char* parent)
 }
 
 void setParent(fileTree_t* newTree, char* parent){
-	char nodes[MAXNAME][MAXFILES]= split(parent, "/");
+	char nodes[MAXNAME][MAXFILES];
+	split(parent, '/', nodes);
 	setParentW(newTree, nodes, 0, tree);
 }
 
