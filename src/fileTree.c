@@ -3,7 +3,13 @@
 fileTree_t* tree;
 fileTable_t table;
 
-
+printTree(fileTree_t* aTree){
+	printf("name %s, parent %s\n", aTree->name, aTree->parent->name);
+	int i;
+	for(i=0;i<aTree->cantChilds; i++){
+		printTree(aTree->childs[i]);
+	}
+}
 void loadTree(){
 	tree = malloc(sizeof(fileTree_t));
 	strcpy(tree->name,"/");

@@ -10,6 +10,7 @@ char* itoa(int val, char* buffer);
 char* xtoa(int mem, char* buffer);
 int atoi(char* a);
 int strlen(char* s);
-char **split ( char *string, const char sep, char list[][]);
+void split ( char *string, const char sep, char list[][MAXFILES]);
+void setLastStr(char path[][MAXFILES], char dest[MAXNAME]);
 
 #endif

@@ -1,6 +1,6 @@
 #include "../include/string.h"
 
-char **split ( char *string, const char sep, char list[][]) 
+void split ( char *string, const char sep, char list[][MAXFILES]) 
 {
     char *p = string;
     int  i = 0;
@@ -22,6 +22,22 @@ char **split ( char *string, const char sep, char list[][])
             pos++;
         }
     }
+}
+
+void setLastStr(char path[][MAXFILES], char dest[MAXNAME])
+{
+	int i;
+	if(path[0][0]=='\0'){
+		strcpy(dest, "/");
+		return;
+	}
+	for(i=0; i<MAXFILES; i++){
+		if(path[i+1][0]=='\0'){
+			strcpy(dest, path[i]);
+			path[i][0]='\0';
+			return;
+		}
+	}
 }
 
 int strcmp(char* str1, char* str2){

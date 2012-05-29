@@ -40,13 +40,35 @@ int getSector()
 	return -1;
 }
 
+
+void setParentW(fileTree_t* newTree, char nodes[MAXNAME][MAXFILES], int index, fileTree_t* thisTree)
+{
+	if(nodes[index][0]=='\0'){
+		thisTree->childs[thisTree->cantChilds++]=newTree;
+		newTree->parent=thisTree;
+		return;
+	}
+	int i;
+	for(i=0; i<thisTree->cantChilds; i++){
+		if(strcmp(nodes[index], thisTree->childs[i]->name)==0){
+			setParentW(newTree, nodes, index+1, thisTree->childs[i]);
+			return;
+		}
+	}
+}
+void setParent(fileTree_t* newTree, char* parent){
+	char nodes[MAXNAME][MAXFILES];
+	split(parent, '/', nodes);
+	setParentW(newTree, nodes, 0, tree);
+}
+
 int _mkdir(char* name, char* parent)
 {
 	fileTree_t* myTree = malloc(sizeof(fileTree_t));
-	myTree.name=name;
-	myTree.type=DIR;
-	myTree.inode.size=0;
-	myTree.cantChilds=0;
+	strcpy(myTree->name,name);
+	myTree->type=DIR;
+	myTree->inode.size=0;
+	myTree->cantChilds=0;
 	setParent(myTree, parent);
 	int sector = getSector();
 	if(sector==-1){
@@ -58,42 +80,45 @@ int _mkdir(char* name, char* parent)
 	return 0;
 }
 
-void setParent(fileTree_t* newTree, char* parent){
-	char nodes[MAXNAME][MAXFILES];
-	split(parent, '/', nodes);
-	setParentW(newTree, nodes, 0, tree);
+void cpyChilds(fileTree_t* from, fileTree_t* to)
+{
+	int i;
+	for(i=0; i<from->cantChilds; i++)
+	{
+		to->childs[i]=from->childs[i];
+	}
 }
 
-void setParentW(fileTree_t* newTree, char** nodes, int index, fileTree_t* thisTree)
+fileTree_t* getNode(char path[][MAXFILES])
 {
-	if(nodes[index]=='\0'){
-		thisTree->childs[tree->cantChilds++]=newTree;
-		return;
-	}
 	int i;
-	for(i=0; i<thisTree->cantChilds; i++){
-		if(strcmp(nodes[index], thisTree->childs[i]->name)==0){
-			setParentW(newTree, nodes, index+1, thisTree->childs[i]);
-			return;
+	fileTree_t* myTree=tree;
+	while(path[i][0]!='\0'){
+		int j;
+		for(j=0; j<myTree->cantChilds; j++){
+			if(strcmp(myTree->childs[j]->name, path[i])==0){
+				myTree=myTree->childs[j];
+			}
 		}
 	}
+	return myTree;
 }
 
-void ln(char* file, char* name)
+void _ln(char* file, char* name)
 {
-	fileEntry_t entry=getEntryByName(file);
-	if(entry==-1){
-		return;
+	char path[MAXNAME][MAXFILES], newPath[MAXNAME][MAXFILES];
+	split(file, '/', path);
+	split(name, '/', newPath);
+	fileTree_t *linked = getNode(path), *newLink=malloc(sizeof(fileTree_t));
+	setLastStr(newPath, newLink->name);
+	newLink->cantChilds=linked->cantChilds;
+	if(linked->type==DIR)
+	{
+		cpyChilds(newLink, linked);
 	}
-	fileEntry_t newEntry=getFreeEntry();
-	if(newEntry==-1){
-		//no hay mas
-		return;
-	}
-	newEntry.free=1;
-	newEntry.name=name;
-	newEntry.type=LINK;
-	newEntry.inode=entry.inode;
+	setParent(newLink,name);
+	newLink->type=LINK;
+	newLink->inode=linked->inode;
 }
 
 fileEntry_t getFreeEntry()
