@@ -46,7 +46,7 @@ typedef struct fileTree_t{
 	fileType_t type;
 }fileTree_t;
 
-fileTree_t* tree;
+fileTree_t* tree, *current;
 fileTable_t table;
 
 
@@ -178,7 +178,18 @@ void cpyChilds(fileTree_t* from, fileTree_t* to)
 fileTree_t* getNode(char path[][MAXNAME])
 {
 	int i=0;
-	fileTree_t* myTree=tree;
+	fileTree_t* myTree;
+	if(strcmp(path[i], "..")==0){
+		do{
+			myTree=current->parent;
+		}while(strcmp(path[++i],"..")==0);
+	}else if(strcmp(path[0], ".")==0) {
+		myTree=current;
+		i++;
+	}else{
+		//path absoluto;
+		myTree=tree;
+	}
 	while(path[i][0]!='\0'){
 		int j, flag=0;
 		for(j=0; j<myTree->cantChilds && flag!=1; j++){
@@ -194,6 +205,7 @@ fileTree_t* getNode(char path[][MAXNAME])
 	}
 	return myTree;
 }
+
 
 
 void removeLast(char* path, char ans[MAXNAME])
@@ -355,6 +367,7 @@ int main(){
 	//_ln("/proc1/proc1.1", "/link");
 	printTree(tree);
 	printf("\n\n");
-	_cp("/copia", "/proc1/proc1.1");
+	current=tree->childs[0];
+	printf("%d\n",_cp("../copia", "/proc1/proc1.1"));
 	printTree(tree);
 }

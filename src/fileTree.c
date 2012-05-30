@@ -1,6 +1,6 @@
 #include "../include/fileTree.h"
 
-fileTree_t* tree;
+fileTree_t* tree, *current;
 fileTable_t table;
 
 printTree(fileTree_t* aTree){
@@ -87,7 +87,18 @@ void cpyChilds(fileTree_t* from, fileTree_t* to)
 fileTree_t* getNode(char path[][MAXNAME])
 {
 	int i=0;
-	fileTree_t* myTree=tree;
+	fileTree_t* myTree;
+	if(strcmp(path[i], "..")==0){
+		do{
+			myTree=current->parent;
+		}while(strcmp(path[++i],"..")==0);
+	}else if(strcmp(path[0], ".")==0) {
+		myTree=current;
+		i++;
+	}else{
+		//path absoluto;
+		myTree=tree;
+	}
 	while(path[i][0]!='\0'){
 		int j, flag=0;
 		for(j=0; j<myTree->cantChilds && flag!=1; j++){
@@ -104,6 +115,7 @@ fileTree_t* getNode(char path[][MAXNAME])
 	return myTree;
 }
 
+
 int isChildOf(fileTree_t* dad, fileTree_t* son)
 {
 	fileTree_t* iter=son;
@@ -115,3 +127,5 @@ int isChildOf(fileTree_t* dad, fileTree_t* son)
 	}
 	return 0;
 }
+
+
