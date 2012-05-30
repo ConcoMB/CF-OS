@@ -128,4 +128,24 @@ int isChildOf(fileTree_t* dad, fileTree_t* son)
 	return 0;
 }
 
+void setParentW(fileTree_t* newTree, char nodes[MAXFILES][MAXNAME], int index, fileTree_t* thisTree)
+{
+	if(nodes[index][0]=='\0'){
+		thisTree->childs[thisTree->cantChilds++]=newTree;
+		newTree->parent=thisTree;
+		return;
+	}
+	int i;
+	for(i=0; i<thisTree->cantChilds; i++){
+		if(strcmp(nodes[index], thisTree->childs[i]->name)==0){
+			setParentW(newTree, nodes, index+1, thisTree->childs[i]);
+			return;
+		}
+	}
+}
+void setParent(fileTree_t* newTree, char* parent){
+	char nodes[MAXNAME][MAXFILES];
+	split(parent, '/', nodes);
+	setParentW(newTree, nodes, 0, tree);
+}
 
