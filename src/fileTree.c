@@ -41,3 +41,77 @@ void fill(fileTree_t* tree, fileTable_t* table, int myEntry)
 	}
 }
 
+void removeChild(fileTree_t* node)
+{
+	int i;
+	fileTree_t* dad=node->parent;
+	for(i=0; i<dad->cantChilds; i++){
+		if(node==dad->childs[i]){
+			//shifteo
+			int j=i;
+			for(;j<dad->cantChilds-1; j++){
+				dad->childs[j]=dad->childs[j+1];
+			}
+			dad->cantChilds--;
+			return;
+		}
+	}
+}
+
+void removeLast(char* path, char ans[MAXPATH])
+{
+	int len = strlen(path);
+	for(len--;len>=0; len--){
+		if(path[len]=='/'){
+			int i=0;
+			for(;i<=len; i++){
+				ans[i]=path[i];
+			}
+			ans[i]=0;
+			return;
+		}
+	}
+	return;
+}
+
+
+void cpyChilds(fileTree_t* from, fileTree_t* to)
+{
+	int i;
+	for(i=0; i<from->cantChilds; i++)
+	{
+		to->childs[i]=from->childs[i];
+	}
+}
+
+fileTree_t* getNode(char path[][MAXNAME])
+{
+	int i=0;
+	fileTree_t* myTree=tree;
+	while(path[i][0]!='\0'){
+		int j, flag=0;
+		for(j=0; j<myTree->cantChilds && flag!=1; j++){
+			if(strcmp(myTree->childs[j]->name, path[i])==0){
+				myTree=myTree->childs[j];
+				flag=1;
+			}
+		}
+		if(flag==0){
+			return 0;
+		}
+		i++;
+	}
+	return myTree;
+}
+
+int isChildOf(fileTree_t* dad, fileTree_t* son)
+{
+	fileTree_t* iter=son;
+	while(iter!=tree){
+		if(iter->parent==dad){
+			return 1;
+		}
+		iter=iter->parent;
+	}
+	return 0;
+}

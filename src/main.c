@@ -180,11 +180,15 @@ fileTree_t* getNode(char path[][MAXNAME])
 	int i=0;
 	fileTree_t* myTree=tree;
 	while(path[i][0]!='\0'){
-		int j;
-		for(j=0; j<myTree->cantChilds; j++){
+		int j, flag=0;
+		for(j=0; j<myTree->cantChilds && flag!=1; j++){
 			if(strcmp(myTree->childs[j]->name, path[i])==0){
 				myTree=myTree->childs[j];
+				flag=1;
 			}
+		}
+		if(flag==0){
+			return 0;
 		}
 		i++;
 	}
@@ -272,8 +276,61 @@ int _rm(char* path)
 	fileTree_t* node = getNode(realPath);
 	_myrm(node);
 }
+int isChildOf(fileTree_t* dad, fileTree_t* son)
+{
+	fileTree_t* iter=son;
+	while(iter!=tree){
+		if(iter->parent==dad){
+			return 1;
+		}
+		iter=iter->parent;
+	}
+	return 0;
+}
+int _mv(char* to, char* from)
+{
+	char pathFrom[MAXFILES][MAXNAME], pathTo[MAXFILES][MAXNAME];
+	split(from, '/', pathFrom);
+	split(to, '/', pathTo);
+	fileTree_t* nodeF= getNode(pathFrom);
+	fileTree_t* nodeT = getNode(pathTo);
+	if(nodeT==0 || nodeF==0 || nodeT->type!=DIR){
+		return -1;
+	}
+	if(isChildOf(nodeF, nodeT)){
+		return -2;
+	}
+	nodeT->childs[nodeT->cantChilds++]=nodeF;
+	removeChild(nodeF);
+	nodeF->parent=nodeT; 
+	return 0;
+}
 
-
+int _cp(char* to, char* from)
+{
+	char pathFrom[MAXFILES][MAXNAME], pathTo[MAXFILES][MAXNAME], nodeName[MAXNAME];
+	split(from, '/', pathFrom);
+	split(to, '/', pathTo);
+	fileTree_t* nodeF= getNode(pathFrom);
+	if(nodeF==0){
+		return -1;
+	}
+	setLastStr(pathTo, nodeName);
+	fileTree_t* dad=getNode(pathTo);
+	if(dad==0){
+		return -2;
+	}
+	fileTree_t* newNode=malloc(sizeof(fileTree_t));
+	strcpy(newNode->name, nodeName);
+	newNode->inode=nodeF->inode;
+	newNode->type=nodeF->type;
+	cpyChilds(nodeF, newNode);
+	newNode->cantChilds=nodeF->cantChilds;
+	newNode->parent=dad;
+	dad->childs[dad->cantChilds++]=newNode;
+	//SNAPSHOTS???
+	return 0;
+}
 int main(){
 	int i;
 	for(i=0; i<MAXFILES; i++){
@@ -295,9 +352,9 @@ int main(){
 
 	loadTree();
 	_mkdir("dir", "/proc1");
-	_ln("/proc1/proc1.1", "/link");
+	//_ln("/proc1/proc1.1", "/link");
 	printTree(tree);
 	printf("\n\n");
-	_rm("/proc1/proc1.1");
+	_cp("/copia", "/proc1/proc1.1");
 	printTree(tree);
 }

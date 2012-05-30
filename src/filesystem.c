@@ -80,30 +80,6 @@ int _mkdir(char* name, char* parent)
 	return 0;
 }
 
-void cpyChilds(fileTree_t* from, fileTree_t* to)
-{
-	int i;
-	for(i=0; i<from->cantChilds; i++)
-	{
-		to->childs[i]=from->childs[i];
-	}
-}
-
-fileTree_t* getNode(char path[][MAXNAME])
-{
-	int i=0;
-	fileTree_t* myTree=tree;
-	while(path[i][0]!='\0'){
-		int j;
-		for(j=0; j<myTree->cantChilds; j++){
-			if(strcmp(myTree->childs[j]->name, path[i])==0){
-				myTree=myTree->childs[j];
-			}
-		}
-		i++;
-	}
-	return myTree;
-}
 
 
 
@@ -119,7 +95,7 @@ fileEntry_t getFreeEntry()
 	return -1;
 }
 
-fileEntry_t getEntryByName(char* name)
+/*fileEntry_t getEntryByName(char* name)
 {
 	int i=0;
 	for(i=0; i<MAXFILES; i++){
@@ -128,7 +104,7 @@ fileEntry_t getEntryByName(char* name)
 		}
 	}
 	return -1;
-}
+}*/
 
 void _ls(char* path, char ans[][MAXNAME])
 {
@@ -145,21 +121,8 @@ void _ls(char* path, char ans[][MAXNAME])
 	}
 }
 
-void removeLast(char* path, char ans[MAXPATH])
-{
-	int len = strlen(path);
-	for(len--;len>=0; len--){
-		if(path[len]=='/'){
-			int i=0;
-			for(;i<=len; i++){
-				ans[i]=path[i];
-			}
-			ans[i]=0;
-			return;
-		}
-	}
-	return;
-}
+
+
 void _ln(char* file, char* name)
 {
 	char path[MAFILES][MAXNAME], newPath[MAXFILES][MAXNAMES];
@@ -188,22 +151,7 @@ int _rm(char* path)
 	_myrm(node);
 }
 
-void removeChild(fileTree_t* node)
-{
-	int i;
-	fileTree_t* dad=node->parent;
-	for(i=0; i<dad->cantChilds; i++){
-		if(node==dad->childs[i]){
-			//shifteo
-			int j=i;
-			for(;j<dad->cantChilds-1; j++){
-				dad->childs[j]=dad->childs[j+1];
-			}
-			dad->cantChilds--;
-			return;
-		}
-	}
-}
+
 
 void _myrm(fileTree_t* node){
 	switch (node->type){
@@ -227,7 +175,48 @@ void rmRecursive(fileTree_t* node)
 }
 
 
-int mv(char* to, char* from)
+int _mv(char* to, char* from)
 {
-
+	char pathFrom[MAXFILES][MAXNAME], pathTo[MAXFILES][MAXNAME];
+	split(from, '/', pathFrom);
+	split(to, '/', pathTo);
+	fileTree_t* nodeF= getNode(pathFrom);
+	fileTree_t* nodeT = getNode(pathTo);
+	if(nodeT==0 || nodeF==0 || nodeT->type!=DIR){
+		return -1;
+	}
+	if(isChildOf(nodeF, nodeT)){
+		return -2;
+	}
+	nodeT->childs[nodeT->cantChilds++]=nodeF;
+	removeChild(nodeF);
+	nodeF->parent=nodeT; 
+	return 0;
 }
+
+int _cp(char* to, char* from)
+{
+	char pathFrom[MAXFILES][MAXNAME], pathTo[MAXFILES][MAXNAME], nodeName[MAXNAME];
+	split(from, '/', pathFrom);
+	split(to, '/', pathTo);
+	fileTree_t* nodeF= getNode(pathFrom);
+	if(nodeF==0){
+		return -1;
+	}
+	setLastStr(pathTo, nodeName);
+	fileTree_t* dad=getNode(pathTo);
+	if(dad==0){
+		return -2;
+	}
+	fileTree_t* newNode=malloc(sizeof(fileTree_t));
+	strcpy(newNode->name, nodeName);
+	newNode->inode=nodeF->inode;
+	newNode->type=nodeF->type;
+	cpyChilds(nodeF, newNode);
+	newNode->cantChilds=nodeF->cantChilds;
+	newNode->parent=dad;
+	dad->childs[dad->cantChilds++]=newNode;
+	//SNAPSHOTS???
+	return 0;
+}
+
