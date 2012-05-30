@@ -29,7 +29,7 @@ void fill(fileTree_t* tree, fileTable_t* table, int myEntry)
 			fileEntry_t entry= table->files[i];
 			strcpy(son->name, entry.name);
 			son->type=entry.type;
-			son->snapshots=entry.snapshots;
+			//son->snapshots=entry.snapshots;
 			son->inode=entry.inode;
 			son->parent=tree;
 			son->cantChilds=0;

@@ -1,6 +1,6 @@
 #include "../include/string.h"
 
-void split ( char *string, const char sep, char list[][MAXNAMES]) 
+void split ( char *string, const char sep, char list[][MAXNAME]) 
 {
     char *p = string;
     int  i = 0;
@@ -14,7 +14,7 @@ void split ( char *string, const char sep, char list[][MAXNAMES])
        
             list[pos + 1][0] = '\0';
             int j = 0;
-            for (i; ((p[i] != sep) && (i <len)); i++) {
+            for (; (p[i] != sep) && (i <len); i++) {
                 list[pos][j] = p[i];
                 j++;
             }
