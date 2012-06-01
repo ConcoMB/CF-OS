@@ -35,7 +35,8 @@ int heapTest(int argc, char** argcv){
 int test(int a, char** v){
 
 
-	/* la forma de ejecutar es qemu -kernel bin/kernel.bin -hda disk.img */
+	/* la forma de ejecutar es qemu -kernel bin/kernel.bin -hda disk.img 
+	** o tambien con -hda disk0.img que tiene cosas escritas parece y es mas facil ver cosas*/
 
 	char buffer2[10],buffer[10];
 	int i;
@@ -68,7 +69,7 @@ int test(int a, char** v){
 		printf("%c", buffer2[i]);
 	}
 	printf("\n");
-	ata_read(ATA0, buffer2, 10, 1, 0);
+	ata_read(ATA0, buffer2, 10, 0, 0);
 	printf("lei esto\n");
 	for(i=0 ; i<10 ;i++){
 		printf("%c", buffer2[i]);

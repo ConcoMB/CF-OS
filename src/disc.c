@@ -24,12 +24,11 @@ void ata_normalize(unsigned short* sector, int* offset) {
    }
 }
 
-void ata_read(int ata, void* msg, int bytes, unsigned short sector, int offset) {
+void ata_read(int ata, void* ans, int bytes, unsigned short sector, int offset) {
    if (ata != ATA0 && ata != ATA1) {
       printf("Disk don't exist %d - [%d, %d]", ata, sector, offset);
       return;
    }
-   char* ans = (char*) msg;
    while (bytes != 0) {
       if (offset >= SECTOR_SIZE) {
          sector += (offset / SECTOR_SIZE);
