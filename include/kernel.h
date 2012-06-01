@@ -33,4 +33,9 @@ void _IO_out(int port, char data);
 char _IO_in_w(int port);
 void _IO_out_w(int port, char data);
 
+void _port_out(unsigned short port, unsigned short data);
+unsigned char _port_in(unsigned short port);
+void _portw_out(unsigned short port, unsigned short data);
+unsigned int _portw_in(unsigned short port);
+
 #endif

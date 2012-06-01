@@ -34,24 +34,44 @@ int heapTest(int argc, char** argcv){
 
 int test(int a, char** v){
 
-	char buffer2[1024], buffer[1024];
-	buffer[512]=0;
+
+	/* la forma de ejecutar es qemu -kernel bin/kernel.bin -hda disk.img */
+
+	char buffer2[10],buffer[10];
 	int i;
-	for(i=0;i<511;i++){
-		buffer[i]=i%10+'0';
+	for(i=0;i<10;i++){
+		buffer2[i]='h';
 	}
-	buffer[511]='x';
-	_disk_write(0, buffer, 1, 1);
-	_disk_read(0, buffer2, 2, 1);
-	printf("primero\n");
-	for(i=0 ; i<512 ;i++){
-			printf("%c", buffer[i]);
-
-	}
-	printf("\nsegundo\n");
-	for(i=0 ; i<1024 ;i++){
+	printf("buffer tiene eso\n");
+	for(i=0 ; i<10 ;i++){
 		printf("%c", buffer2[i]);
+	}
+	printf("\n");
 
+	ata_read(ATA0, buffer2, 10, 1, 0);
+	printf("lei esto\n");
+	for(i=0 ; i<10 ;i++){
+		printf("%c", buffer2[i]);
+	}
+	printf("\n");
+
+	printf("escribo: llllllllll\n");
+	for(i=0 ; i<10 ; i++){
+		buffer[i] = 'l';
+	}
+	ata_write(ATA0, buffer, 10, 1, 0);
+	printf("buffer tiene eso\n");
+	for(i=0;i<10;i++){
+		buffer2[i]='d';
+	}
+	for(i=0 ; i<10 ;i++){
+		printf("%c", buffer2[i]);
+	}
+	printf("\n");
+	ata_read(ATA0, buffer2, 10, 1, 0);
+	printf("lei esto\n");
+	for(i=0 ; i<10 ;i++){
+		printf("%c", buffer2[i]);
 	}
 	return 0;
 }

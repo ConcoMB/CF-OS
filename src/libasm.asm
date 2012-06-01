@@ -31,6 +31,7 @@ GLOBAL _sys_stack_count
 GLOBAL _sys_yield
 GLOBAL __sleep
 GLOBAL __createChild
+GLOBAL  _port_in, _port_out, _portw_in, _portw_out
 
 EXTERN  getIP
 EXTERN  printIdleStack
@@ -332,4 +333,78 @@ vuelve:	mov     ax, 1
 	pop	ax
 	pop     bp
         retn
+
+
+
+
+
+        ;=================================================================
+;					PORT_IN
+;=================================================================
+_port_in:
+	push ebp
+	mov ebp, esp
+	push dx	
+
+	mov eax, 0
+	mov dx, [ebp+8]
+	in al, dx
+	
+	pop dx
+	leave
+	ret
+
+
+;=================================================================
+;					PORT_OUT
+;=================================================================
+
+_port_out:
+	push ebp
+	mov ebp, esp
+	pusha
+
+	mov dx, [ebp+8]
+	mov ax, [ebp+12]
+	out dx, al
+	
+	popa
+	leave
+	ret
+
+
+
+;=================================================================
+;					PORTW_IN
+;=================================================================
+_portw_in:
+	push ebp
+	mov ebp, esp
+	push dx	
+
+	mov eax, 0
+	mov dx, [ebp+8]
+	in ax, dx
+	
+	pop dx
+	leave
+	ret
+
+
+;=================================================================
+;					PORTW_OUT
+;=================================================================
+
+_portw_out:
+	push ebp
+	mov ebp, esp
+	pusha
+
+	mov dx, [ebp+8]
+	mov ax, [ebp+12]
+	out dx, ax
+	
+	popa
+	leave
+	ret
 
