@@ -24,6 +24,14 @@ void split ( char *string, const char sep, char list[][MAXNAME])
     }
 }
 
+void strcat(char prev[], char* next){
+	int i, len = strlen(prev);
+	for(i=0; next[i]!='\0'; i++){
+		prev[len+i]=next[i];
+	}
+	prev[i]='\0';
+}
+
 void setLastStr(char path[][MAXNAME], char dest[MAXNAME])
 {
 	int i;

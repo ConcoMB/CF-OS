@@ -1,15 +1,17 @@
 #include "../include/fileTree.h"
 
-fileTree_t* tree, *current;
+fileTree_t* tree, *actual;
 fileTable_t table;
 
-printTree(fileTree_t* aTree){
+
+void printTree(fileTree_t* aTree){
 	printf("name %s, parent %s\n", aTree->name, aTree->parent->name);
 	int i;
 	for(i=0;i<aTree->cantChilds; i++){
 		printTree(aTree->childs[i]);
 	}
 }
+
 void loadTree(){
 	tree = malloc(sizeof(fileTree_t));
 	strcpy(tree->name,"/");
@@ -17,27 +19,42 @@ void loadTree(){
 	tree->parent=tree;
 	tree->type=DIR;
 
-	fill(tree, &table, -1);
+	fill(tree, -1);
 }
 
-void fill(fileTree_t* tree, fileTable_t* table, int myEntry)
+void fill(fileTree_t* tree, int myEntry)
 {
 	int i;
 	for(i=0; i<MAXFILES; i++){
-		if(!table->files[i].free && table->files[i].parent==myEntry){
+		if(!table.files[i].free && table.files[i].parent==myEntry && table.files[i].next==-1 && !table.files[i].del){
 			fileTree_t* son=malloc(sizeof(fileTree_t));
-			fileEntry_t entry= table->files[i];
+			fileEntry_t entry= table.files[i];
 			strcpy(son->name, entry.name);
 			son->type=entry.type;
 			//son->snapshots=entry.snapshots;
-			son->inode=entry.inode;
+			//son->inode=entry.inode;
 			son->parent=tree;
 			son->cantChilds=0;
 			tree->childs[tree->cantChilds++]=son;
+			son->index=i;
 			if(entry.type==DIR){
-				fill(son, table, i);
+				fill(son, i);
 			}
 		}
+	}
+}
+
+void complete(fileTree_t* dad, int index){
+	fileTree_t* son=malloc(sizeof(fileTree_t));
+	fileEntry_t entry= table.files[index];
+	strcpy(son->name, entry.name);
+	son->type=entry.type;
+	son->parent=dad;
+	son->cantChilds=0;
+	dad->childs[dad->cantChilds++]=son;
+	son->index=index;
+	if(entry.type==DIR){
+		fill(son, index);
 	}
 }
 
@@ -56,6 +73,14 @@ void removeChild(fileTree_t* node)
 			return;
 		}
 	}
+}
+
+void freeNode(fileTree_t* node){
+	int i;
+	for(i=0; i<node->cantChilds; i++){
+		freeNode(node->childs[i]);
+	}
+	free(node);
 }
 
 void removeLast(char* path, char ans[MAXPATH])
@@ -84,16 +109,24 @@ void cpyChilds(fileTree_t* from, fileTree_t* to)
 	}
 }
 
+void buildPath(char path[], fileEntry_t* entry){
+	
+	while(entry->parent!=-1){
+		strcat(path,entry->name);
+		entry=&(table.files[entry->parent]);
+	}
+}
+
 fileTree_t* getNode(char path[][MAXNAME])
 {
 	int i=0;
 	fileTree_t* myTree;
 	if(strcmp(path[i], "..")==0){
 		do{
-			myTree=current->parent;
+			myTree=actual->parent;
 		}while(strcmp(path[++i],"..")==0);
 	}else if(strcmp(path[0], ".")==0) {
-		myTree=current;
+		myTree=actual;
 		i++;
 	}else{
 		//path absoluto;
@@ -144,7 +177,7 @@ void setParentW(fileTree_t* newTree, char nodes[MAXFILES][MAXNAME], int index, f
 	}
 }
 void setParent(fileTree_t* newTree, char* parent){
-	char nodes[MAXNAME][MAXFILES];
+	char nodes[MAXFILES][MAXNAME];
 	split(parent, '/', nodes);
 	setParentW(newTree, nodes, 0, tree);
 }

@@ -8,7 +8,7 @@
 #include "status.h"
 #include "heap.h"
 
-#define MAXPAGEPERPROC 10
+#define BLOCKSIZE 10
 #define STACK_SIZE 4096
 
 #define TICK_FREQUENCY 55

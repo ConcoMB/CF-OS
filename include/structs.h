@@ -24,13 +24,14 @@ typedef struct{
 	int size;
 }inode_t;
 
+
 typedef struct fileEntry_t{
 	char name[MAXNAME];
 	int parent;
-	inode_t inode;
-	//struct fileEntry_t* snapshots[MAXSNAPSHOTS];
+	int inode;
+	int prev,next;
 	fileType_t type;
-	char free;		
+	char free, del;		
 }fileEntry_t;
 
 
@@ -43,8 +44,7 @@ typedef struct fileTree_t{
 	int cantChilds;
 	struct fileTree_t* parent;
 	char name[MAXNAME];
-	inode_t inode;
-	//fileEntry_t snapshots[MAXSNAPSHOTS];
+	int index;
 	fileType_t type;
 }fileTree_t;
 

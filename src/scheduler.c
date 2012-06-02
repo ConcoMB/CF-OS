@@ -99,8 +99,8 @@ void stackResize(task_t* task)
 	if(task->pid!=-1 && task->status!=FREE)
 	{
 		//printf("ESP = %d\n", task->sp->ESP);
-		int max= task->ssize*4096;
-		int now = (4096*(current*MAXPAGEPERPROC+MAXPAGEPERPROC+KERNEL_PAGES+1)-task->sp->ESP);
+		int max= task->ssize*PAGE_SIZE;
+		int now = (PAGE_SIZE*(getInitBlock(current)*BLOCKSIZE+BLOCKSIZE+KERNEL_PAGES+1)-task->sp->ESP);
 		double percent = (double)(now) / (double)(max);
 		//printf("max %d, now %d\n", max, now);
 		//printf("percent %d\n", (int)percent*100);
@@ -159,6 +159,7 @@ void initScheduler()
 		//level[i]=0;
 		process[i].status=FREE;
 	}
+
 	cant=0;
 	current=-1;
 	idleP.pid=-1;
@@ -167,7 +168,8 @@ void initScheduler()
 	//initHeap((void*)idleP.heap);
 	//idleP.ssize=STACK_SIZE;
 	idleP.sp=initStackFrame(idle, 0, 0, idleP.ss+STACK_SIZE-1, cleaner);
-	idleP.tty=&terminals[2];	
+	idleP.tty=&terminals[2];
+	initBlocks();	
 }
 
 
@@ -232,7 +234,7 @@ void createProcess(int (*funct)(int, char **), int argc, char** argv, char* name
 	task->status=READY;
 	task->parentid=parid;
 	//printf("tnego pid %d\n", task->pid);
-
+	setBlock(i);
 	task->ss=(int)getStackPage(task->pid);
 	task->ssize=1;
 	task->hsize=1;

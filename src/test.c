@@ -1,34 +1,39 @@
+void stackBomb(long a, long b, long c,long d, long e, long f,long g){
+	printf("Voy %d\n", a);
+	sleep(50);
+	stackBomb(a+1,0, 0,0,0,0,0);
+}
 
 int stackTest(int argc, char** argv){
 	printf("Voy %d\n", argc);
-	sleep(100);
-	stackTest(argc+1,0);
+	sleep(50);
+	stackBomb(argc+1,0, 0,0,0,0,0);
 	return 1;
 }
 
 int heapTest(int argc, char** argcv){
 	int i=1;
 	void* mem, *aux;
-	while(i<20){
+	while(1){
 		if(i%3==0){
-			mem=malloc(100);
+			mem=malloc(1000);
 			printf("malloc de 100 dio %d\n", (int)mem);
 		}else if(i%3==1){
-			mem= malloc(250);
+			mem= malloc(2500);
 			printf("malloc de 250 dio %d\n", (int)mem);
 		}else if(i%3==2){
 			mem= malloc(600);
 			printf("malloc de 600 dio %d\n", (int)mem);
 		}
-		if(i%5==0){
+		/*if(i%5==0){
 			printf("libere %d\n", (int)aux);
 			free(aux);
-		}
+		}*/
 		aux=mem;
 		i++;
 		sleep(500);
 	}
-	printHeap();
+	//printHeap();
 	return 0;
 }
 
@@ -76,3 +81,6 @@ int test(int a, char** v){
 	}
 	return 0;
 }
+
+
+

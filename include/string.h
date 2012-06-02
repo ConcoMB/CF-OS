@@ -9,6 +9,7 @@ int substr(char* str1, char* str2);
 void strcpy(char* dest, char* src);
 char* itoa(int val, char* buffer);
 char* xtoa(int mem, char* buffer);
+void strcat(char prev[], char* next);
 int atoi(char* a);
 int strlen(char* s);
 void split ( char *string, const char sep, char list[][MAXNAME]);
