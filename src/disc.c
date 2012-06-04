@@ -25,6 +25,7 @@ void ata_normalize(unsigned short* sector, int* offset) {
 }
 
 void ata_read(int ata, void* ans, int bytes, unsigned short sector, int offset) {
+   _Cli();
    if (ata != ATA0 && ata != ATA1) {
       printf("Disk don't exist %d - [%d, %d]", ata, sector, offset);
       return;
@@ -50,6 +51,7 @@ void ata_read(int ata, void* ans, int bytes, unsigned short sector, int offset) 
          ans += size;
       }
    }
+   _Sti();
 }
 
 void _read(int ata, char * ans, unsigned short sector, int offset, int count) {
@@ -74,6 +76,7 @@ void translateBytes(char * ans, unsigned short databyte) {
 }
 
 void ata_write(int ata, void * msg, int bytes, unsigned short sector, int offset) {
+   _Cli();
    if (ata != ATA0 && ata != ATA1) {
       printf("Disk don't exist %d - [%d, %d]", ata, sector, offset);
       return;
@@ -100,6 +103,7 @@ void ata_write(int ata, void * msg, int bytes, unsigned short sector, int offset
          ans += size;
       }
    }
+   _Sti();
 }
 
 void _write(int ata, char * msg, int bytes, unsigned short sector, int offset) {
@@ -120,35 +124,28 @@ void _write(int ata, char * msg, int bytes, unsigned short sector, int offset) {
 
 void writeDataToRegister(int ata, char upper, char lower) {
    unsigned short out;
-   _Cli();
    // Wait for driver's ready signal.
    while (!(_portw_in(ata + WIN_REG7) & BIT(3)))
       ;
    out = upper << 8 | (lower & 0xff);
    _portw_out(ata + WIN_REG0, out);
-   _Sti();
 }
 
 unsigned short getDataRegister(int ata) {
    unsigned short ans;
-   _Cli();
    // Wait for driver's ready signal.
    while (!(_portw_in(ata + WIN_REG7) & BIT(3)))
        ;
    ans = _portw_in(ata + WIN_REG0);
-   _Sti();
    return ans;
 }
 
 unsigned short getErrorRegister(int ata) {
-   _Cli();
    unsigned short rta = _port_in(ata + WIN_REG1) & 0x00000FFFF;
-   _Sti();
    return rta;
 }
 
 void sendComm(int ata, int rdwr, unsigned short sector) {
-   _Cli();
    _port_out(ata + WIN_REG1, 0);
    _port_out(ata + WIN_REG2, 0); // Set count register sector in 1
 
@@ -158,22 +155,17 @@ void sendComm(int ata, int rdwr, unsigned short sector) {
    _port_out(ata + WIN_REG6, 0xE0 | (ata << 4) | ((sector >> 24) & 0x0F)); // Set LBA bit in 1 and the rest in 0
    // Set command
    _port_out(ata + WIN_REG7, rdwr);
-   _Sti();
 }
 
 unsigned short ata_getStatusRegister(int ata) {
    unsigned short rta;
-   _Cli();
    rta = _port_in(ata + WIN_REG7) & 0x00000FFFF;
-   _Sti();
    return rta;
 }
 
 void identifyDevice(int ata) {
-   _Cli();
    _port_out(ata + WIN_REG6, 0);
    _port_out(ata + WIN_REG7, WIN_IDENTIFY);
-   _Sti();
 }
 
 // Check disk features

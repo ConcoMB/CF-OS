@@ -43,38 +43,23 @@ int test(int a, char** v){
 	/* la forma de ejecutar es qemu -kernel bin/kernel.bin -hda disk.img 
 	** o tambien con -hda disk0.img que tiene cosas escritas parece y es mas facil ver cosas*/
 
-	char buffer2[10],buffer[10];
+	char buffer2[512],buffer[512];
 	int i;
-	for(i=0;i<10;i++){
-		buffer2[i]='h';
-	}
-	printf("buffer tiene eso\n");
-	for(i=0 ; i<10 ;i++){
-		printf("%c", buffer2[i]);
+	for(i=0;i<512;i++){
+		buffer[i]='T';
 	}
 	printf("\n");
 
-	ata_read(ATA0, buffer2, 10, 1, 0);
+	ata_read(ATA0, buffer2, 512, 1, 0);
 	printf("lei esto\n");
 	for(i=0 ; i<10 ;i++){
 		printf("%c", buffer2[i]);
 	}
 	printf("\n");
 
-	printf("escribo: llllllllll\n");
-	for(i=0 ; i<10 ; i++){
-		buffer[i] = 'l';
-	}
-	ata_write(ATA0, buffer, 10, 1, 0);
-	printf("buffer tiene eso\n");
-	for(i=0;i<10;i++){
-		buffer2[i]='d';
-	}
-	for(i=0 ; i<10 ;i++){
-		printf("%c", buffer2[i]);
-	}
-	printf("\n");
-	ata_read(ATA0, buffer2, 10, 0, 0);
+	ata_write(ATA0, buffer, 512, 1, 0);
+
+	ata_read(ATA0, buffer2, 512, 0, 0);
 	printf("lei esto\n");
 	for(i=0 ; i<10 ;i++){
 		printf("%c", buffer2[i]);
