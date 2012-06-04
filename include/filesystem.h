@@ -19,13 +19,15 @@ int _touch(char* file);
 int _cat(char* file);
 int _revert(char* file);
 void readTable();
-void open(fileTree_t* node, void** buffer, int* size);
-void create(fileEntry_t* entry, void* buffer, int size);
+void open(fileTree_t* node, inode_t* inode);
+void read(inode_t* inode, int which, void** buffer);
+void write(inode_t* inode, int which, int size, void* buffer);
+void create(fileEntry_t* entry, void* buffer, int size, int index);
 void writeSnap(fileTree_t* node, void* buffer, int size);
 void writeFile(fileTree_t* node, void* buffer, int size);
 void snapCP(fileTree_t* node);
 void delFile(fileTree_t* node, char isStr);
 int getFile(fileTree_t* node);
 fileTree_t* getParentFromTable(fileEntry_t* entry);
-
+void readAll(inode_t* inode, void** buffer);
 #endif

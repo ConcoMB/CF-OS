@@ -108,6 +108,9 @@ void _ln(char* file, char* name)
 
 int _rm(char* path, char isStr)
 {
+	if(strcmp(path, "/")==0){
+		return -1;
+	}
 	char realPath[MAXFILES][MAXNAME];
 	split(path, '/', realPath);
 	fileTree_t* node = getNode(realPath);
@@ -184,11 +187,12 @@ int _cp(char* to, char* from)
 	newNode->parent=dad;
 	dad->childs[dad->cantChilds++]=newNode;
 
-	void * buf;
-	int size;
-	open(nodeF, &buf, &size);
-	writeSnap(newNode, buf, size);
-	free(buf);
+	inode_t inode;
+	open(nodeF, &inode);
+	void* buffer=malloc(inode.size);
+	readAll(&inode, &buffer);
+	writeSnap(newNode, buffer, inode.size);
+	free(buffer);
 	return 0;
 }
 
@@ -218,10 +222,38 @@ int _cat(char* file){
 	}
 	//inode_t in;
 	//ata_read(ATA0, (void*)&in, 512, table[node->index].inode, 0);
-	int size;
 	void * buffer;
-	open(node, &buffer, &size);
-	printf("%s\n", (char*)buffer);
+	inode_t inode;
+	open(node, &inode);
+	int i=0;
+	while(inode.sector[i]!=-1){
+		read(&inode, i++, &buffer);
+		printf("%s\n", (char*)buffer);
+	}
+	return 0;
+}
+
+int attatch(char* file, char* string){
+	char path[MAXFILES][MAXNAME];
+	split(file, '/', path);
+	fileTree_t* node = getNode(path);
+	if(node==0){
+		/*char nodeName[MAXNAME];
+		setLastStr(path, nodeName);
+		strcpy(node->name, nodeName);
+		...*/
+		return -1;
+	}
+	void* buffer;
+	int len=strlen(string);
+	inode_t inode;
+	open(node, &inode);
+	int size=inode.size+len;
+	buffer=malloc(size);
+	readAll(&inode, &buffer);
+	memcpy(buffer+inode.size, string, len);
+	writeSnap(node, buffer, size);
+	free(buffer);
 	return 0;
 }
 
@@ -313,20 +345,39 @@ void readTable(){
 	ata_read(ATA0, table.files, sizeof(fileEntry_t)*MAXFILES, 0,0);
 }
 
-void open(fileTree_t* node, void** buffer, int* size){
-	inode_t inode;
+void open(fileTree_t* node, inode_t* inode){
 	ata_read(ATA0, (void*)&inode, sizeof(inode), table.files[node->index].inode,0);
-	*size=inode.size;
-	*buffer=malloc(inode.size*512);
+	/**buffer=malloc(inode.size*512);
 	int i;
 	for(i=0; i<inode.size; i++){
 		ata_read(ATA0, (*buffer)+i*512, 512, inode.sector[i],0);
+	}*/
+}
+
+void read(inode_t* inode, int which, void** buffer){
+	int size=512;
+	if(inode->sector[which+1]==-1){
+		size=inode->size%512;
+	}
+	ata_read(ATA0, *buffer, size, inode->sector[which], 0);
+}
+
+void readAll(inode_t* inode, void** buffer){
+	int i=0, size;
+	while(inode->sector[i]!=-1){
+		size=512;
+		if(i!=MAXSECTOR && inode->sector[i+1]==-1){
+			size=inode->size%512;
+		}
+		ata_read(ATA0, *buffer+i*512, size, inode->sector[i], 0);
 	}
 }
 
+void write(inode_t* inode, int which, int size, void* buffer){
+	ata_read(ATA0, buffer, size, inode->sector[which], 0);
+}
 
-
-void create(fileEntry_t* entry, void* buffer, int size){
+void create(fileEntry_t* entry, void* buffer, int size, int index){
 	int sects = size/512;
 	size%512!=0?sects++:1;
 	inode_t inode;
@@ -337,7 +388,9 @@ void create(fileEntry_t* entry, void* buffer, int size){
 		inode.sector[i]=j;
 		ata_write(ATA0, buffer+i*512,512, j,0);
 	}
-	//write en la tabla
+	int inodeSect=getSector();
+	entry->inode=inodeSect;
+	//write en la tabla el inodo y el enntry
 
 }
 
@@ -353,7 +406,7 @@ void writeSnap(fileTree_t* node, void* buffer, int size){
 	entry.prev=node->index;
 	old.next=i;
 	entry.next=-1;
-	create(&entry, buffer, size);
+	create(&entry, buffer, size, i);
 	node->index=i;
 }
 
@@ -369,7 +422,7 @@ void writeFile(fileTree_t* node, void* buffer, int size){
 	entry.del=0;
 	strcpy(entry.name, node->name);
 	if(size!=0)
-		create(&entry, buffer, size);
+		create(&entry, buffer, size, i);
 }
 
 void snapCP(fileTree_t* node){
