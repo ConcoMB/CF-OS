@@ -52,7 +52,7 @@ int test(int a, char** v){
 
 	ata_read(ATA0, buffer2, 512, 1, 0);
 	printf("lei esto\n");
-	for(i=0 ; i<10 ;i++){
+	for(i=0 ; i<512 ;i++){
 		printf("%c", buffer2[i]);
 	}
 	printf("\n");
@@ -61,7 +61,7 @@ int test(int a, char** v){
 
 	ata_read(ATA0, buffer2, 512, 0, 0);
 	printf("lei esto\n");
-	for(i=0 ; i<10 ;i++){
+	for(i=0 ; i<512 ;i++){
 		printf("%c", buffer2[i]);
 	}
 	return 0;
