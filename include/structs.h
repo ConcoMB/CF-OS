@@ -13,6 +13,7 @@
 #define SET(n) (bitMap[n/8]|=0x01<<(n%8))
 #define GET(n) ((bitMap[n/8]>>(n%8))&0x01)
 #define FREE(n) (bitMap[n/8]&= ~(0x01<<(n%8)))
+#define ENTRY(n) table.files[n]
 
 typedef enum {DIR, FILE, LINK} fileType_t;
 int sectorIndex;

@@ -47,13 +47,13 @@ fileEntry_t getFreeEntry(int* index)
 	int i=0;
 	for(i=0; i<MAXFILES; i++)
 	{
-		if(table.files[i].free){
+		if(ENTRY(i).free){
 			*index = i;
-			return table.files[i];
+			return ENTRY(i);
 		}
 	}
 	//no hay lugar
-	return table.files[i];
+	return ENTRY(i);
 
 }
 
@@ -114,6 +114,9 @@ int _rm(char* path, char isStr)
 	char realPath[MAXFILES][MAXNAME];
 	split(path, '/', realPath);
 	fileTree_t* node = getNode(realPath);
+	if(isChildOf(node, actual)){
+		return -2;
+	}
 	_myrm(node, isStr);
 	return 0;
 }
@@ -257,18 +260,34 @@ int attatch(char* file, char* string){
 	return 0;
 }
 
-int _revert(char* file){
+
+
+int revertLast(char* file){
+	return revertTo(file, 1);
+}
+
+int revertTo(char* file, int version){
+	if(version ==0){
+		return 0;
+	}
 	char path[MAXFILES][MAXNAME];
 	split(file, '/', path);
 	fileTree_t* node = getNode(path);
 	if(node==0){
 		return -2;
 	}
-	fileEntry_t this = table.files[node->index];
-	if(this.prev==-1){
-		return -1;
+
+	fileEntry_t this = ENTRY(node->index);
+	fileEntry_t prev;
+	int i = 0;
+	while(i!=version){
+		if(this.prev==-1){
+			return -1;
+		}
+		prev = ENTRY(this.prev);
+		i++;
 	}
-	fileEntry_t prev = table.files[this.prev];
+	
 	this.free=1;
 	prev.next=-1;
 	removeChild(node);
@@ -281,6 +300,25 @@ int _revert(char* file){
 	//escribir en this.prev y en node->index
 	return 0;
 }
+
+int snapList(char* file){
+	char path[MAXFILES][MAXNAME];
+	split(file, '/', path);
+	fileTree_t* node = getNode(path);
+	if(node==0){
+		return -2;
+	}
+	int i=0;
+	printf("Revision of file %s\n", file);
+	fileEntry_t entry = ENTRY(node->index);
+	while(entry.prev!=-1){
+		printf("Version %d: name %s, parent name %s, inode sector %d\n", i++, entry.name, ENTRY(entry.parent).name, entry.inode);
+		entry=ENTRY(entry.prev);
+	}
+	printf("Name %s, parent name %s, inode sector %d\n", entry.name, ENTRY(entry.parent).name, entry.inode);
+	return 0;	
+}
+
 
 fileTree_t* getParentFromTable(fileEntry_t* entry){
 	char path[MAXPATH];
@@ -346,7 +384,7 @@ void readTable(){
 }
 
 void open(fileTree_t* node, inode_t* inode){
-	ata_read(ATA0, (void*)&inode, sizeof(inode), table.files[node->index].inode,0);
+	ata_read(ATA0, (void*)&inode, sizeof(inode), ENTRY(node->index).inode,0);
 	/**buffer=malloc(inode.size*512);
 	int i;
 	for(i=0; i<inode.size; i++){
@@ -396,7 +434,7 @@ void create(fileEntry_t* entry, void* buffer, int size, int index){
 
 void writeSnap(fileTree_t* node, void* buffer, int size){
 	int i;
-	fileEntry_t old= table.files[node->index];
+	fileEntry_t old= ENTRY(node->index);
 	fileEntry_t entry=getFreeEntry(&i);
 	strcpy(entry.name, node->name);
 	entry.type=node->type;
@@ -428,7 +466,7 @@ void writeFile(fileTree_t* node, void* buffer, int size){
 void snapCP(fileTree_t* node){
 	int i;
 	fileEntry_t entry=getFreeEntry(&i);
-	fileEntry_t old= table.files[node->index];
+	fileEntry_t old= ENTRY(node->index);
 	old.next=i;
 	entry.prev=node->index;
 	entry.next=-1;
@@ -440,13 +478,13 @@ void snapCP(fileTree_t* node){
 void delFile(fileTree_t* node, char isStr){
 	if(!isStr){
 		int i = getFile(node);
-		table.files[i].del=1;
+		ENTRY(i).del=1;
 		//escribir en i
 	}else{
-		fileEntry_t entry = table.files[node->index];
+		fileEntry_t entry = ENTRY(node->index);
 		while(entry.prev!=-1){
 			entry.free=1;
-			entry=table.files[entry.prev];
+			entry=ENTRY(entry.prev);
 		}
 		entry.free=1;
 		//escribir toda la tabla
@@ -458,9 +496,9 @@ int getFile(fileTree_t* node)
 {
 	int i;
 	for(i=0; i<MAXFILES; i++){
-		if(strcmp(node->name, table.files[i].name)==0){
-			while(table.files[i].next!=-1){
-				i=table.files[i].next;
+		if(strcmp(node->name, ENTRY(i).name)==0){
+			while(ENTRY(i).next!=-1){
+				i=ENTRY(i).next;
 			}
 			return i;
 		}
