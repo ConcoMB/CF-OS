@@ -131,6 +131,20 @@ void editFile(fileTree_t* node){
 }
 */
 
+void initialize(){
+	initTable();
+	initBitMap();
+}
+
+void initBitMap(){
+	int pos = sizeof(fileEntry_t)*MAXFILES/512;
+	pos++;
+	int i;
+	for(i=0; i<=pos; i++){
+		SET(i);
+	}
+	writeBitMap();
+}
 
 void initTable(){
 	fileTable_t tab;
@@ -194,7 +208,7 @@ void create(fileEntry_t* entry, void* buffer, int size, int index){
 	}
 	int inodeSect=getSector();
 	entry->inode=inodeSect;
-	writeEntry(entry->index);
+	writeEntry(index);
 	writeInode(entry, &inode);
 }
 
@@ -242,20 +256,24 @@ void snapCP(fileTree_t* node){
 }
 
 void delFile(fileTree_t* node, char isStr){
+	int i;
 	if(!isStr){
-		int i = getFile(node);
+		i = getFile(node);
 		ENTRY(i).del=1;
 		writeEntry(i);
 	}else{
-		fileEntry_t entry = ENTRY(node->index);
+		i=node->index;
+		fileEntry_t entry = ENTRY(i);
 		while(entry.prev!=-1){
 			entry.free=1;
-			writeEntry(entry.index);
+			writeEntry(i);
+			FREE(i);
+			i=entry.prev;
 			entry=ENTRY(entry.prev);
 		}
 		entry.free=1;
-		FREE(entry.index);
-		writeEntry(entry.index);
+		FREE(i);
+		writeEntry(i);
 		writeBitMap();
 	}
 	
@@ -277,15 +295,23 @@ int getFile(fileTree_t* node)
 
 void writeEntry(int index){
 	int pos = index*sizeof(fileEntry_t);
-	ata_write(ATA0, ENTRY(index), sizeof(fileEntry_t), pos/512, pos%512);
+	ata_write(ATA0, (void*)&ENTRY(index), sizeof(fileEntry_t), pos/512, pos%512);
 }
 
 void writeInode(fileEntry_t* entry, inode_t* inode)
 {
-	ata_write(ATA0, *inode, sizeof(inode_t), entry->inode, 0);
+	ata_write(ATA0, (void*)inode, sizeof(inode_t), entry->inode, 0);
 
 }
 
 void writeBitMap(){
+	int pos = sizeof(fileEntry_t)*MAXFILES/512;
+	pos++;
+	ata_write(ATA0, (void*)&bitMap, sizeof(bitMap), pos, 0);
+}
 
+void readBitMap(){
+	int pos = sizeof(fileEntry_t)*MAXFILES/512;
+	pos++;
+	ata_read(ATA0, (void*)&bitMap, sizeof(bitMap), pos, 0);
 }

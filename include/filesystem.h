@@ -2,7 +2,7 @@
 #define __FS__
 
 #include "structs.h"
-//#include "fileTree.h"
+#include "fileTree.h"
 #include "string.h"
 
 int getSector();
@@ -21,4 +21,10 @@ void delFile(fileTree_t* node, char isStr);
 int getFile(fileTree_t* node);
 fileTree_t* getParentFromTable(fileEntry_t* entry);
 void readAll(inode_t* inode, void** buffer);
+void initialize();
+void initBitMap();
+void writeEntry(int index);
+void writeInode(fileEntry_t* entry, inode_t* inode);
+void writeBitMap();
+void readBitMap();
 #endif

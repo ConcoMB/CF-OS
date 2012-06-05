@@ -1,4 +1,6 @@
 #include "../include/fileCalls.h"
+extern fileTree_t* tree, *actual;
+extern fileTable_t table;
 
 int _mkdir(char* name, char* parent)
 {
@@ -228,13 +230,15 @@ int revertTo(char* file, int version){
 
 	fileEntry_t this = ENTRY(node->index);
 	fileEntry_t previous=this;
-	int i = 0;
+	int i = 0, j= node->index;
 	while(i!=version){
 		if(previous.prev==-1){
 			return -1;
 		}
 		previous.free=1;
-		writeEntry(previous.index);
+		writeEntry(j);
+		FREE(j);
+		j=previous.prev;
 		previous = ENTRY(previous.prev);
 		i++;
 	}
@@ -243,12 +247,13 @@ int revertTo(char* file, int version){
 	previous.next=-1;
 	removeChild(node);
 	freeNode(node);
-	fileTree_t * dad = getParentFromTable(&prev);
+	fileTree_t * dad = getParentFromTable(&previous);
 	if(dad==0){
 		return -3;
 	}
 	complete(dad, this.prev);
-	writeEntry(previous.index)
-	writeEntry(this.index);
+	writeEntry(j);
+	writeEntry(node->index);
+	FREE(j);
 	return 0;
 }
