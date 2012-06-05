@@ -4,6 +4,7 @@
 #define __FTR
 
 #include "filesystem.h"
+#include "fileCalls.h"
 #include "structs.h"
 #include "string.h"
 #include "stdio.h"

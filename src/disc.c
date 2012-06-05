@@ -147,7 +147,7 @@ unsigned short getErrorRegister(int ata) {
 
 void sendComm(int ata, int rdwr, unsigned short sector) {
    _port_out(ata + WIN_REG1, 0);
-   _port_out(ata + WIN_REG2, 0); // Set count register sector in 1
+   _port_out(ata + WIN_REG2, 1); // Set count register sector in 1
 
    _port_out(ata + WIN_REG3, (unsigned char)sector);        // LBA low
    _port_out(ata + WIN_REG4, (unsigned char)(sector >> 8));    // LBA mid

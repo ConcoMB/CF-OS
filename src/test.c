@@ -46,20 +46,20 @@ int test(int a, char** v){
 	char buffer2[512],buffer[512];
 	int i;
 	for(i=0;i<512;i++){
-		buffer[i]='T';
+		buffer[i]='C';
 	}
 	printf("\n");
 
+	
+
+	ata_write(ATA0, buffer, 512, 1, 256);
 	ata_read(ATA0, buffer2, 512, 1, 0);
 	printf("lei esto\n");
 	for(i=0 ; i<512 ;i++){
 		printf("%c", buffer2[i]);
 	}
 	printf("\n");
-
-	ata_write(ATA0, buffer, 512, 1, 0);
-
-	ata_read(ATA0, buffer2, 512, 0, 0);
+	ata_read(ATA0, buffer2, 512, 2, 0);
 	printf("lei esto\n");
 	for(i=0 ; i<512 ;i++){
 		printf("%c", buffer2[i]);
