@@ -8,7 +8,9 @@ void int_80(REG registers)
 {
 	//while(1){};
 	char *c;
+	char * parent, *path;
 	int i;
+	char** ans;
 	switch(registers.ebx)
 	{
 		case 1:
@@ -75,6 +77,20 @@ void int_80(REG registers)
 			break;
 		case 15:
 			createChild( (int (*)(int, char **)) registers.edx,(int)registers.ecx,(char **)registers.eax);
+			break;
+		case 16:
+			path = (char*)registers.edx;
+			/* vamos a necesitar un get parent que parse el path para ver quien es el parent */
+			//char * parent = _getParent(path);
+			//registers.eax=_mkdir(path, parent);
+			break;
+		case 17:
+			path = (char*)registers.edx;
+			if(path == 0){
+				//path = getCurrentPath();
+			}
+			ans = (char **)registers.ecx;
+			_ls(path, (char[][MAXNAME])ans);
 			break;
 
 	}  

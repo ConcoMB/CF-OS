@@ -192,43 +192,11 @@ __min:
 	int 080h
 	ret
 
-__createChild:
-  mov ebx, 15
-  mov eax, [esp+12]
-  mov ecx, [esp+8]
-  mov edx, [esp+4]
-  int 080h
-  ret
-
 __setcolor:
 	mov ecx, [esp+4]
 	mov ebx, 5
 	int 080h
 	ret
-
-_IO_in:
-	mov dx, [esp+4]
-	in byte al, dx
-	ret
-	
-_IO_out:
-	mov al, [esp+8]
-	mov dx, [esp+4]
-	out dx,al
-	ret
-
-_IO_out_w:
-	mov ax, [esp+8]
-	mov dx, [esp+4]
-	out word dx,ax
-	ret
-
-_IO_in_w:
-	mov dx, [esp+4]
-	in word ax, dx
-	ret
-
-
 
 __malloc:
 	mov ebx, 6
@@ -252,22 +220,16 @@ __heap_count:
 	mov ebx, 9
 	int 080h
 	ret
+	
+__set_scancode:
+	mov ebx, 10
+	mov ecx, [esp+4]
+	int 080h
+	ret
 
 __stack_count:
 	mov ebx, 11
 	int 080h
-	ret
-
-__sleep:
-	mov ebx, 14
-	mov ecx, [esp+4]
-	int 080h
-	ret
-	
-_sys_yield:
-	;call _scheduler
-	sti
-	int 08
 	ret
 
 __kill:
@@ -281,24 +243,53 @@ __top:
 	mov ecx, [esp+4]
 	int 080h
 	ret
+
+__sleep:
+	mov ebx, 14
+	mov ecx, [esp+4]
+	int 080h
+	ret
+
+__createChild:
+  mov ebx, 15
+  mov eax, [esp+12]
+  mov ecx, [esp+8]
+  mov edx, [esp+4]
+  int 080h
+  ret
+
+__mkdir:
+	mov ebx, 16
+	mov edx, [esp+4]
+	int 080h
+	ret
+
+__ls:
+	mov ebx, 17
+	mov ecx, [esp+8]
+	mov edx, [esp+4]
+	int 080h
+	ret
 	
 _sys_stack_count:
 	mov eax, eokl
 	mov ebx, esp
 	sub eax,ebx
 	ret
-	
-__set_scancode:
-	mov ebx, 10
-	mov ecx, [esp+4]
-	int 080h
+
+_sys_yield:
+	;call _scheduler
+	sti
+	int 08
 	ret
-	
+
 _lcr3:
 	;mov eax, [esp+4]
 	mov eax, 00200000h 
 	mov cr3, eax
 	ret
+
+
 
 ; Mapeo 1:1 de la primer pagina
 _fill_page1:
@@ -318,10 +309,9 @@ _fill_page1:
 		  jmp .fill_table
 	 .end:
 	 ret
+
 	
 ; Debug para el BOCHS, detiene la ejecució; Para continuar colocar en el BOCHSDBG: set $eax=0
-;
-
 
 _debug:
         push    bp
@@ -338,7 +328,30 @@ vuelve:	mov     ax, 1
 
 
 
-        ;=================================================================
+
+_IO_in:
+	mov dx, [esp+4]
+	in byte al, dx
+	ret
+	
+_IO_out:
+	mov al, [esp+8]
+	mov dx, [esp+4]
+	out dx,al
+	ret
+
+_IO_out_w:
+	mov ax, [esp+8]
+	mov dx, [esp+4]
+	out word dx,ax
+	ret
+
+_IO_in_w:
+	mov dx, [esp+4]
+	in word ax, dx
+	ret
+
+;=================================================================
 ;					PORT_IN
 ;=================================================================
 _port_in:

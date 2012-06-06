@@ -228,3 +228,15 @@ int top(int argc, char** argv)
 	}
 	return 0;
 }
+
+int Mkdir(int argc, char** argv){
+	if(!__mkdir(argv[1])){
+		printf("No se creo el directorio.\n");
+	}
+}
+
+
+int Ls(int argc, char** argv){
+	char ** ans;
+	__ls(argv[2], (char[][MAXNAME])ans);
+}

@@ -32,3 +32,7 @@ int top(int argc, char** argv);
 int Malloc(int argc, char** argv);
 
 int Free(int argc, char** argv);
+
+int Mkdir(int argc, char** argv);
+
+int Ls(int argc, char** argv);

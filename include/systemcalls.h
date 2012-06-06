@@ -1,6 +1,6 @@
 #ifndef __SYSCALLS__
 #define __SYSCALLS__
-
+#include "structs.h"
 void __hour(char* hp);
 void __min(char* mp);
 void* __malloc(int bytes);
@@ -14,6 +14,8 @@ void __sleep(int ms);
 int __kill(int pID);
 void* __top();
 void __createChild(int (*func)(int, char**), int argc, char ** argv);
+int __mkdir(char* path);
+void __ls(char* path, char[][MAXNAME]);
 
 /* __write
 *
