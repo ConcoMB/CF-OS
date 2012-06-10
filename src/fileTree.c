@@ -1,7 +1,19 @@
 #include "../include/fileTree.h"
 
 void printTree(fileTree_t* aTree){
-	printf("name %s, parent %s\n", aTree->name, aTree->parent->name);
+	char* type;
+	switch(aTree->type){
+		case DIR:
+			type="DIR";
+			break;
+		case FILE:
+			type="FILE";
+			break;
+		case LINK:
+			type="LINK";
+			break;
+	}
+	printf("name %s, type %s, parent %s\n", aTree->name, type, aTree->parent->name);
 	int i;
 	for(i=0;i<aTree->cantChilds; i++){
 		printTree(aTree->childs[i]);

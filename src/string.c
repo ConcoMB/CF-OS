@@ -22,6 +22,8 @@ void split ( char *string, const char sep, char list[][MAXNAME])
             pos++;
         }
     }
+    if(pos!=MAXFILES)
+    list[pos][0]='\0';
 }
 
 void strcat(char prev[], char* next){
