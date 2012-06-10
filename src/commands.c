@@ -231,6 +231,7 @@ int top(int argc, char** argv)
 
 int format(int argc, char** argv){
 	initializeFS();
+	return 0;
 }
 
 
