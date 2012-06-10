@@ -257,19 +257,6 @@ __createChild:
   mov edx, [esp+4]
   int 080h
   ret
-
-__mkdir:
-	mov ebx, 16
-	mov edx, [esp+4]
-	int 080h
-	ret
-
-__ls:
-	mov ebx, 17
-	mov ecx, [esp+8]
-	mov edx, [esp+4]
-	int 080h
-	ret
 	
 _sys_stack_count:
 	mov eax, eokl

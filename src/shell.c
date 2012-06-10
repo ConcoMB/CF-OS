@@ -173,8 +173,7 @@ int shell(int argc, char** argv){
 			argv[0]="malloc";
 			argv[1]=buffer+7;
 			argv[2]=(char*)0;
-		}
-		else if(substr("free ", buffer)){
+		} else if(substr("free ", buffer)){
 			func=Free;
 			argc=2;
 			argv[0]="free";

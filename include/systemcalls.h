@@ -14,8 +14,6 @@ void __sleep(int ms);
 int __kill(int pID);
 void* __top();
 void __createChild(int (*func)(int, char**), int argc, char ** argv);
-int __mkdir(char* path);
-void __ls(char* path, char[][MAXNAME]);
 
 /* __write
 *
