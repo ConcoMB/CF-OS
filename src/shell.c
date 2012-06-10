@@ -173,30 +173,11 @@ int shell(int argc, char** argv){
 			argv[0]="malloc";
 			argv[1]=buffer+7;
 			argv[2]=(char*)0;
-		}
-		else if(substr("free ", buffer)){
+		} else if(substr("free ", buffer)){
 			func=Free;
 			argc=2;
 			argv[0]="free";
 			argv[1]=buffer+5;
-			argv[2]=(char*)0;
-		} else if(substr("mkdir ", buffer)){
-			func=Mkdir;
-			argc=2;
-			argv[0]="mkdir";
-			argv[1]=buffer+5;
-			argv[2]=(char*)0;
-		} else if(substr("ls ", buffer)){
-			func=Ls;
-			argc=1;
-			argv[0]="ls";
-			argv[1]=buffer+5;
-			argv[2]=(char*)0;
-		} else if(substr("ls", buffer)){
-			func=Ls;
-			argc=2;
-			argv[0]="ls";
-			argv[1]=0;
 			argv[2]=(char*)0;
 		} else{
 			nothing=1;
