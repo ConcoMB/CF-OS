@@ -2,20 +2,27 @@
 
 #define __MSG__
 
+#include "../include/fileCalls.h"
+
 #define MAXMSG 20
+
 
 typedef struct
 {
-	int comand;
+	int pid;
+	int command;
 	int argc;
-	void** argv;
+	void * argv[4];
 } msg_t;
 
 extern msg_t msgs[];
-extern int readIndex;
+extern int msgTail;
 extern int msgCount;
-extern int writeIndex;
-extern int writeBlock;
-extern int readBlock;
+extern int msgHead;
+
+int msgRead(msg_t * ans);
+
+int msgWrite(msg_t * toWrite);
+
 
 #endif

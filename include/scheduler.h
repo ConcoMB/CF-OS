@@ -17,6 +17,7 @@
 extern task_t process[];
 extern int current;
 extern tty_t terminals[];
+extern int driverPid;
 
 task_t* getProcess(int current);
 stackframe_t* initStackFrame(int (*funct)(int, char **), int argc, char** argv, int bot, void(*clean)());
@@ -28,7 +29,7 @@ stackframe_t* getStack(task_t* proc);
 void initScheduler();
 void cleaner(void);
 int idle(int argc, char* argv[]);
-void createProcess(int (*funct)(int, char **), int argc, char** argv, char* name, int p, int ttyN, int parid);
+int createProcess(int (*funct)(int, char **), int argc, char** argv, char* name, int p, int ttyN, int parid);
 void createChild(int (*funct)(int, char **), int argc, char ** argv);
 int processHasFocus();
 void sys_top();

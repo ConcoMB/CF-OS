@@ -7,7 +7,7 @@ task_t process[MAXPROC];
 int level[MAXPROC];
 //char stack[MAXPROC][STACK_SIZE];
 task_t idleP;
-int current, cant;
+int current, cant, driverPid;
 
 int count=0;
 
@@ -223,7 +223,7 @@ int getFreeTask(void)
 	return 0;
 }
 
-void createProcess(int (*funct)(int, char **), int argc, char** argv, char* name, int p, int ttyN, int parid)
+int createProcess(int (*funct)(int, char **), int argc, char** argv, char* name, int p, int ttyN, int parid)
 {
 	int i=getFreeTask();
 	task_t* task=&process[i];
@@ -242,7 +242,7 @@ void createProcess(int (*funct)(int, char **), int argc, char** argv, char* name
 	if(task->ss==0 || task->heap==0)
 	{
 		//ERROR
-		return;
+		return task->pid;
 	}
 	initHeap((void*)task->heap);
 	task->sp=initStackFrame(funct, argc, argv, task->ss+STACK_SIZE-1, cleaner);
@@ -251,6 +251,7 @@ void createProcess(int (*funct)(int, char **), int argc, char** argv, char* name
 	task->timeBlocks=0;
 	task->input=0;
 	task->name=name;
+	return task->pid;
 }
 
 void createChild(int (*funct)(int, char **), int argc, char ** argv)

@@ -75,6 +75,7 @@ typedef struct
 	int ticks;
 	int timeBlocks;
 	int input;
+	int msg;
 	int pid;
 	int parentid;
 	int priority;
