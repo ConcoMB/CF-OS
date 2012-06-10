@@ -2,7 +2,7 @@
 #define __STRUCTS__
 #define MAXPROC 50
 
-#define MAXFILES 100
+#define MAXFILES 50
 #define MAXSIZE 4096
 #define MAXPATH 100
 #define MAXNAME 20

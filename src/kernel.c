@@ -33,12 +33,11 @@ void kmain()
 	initScreens();
 	initScheduler();
 	
-	//initializeFS();
 
 	//fileSyst(0,0);
-	//createProcess(fileSyst, 0, 0, fileSyst, 0, 4, 10);
 	createProcess(shell, 0,0, "SHELL",  2,0,10);
-	createProcess(shell, 0,0,"YPF", 1,1,10);
+
+	//createProcess(shell, 0,0,"YPF", 1,1,10);
 	//createProcess(test, 0,0, "disktest", 0,0,10);
 
 	//createProcess(heapTest, 0,0, "heap", 3,3,10);	
@@ -52,7 +51,9 @@ void kmain()
     _mascaraPIC1(0xFC);
     _mascaraPIC2(0xFF);
 	_Sti();	
-	
+	//initializeFS();
+	createProcess(fileSyst, 0, 0, "fileSyst", 0, 0, 10);
+
 	/*Test*/	
 
     while(1);

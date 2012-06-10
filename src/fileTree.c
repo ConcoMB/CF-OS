@@ -13,6 +13,7 @@ void loadTree(){
 	strcpy(tree->name,"/");
 	tree->cantChilds=0;
 	tree->parent=tree;
+	tree->index=-1;
 	tree->type=DIR;
 	int i;
 	for(i=0; i<8; i++){
