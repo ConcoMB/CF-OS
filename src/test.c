@@ -67,5 +67,27 @@ int test(int a, char** v){
 	return 0;
 }
 
+int testDriveC(int a, char** v){
+	msg_t msg;
+	msg.command = 0;
+	msg.argc = 0;
+	int i = 0;
+	while(i<20){
+		msgWrite(&msg);
+		i++;
+	}
+	return 0;
+}
+int testDriveS(int a, char** v){
+	msg_t msg;
+	int i = 0;
+	while(i<20){
+		sleep(500);
+		msgRead(&msg);
+		i++;
+	}
+	return 0;
+}
+
 
 

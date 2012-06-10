@@ -20,6 +20,7 @@
 #include "scheduler.h"
 #include "disc.h"
 #include "video.h"
+#include "msg.h"
 #define OS_PID	0
 
 int (*player)(void);

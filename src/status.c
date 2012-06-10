@@ -13,7 +13,7 @@ void tick()
 	int i;
 	for(i=0;i<MAXPROC;i++)
 	{
-		if(process[i].status==BLOCK && !process[i].input)
+		if(process[i].status==BLOCK && !process[i].input && !process[i].msg)
 		{
 			if(process[i].ticks>0)
 			{
@@ -47,4 +47,33 @@ void blockInput()
 	_sys_yield();
 	//_Sti();
 	//while(1);
+}
+
+void msgWAwake(){
+	int i;
+	for(i=0; i<MAXPROC; i++)
+	{
+		if(process[i].status==BLOCK && process[i].msg)	{
+			process[i].status=READY;
+			process[i].msg=0;
+		}
+	}
+}
+
+void msgRAwake(){
+	process[driverPid].msg = 0;
+	process[driverPid].status = READY;
+}
+
+
+void msgRBlock(){
+	process[driverPid].msg = 1;
+	process[driverPid].status = BLOCK;
+	_sys_yield();
+}
+
+void msgWBlock(){
+	process[current].msg = 1;
+	process[current].status = BLOCK;
+	_sys_yield();
 }

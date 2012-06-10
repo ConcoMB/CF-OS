@@ -250,6 +250,7 @@ int createProcess(int (*funct)(int, char **), int argc, char** argv, char* name,
 	task->priority=p;
 	task->timeBlocks=0;
 	task->input=0;
+	task->msg=0;
 	task->name=name;
 	return task->pid;
 }

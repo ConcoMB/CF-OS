@@ -188,7 +188,7 @@ int _cat(char* file){
 	int i=0;
 	while(inode.sector[i]!=-1){
 		read(&inode, i++, &buffer);
-		printf("%s\n", (char*)buffer);
+		//printf("%s\n", (char*)buffer);
 	}
 	return 0;
 }

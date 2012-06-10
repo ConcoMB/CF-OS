@@ -3,8 +3,9 @@
 #define __MSG__
 
 #include "../include/fileCalls.h"
+#include "../include/status.h"
 
-#define MAXMSG 20
+#define MAXMSG 5
 
 
 typedef struct
@@ -17,7 +18,6 @@ typedef struct
 
 extern msg_t msgs[];
 extern int msgTail;
-extern int msgCount;
 extern int msgHead;
 
 int msgRead(msg_t * ans);

@@ -33,11 +33,12 @@ void kmain()
 	initScreens();
 	initScheduler();
 	
-
+	createProcess(testDriveC,0,0,"TEST3", 0,0,10);
+	driverPid = createProcess(testDriveS,0,0,"TEST78", 0,0,10);
 	//fileSyst(0,0);
-	createProcess(shell, 0,0, "SHELL",  2,0,10);
+	//createProcess(shell, 0,0, "SHELL",  2,0,10);
 
-	//createProcess(shell, 0,0,"YPF", 1,1,10);
+	createProcess(shell, 0,0,"YPF", 1,1,10);
 	//createProcess(test, 0,0, "disktest", 0,0,10);
 
 	//createProcess(heapTest, 0,0, "heap", 3,3,10);	
@@ -52,7 +53,7 @@ void kmain()
     _mascaraPIC2(0xFF);
 	_Sti();	
 	//initializeFS();
-	createProcess(fileSyst, 0, 0, "fileSyst", 0, 0, 10);
+	//createProcess(fileSyst, 0, 0, "fileSyst", 0, 0, 10);
 
 	/*Test*/	
 

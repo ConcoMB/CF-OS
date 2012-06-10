@@ -13,5 +13,14 @@ void tick();
 void awake();
 void blockInput();
 
+void msgWAwake();
+
+void msgRAwake();
+
+void msgRBlock();
+
+void msgWBlock();
+
+
 
 #endif
