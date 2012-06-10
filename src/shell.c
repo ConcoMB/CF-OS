@@ -180,6 +180,12 @@ int shell(int argc, char** argv){
 			argv[1]=buffer+5;
 			argv[2]=(char*)0;
 		}
+		else if(strcmp("format", buffer)==0){
+			func=format;
+			argc=1;
+			argv[0]="format";
+			argv[1]=(char*)0;
+		}
 		else if(substr("mkdir ", buffer)){
 			func=mkdir;
 			argc=2;
