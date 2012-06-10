@@ -179,7 +179,25 @@ int shell(int argc, char** argv){
 			argv[0]="free";
 			argv[1]=buffer+5;
 			argv[2]=(char*)0;
-		} else{
+		}
+		else if(substr("mkdir ", buffer)){
+			func=mkdir;
+			argc=2;
+			argv[0]="mkdir";
+			argv[2]=(char*)0;
+			argv[1]=buffer+6;
+		}
+		else if(substr("ls", buffer)){
+			func=ls;
+			argc=2;
+			argv[0]="ls";
+			if(buffer[2] == ' '){
+				argv[1]=buffer+3;
+			}else{
+				argv[1]=".";
+			}
+			argv[2]=(char*)0;			
+		}else{
 			nothing=1;
 			printf("Command not found\n");
 		}

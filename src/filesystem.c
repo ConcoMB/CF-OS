@@ -1,5 +1,5 @@
 #include "../include/filesystem.h"
-extern fileTree_t* tree, *actual;
+extern fileTree_t* tree;
 extern fileTable_t table;
 
 int getSector()
@@ -21,9 +21,11 @@ int getSector()
 	return -1;
 }
 
-
-
-
+int fileSyst(int argc, char* argv){
+	readTable();
+	readBitMap();
+	return 0;
+}
 
 
 fileEntry_t getFreeEntry(int* index)
@@ -131,7 +133,7 @@ void editFile(fileTree_t* node){
 }
 */
 
-void initialize(){
+void initializeFS(){
 	initTable();
 	initBitMap();
 }

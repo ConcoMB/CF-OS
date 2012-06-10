@@ -1,6 +1,6 @@
 #ifndef __STRUCTS__
 #define __STRUCTS__
-#define MAXPROC 10
+#define MAXPROC 50
 
 #define MAXFILES 100
 #define MAXSIZE 4096
@@ -14,9 +14,11 @@
 #define GET(n) ((bitMap[n/8]>>(n%8))&0x01)
 #define FREE(n) (bitMap[n/8]&= ~(0x01<<(n%8)))
 #define ENTRY(n) table.files[n]
+#define CWD cwd[process[current].tty->num]
 
 typedef enum {DIR, FILE, LINK} fileType_t;
 int sectorIndex;
+
 char bitMap[MAXFILES * MAXSIZE / (512*8)];
 typedef enum {RUN, BLOCK, READY, FREE} status_t;
 
@@ -95,6 +97,7 @@ typedef struct
 	int cant;
 }topInfo_t;
 
-
+fileTree_t* tree, *cwd[8];
+fileTable_t table;
 
 #endif

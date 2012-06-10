@@ -5,7 +5,7 @@
 #include "string.h"
 #include "fileTree.h"
 
-int _mkdir(char* name, char* parent);
+int _mkdir(char* name);
 void _ls(char* path, char ans[][MAXNAME]);
 void _ln(char* file, char* name);
 int _rm(char* path, char isStr);
