@@ -260,8 +260,9 @@ int ls(int argc, char** argv)
 	msg.argv[1] = LS;
 	msgWrite(&msg);
 	int i=0;
-	while(LS[i]){
+	while(LS[i][0]){
 		printf("%s\n", LS[i]);
+		i++;
 	}
 	return 0;
 }

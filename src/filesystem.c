@@ -170,11 +170,13 @@ void editFile(fileTree_t* node){
 */
 
 void initializeFS(){
-	char* dir = (char*) 0xb8000;
-	dir[0]='0';
+	_Cli();
 	initTable();
-	dir[0]='1';
 	initBitMap();
+	readTable();
+	readBitMap();
+	loadTree(tree);
+	_Sti();
 }
 
 void initBitMap(){
@@ -193,8 +195,6 @@ void initTable(){
 	for(i=0; i<MAXFILES; i++){
 		tab.files[i].free=1;
 	}
-	char* dir= (char*) 0xb8000;
-	dir[0]='s';
 	ata_write(ATA0, tab.files, sizeof(fileEntry_t)*MAXFILES, 0,0);
 
 }
@@ -383,6 +383,13 @@ void readBitMap(){
 }
 
 int FSServer(int a, char** v){
+	getStackPage(current);
+	getStackPage(current);
+
+	readTable();
+	readBitMap();
+	loadTree(tree);
+
 	msg_t msg;
 	while(1){
 		msgRead(&msg);

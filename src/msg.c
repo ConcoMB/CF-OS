@@ -16,15 +16,18 @@ int msgRead(msg_t * info){
 	} else{
 		msgTail++;
 	}
-
+	printf("%d\n", info->command);
 	switch(info->command){
 		case 0:
+			printf("mkdir\n");
 			_mkdir( (char*)info->argv[0] );
 		break;
 		case 1:
+			printf("ls\n");
 			_ls((char*)info->argv[0],(char(*)[MAXNAME]) info->argv[1]);
 		break;
 		case 2:
+			printf("format\n");
 			initializeFS();
 		break;
 	}
