@@ -5,6 +5,9 @@ int readIndex = 0;
 int msgCount = 0;
 int writeIndex = 0;
 
+int writeBlock=FALSE;
+int readBlock=TRUE;
+
 
 int read(msg_t * ans){
 	while(msgCount == 0);
