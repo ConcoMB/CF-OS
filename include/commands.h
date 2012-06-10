@@ -2,7 +2,8 @@
 #include "systemcalls.h"
 #include "extras.h"
 #include "kasm.h"
-//#include "fileCalls.h"
+#include "fileCalls.h"
+#include "filesystem.h"
 #include "string.h"
 #include "libc.h"
 
@@ -33,6 +34,8 @@ int top(int argc, char** argv);
 int Malloc(int argc, char** argv);
 
 int Free(int argc, char** argv);
+
+int format(int argc, char** argv);
 
 int mkdir(int argc, char** argv);
 

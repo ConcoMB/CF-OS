@@ -229,6 +229,12 @@ int top(int argc, char** argv)
 	return 0;
 }
 
+int format(int argc, char** argv){
+	initializeFS();
+	return 0;
+}
+
+
 int mkdir(int argc, char** argv)
 {
 	/*int ans = _mkdir(argv[1]);
