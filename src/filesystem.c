@@ -28,22 +28,35 @@ int fileSyst(int argc, char** argv){
 		//leer comandos
 	}*/
 
+		//initializeFS();
+
 	getStackPage(current);
 	getStackPage(current);
 	int i;
 	for(i=0; i<MAXFILES; i++){
 		table.files[i].free=1;
 	}
+	readTable();
+	readBitMap();
 	loadTree(tree);
-	//_mkdir("hola");
-	//_mkdir("chau");
-	//_mkdir("chau/adios");
+	/*_mkdir("hola");
+	_mkdir("chau");
+	_mkdir("chau/adios");*/
+	printf("TREE\n");
 	printTree(tree);
-
+	printTable();
 	return 0;
 }
 
-
+void printTable(){
+	int i;
+	printf("TABLE\n");
+	for(i=0; i<MAXFILES; i++){
+		if(!ENTRY(i).free){
+			printf("%s\n", ENTRY(i).name);
+		}
+	}
+}
 fileEntry_t getFreeEntry(int* index)
 {
 	int i=0;
@@ -231,6 +244,7 @@ void create(fileEntry_t* entry, void* buffer, int size, int index){
 	}
 	int inodeSect=getSector();
 	entry->inode=inodeSect;
+	table.files[index]=*entry;
 	writeEntry(index);
 	writeInode(entry, &inode);
 }
@@ -262,8 +276,7 @@ void writeFile(fileTree_t* node, void* buffer, int size){
 	entry.free=0;
 	entry.del=0;
 	strcpy(entry.name, node->name);
-	if(size!=0)
-		create(&entry, buffer, size, i);
+	create(&entry, buffer, size, i);
 }
 
 void snapCP(fileTree_t* node){
