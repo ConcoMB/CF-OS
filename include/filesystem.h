@@ -24,7 +24,7 @@ fileTree_t* getParentFromTable(fileEntry_t* entry);
 void readAll(inode_t* inode, void** buffer);
 void initializeFS();
 void initBitMap();
-void writeEntry(int index);
+void writeEntry(int index, fileEntry_t* entry);
 void writeInode(fileEntry_t* entry, inode_t* inode);
 void writeBitMap();
 void readBitMap();

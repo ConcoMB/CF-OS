@@ -124,7 +124,7 @@ int _mv(char* to, char* from)
 	return 0;
 }
 
-int _cp(char* to, char* from)
+int _cp(char* from, char* to)
 {
 	char pathFrom[MAXFILES][MAXNAME], pathTo[MAXFILES][MAXNAME], nodeName[MAXNAME];
 	split(from, '/', pathFrom);
@@ -135,6 +135,7 @@ int _cp(char* to, char* from)
 	}
 	setLastStr(pathTo, nodeName);
 	fileTree_t* dad=getNode(pathTo);
+
 	if(dad==0){
 		return -2;
 	}
@@ -146,13 +147,18 @@ int _cp(char* to, char* from)
 	newNode->cantChilds=nodeF->cantChilds;
 	newNode->parent=dad;
 	dad->childs[dad->cantChilds++]=newNode;
-
-	inode_t inode;
-	open(nodeF, &inode);
-	void* buffer=malloc(inode.size);
-	readAll(&inode, &buffer);
-	writeSnap(newNode, buffer, inode.size);
-	free(buffer);
+	if(nodeF->type!=DIR){
+		inode_t inode;
+		open(nodeF, &inode);
+		void* buffer=malloc(inode.size);
+		readAll(&inode, &buffer);
+		printf("EE\n");
+		writeFile(newNode, buffer, inode.size);
+		free(buffer);
+	}else{
+		writeFile(newNode, 0,0);
+	}
+	printf("termine\n");
 	return 0;
 }
 
@@ -174,9 +180,11 @@ int _touch(char* file){
 }
 
 int _cat(char* file){
+	printf("CAT\n");
 	char path[MAXFILES][MAXNAME];
 	split(file, '/', path);
 	fileTree_t* node = getNode(path);
+
 	if(node==0){
 		return -2;
 	}
@@ -185,8 +193,10 @@ int _cat(char* file){
 	void * buffer;
 	inode_t inode;
 	open(node, &inode);
+	printf("inodo con size %d\n", inode.size);
 	int i=0;
 	while(inode.sector[i]!=-1){
+		printf("sector %d: %d, \n", i, inode.sector[i]);
 		read(&inode, i++, &buffer);
 		//printf("%s\n", (char*)buffer);
 	}
@@ -208,11 +218,11 @@ int attatch(char* file, char* string){
 	int len=strlen(string);
 	inode_t inode;
 	open(node, &inode);
-	int size=inode.size+len;
-	buffer=malloc(size);
+	inode.size+=len;
+	buffer=malloc(inode.size);
 	readAll(&inode, &buffer);
 	memcpy(buffer+inode.size, string, len);
-	writeSnap(node, buffer, size);
+	writeSnap(node, buffer, inode.size);
 	free(buffer);
 	return 0;
 }
@@ -242,8 +252,8 @@ int revertTo(char* file, int version){
 			return -1;
 		}
 		previous.free=1;
-		writeEntry(j);
 		FREE(j);
+		writeEntry(j, &ENTRY(j));
 		j=previous.prev;
 		previous = ENTRY(previous.prev);
 		i++;
@@ -258,8 +268,8 @@ int revertTo(char* file, int version){
 		return -3;
 	}
 	complete(dad, this.prev);
-	writeEntry(j);
-	writeEntry(node->index);
+	writeEntry(j, &ENTRY(j));
+	writeEntry(node->index, &ENTRY(node->index));
 	FREE(j);
 	return 0;
 }
