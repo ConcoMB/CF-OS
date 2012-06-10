@@ -30,4 +30,5 @@ void writeBitMap();
 void readBitMap();
 void printTable();
 void initFS();
+int FSServer(int a, char** v);
 #endif

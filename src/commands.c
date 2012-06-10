@@ -230,24 +230,35 @@ int top(int argc, char** argv)
 }
 
 int format(int argc, char** argv){
-	initializeFS();
+	msg_t msg;
+	msg.command = 2;
+	msg.argc = 0;
+	msgWrite(&msg);
+	//initializeFS();
 	return 0;
 }
 
 
 int mkdir(int argc, char** argv)
 {
-	/*int ans = _mkdir(argv[1]);
-	if(ans==-1){
-		printf("FULL DISC\n");
-	}*/
+	//int ans = _mkdir(argv[1]);
+	msg_t msg;
+	msg.command = 0;
+	msg.argc = 1;
+	msg.argv[0] = argv[1];
+	msgWrite(&msg);
 	return 0;
 }
 
 int ls(int argc, char** argv)
 {
 	char LS[MAXFILES][MAXNAME];
-	//_ls(argv[1], LS);
+	msg_t msg;
+	msg.command = 1;
+	msg.argc = 2;
+	msg.argv[0] = argv[1];
+	msg.argv[1] = LS;
+	msgWrite(&msg);
 	int i=0;
 	while(LS[i]){
 		printf("%s\n", LS[i]);

@@ -351,3 +351,11 @@ void readBitMap(){
 	pos++;
 	ata_read(ATA0, (void*)&bitMap, sizeof(bitMap), pos, 0);
 }
+
+int FSServer(int a, char** v){
+	msg_t msg;
+	while(1){
+		msgRead(&msg);
+	}
+	return 0;
+}

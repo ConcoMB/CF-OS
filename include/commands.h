@@ -6,6 +6,7 @@
 #include "filesystem.h"
 #include "string.h"
 #include "libc.h"
+#include "msg.h"
 
 int who(int argc, char** argv);
 

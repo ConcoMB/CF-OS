@@ -25,7 +25,7 @@ int msgRead(msg_t * info){
 			_ls((char*)info->argv[0],(char(*)[MAXNAME]) info->argv[1]);
 		break;
 		case 2:
-			printf("caca");
+			initializeFS();
 		break;
 	}
 	msgWAwake();
@@ -51,5 +51,6 @@ int msgWrite(msg_t * toWrite){
 		msgRAwake();
 	}
 	_Sti();
+	msgWBlock();
 	return 0;
 }
