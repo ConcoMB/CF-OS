@@ -1,15 +1,21 @@
 #include "../include/fileCalls.h"
-extern fileTree_t* tree, *actual;
+extern fileTree_t* tree;
 extern fileTable_t table;
 
-int _mkdir(char* name, char* parent)
+int _mkdir(char* name)
 {
+	char spl[MAXFILES][MAXNAME];
+	split(name, '/', spl);
+	char nameD[MAXNAME];
+	setLastStr(spl, nameD);
+	fileTree_t* dad = getNode(spl);
 	fileTree_t* myTree = malloc(sizeof(fileTree_t));
-	strcpy(myTree->name,name);
+	strcpy(myTree->name,nameD);
 	myTree->type=DIR;
 	//myTree->inode.size=0;
 	myTree->cantChilds=0;
-	setParent(myTree, parent);
+	myTree->parent=dad;
+	dad->childs[dad->cantChilds++]=myTree;
 	int sector = getSector();
 	if(sector==-1){
 		//error
@@ -65,7 +71,7 @@ int _rm(char* path, char isStr)
 	char realPath[MAXFILES][MAXNAME];
 	split(path, '/', realPath);
 	fileTree_t* node = getNode(realPath);
-	if(isChildOf(node, actual)){
+	if(isChildOf(node, CWD)){
 		return -2;
 	}
 	_myrm(node, isStr);

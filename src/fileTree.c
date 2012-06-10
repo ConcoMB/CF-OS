@@ -1,9 +1,5 @@
 #include "../include/fileTree.h"
 
-fileTree_t* tree, *actual;
-fileTable_t table;
-
-
 void printTree(fileTree_t* aTree){
 	printf("name %s, parent %s\n", aTree->name, aTree->parent->name);
 	int i;
@@ -123,10 +119,10 @@ fileTree_t* getNode(char path[][MAXNAME])
 	fileTree_t* myTree;
 	if(strcmp(path[i], "..")==0){
 		do{
-			myTree=actual->parent;
+			myTree=CWD->parent;
 		}while(strcmp(path[++i],"..")==0);
 	}else if(strcmp(path[0], ".")==0) {
-		myTree=actual;
+		myTree=CWD;
 		i++;
 	}else{
 		//path absoluto;

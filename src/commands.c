@@ -228,3 +228,24 @@ int top(int argc, char** argv)
 	}
 	return 0;
 }
+
+int mkdir(int argc, char** argv)
+{
+	/*int ans = _mkdir(argv[1]);
+	if(ans==-1){
+		printf("FULL DISC\n");
+	}*/
+	return 0;
+}
+
+int ls(int argc, char** argv)
+{
+	char LS[MAXFILES][MAXNAME];
+	//_ls(argv[1], LS);
+	int i=0;
+	while(LS[i]){
+		printf("%s\n", LS[i]);
+	}
+	return 0;
+}
+
