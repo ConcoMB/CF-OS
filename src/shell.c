@@ -105,10 +105,10 @@ int shell(int argc, char** argv){
 		else if(substr("color ", buffer)){
 		    func=chColor;
 		    argc=3;
+		    argv[0]="color";
 		    argv[1]=buffer+6;
 		    argv[2]=(char*)&user_color;
 		    argv[3]=(char*)0;
-		    argv[0]="color";
 		}
 		else if(substr("time",buffer)){
 			func=time;
@@ -119,9 +119,9 @@ int shell(int argc, char** argv){
 		else if(substr("keyboard ", buffer)){
 			func=keyboard;
 			argc=2;
+			argv[0]="keyboard";
 			argv[1]=buffer+9;
 			argv[2]=(char*)0;
-			argv[0]="keyboard";
 		}
 		
 		else if(substr("lostquote", buffer)){
@@ -151,9 +151,9 @@ int shell(int argc, char** argv){
 		else if(substr("kill ", buffer)){
 			func=Kill;
 			argc=2;
-			argv[2]=(char*)0;
-			argv[1]=buffer+5;
 			argv[0]="kill";
+			argv[1]=buffer+5;
+			argv[2]=(char*)0;
 		}
 		else if(substr("top", buffer)){
 			func=top;
@@ -171,15 +171,15 @@ int shell(int argc, char** argv){
 			func=Malloc;
 			argc=2;
 			argv[0]="malloc";
-			argv[2]=(char*)0;
 			argv[1]=buffer+7;
+			argv[2]=(char*)0;
 		}
 		else if(substr("free ", buffer)){
 			func=Free;
 			argc=2;
 			argv[0]="free";
-			argv[2]=(char*)0;
 			argv[1]=buffer+5;
+			argv[2]=(char*)0;
 		}
 		else if(substr("mkdir ", buffer)){
 			func=mkdir;
@@ -198,9 +198,7 @@ int shell(int argc, char** argv){
 				argv[1]=".";
 			}
 			argv[2]=(char*)0;			
-		}
-
-		else{
+		}else{
 			nothing=1;
 			printf("Command not found\n");
 		}
