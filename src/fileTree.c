@@ -14,7 +14,10 @@ void loadTree(){
 	tree->cantChilds=0;
 	tree->parent=tree;
 	tree->type=DIR;
-
+	int i;
+	for(i=0; i<8; i++){
+		cwd[i]=tree;
+	}
 	fill(tree, -1);
 }
 
