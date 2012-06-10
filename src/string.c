@@ -39,7 +39,7 @@ void setLastStr(char path[][MAXNAME], char dest[MAXNAME])
 		strcpy(dest, "/");
 		return;
 	}
-	for(i=0; i<MAXFILES; i++){
+	for(i=0; i<MAXFILES-1; i++){
 		if(path[i+1][0]=='\0'){
 			strcpy(dest, path[i]);
 			path[i][0]='\0';

@@ -21,9 +21,25 @@ int getSector()
 	return -1;
 }
 
-int fileSyst(int argc, char* argv){
-	readTable();
+int fileSyst(int argc, char** argv){
+	/*readTable();
 	readBitMap();
+	while(1){
+		//leer comandos
+	}*/
+
+	getStackPage(current);
+	getStackPage(current);
+	int i;
+	for(i=0; i<MAXFILES; i++){
+		table.files[i].free=1;
+	}
+	loadTree(tree);
+	//_mkdir("hola");
+	//_mkdir("chau");
+	//_mkdir("chau/adios");
+	printTree(tree);
+
 	return 0;
 }
 
@@ -134,7 +150,10 @@ void editFile(fileTree_t* node){
 */
 
 void initializeFS(){
+	char* dir = (char*) 0xb8000;
+	dir[0]='0';
 	initTable();
+	dir[0]='1';
 	initBitMap();
 }
 
@@ -154,7 +173,9 @@ void initTable(){
 	for(i=0; i<MAXFILES; i++){
 		tab.files[i].free=1;
 	}
-	ata_write(ATA0, table.files, sizeof(fileEntry_t)*MAXFILES, 0,0);
+	char* dir= (char*) 0xb8000;
+	dir[0]='s';
+	ata_write(ATA0, tab.files, sizeof(fileEntry_t)*MAXFILES, 0,0);
 
 }
 
@@ -191,7 +212,7 @@ void readAll(inode_t* inode, void** buffer){
 }
 
 void write(inode_t* inode, int which, int size, void* buffer){
-	ata_read(ATA0, buffer, size, inode->sector[which], 0);
+	ata_write(ATA0, buffer, size, inode->sector[which], 0);
 }
 
 void create(fileEntry_t* entry, void* buffer, int size, int index){
