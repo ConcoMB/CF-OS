@@ -9,7 +9,6 @@ void int_80(REG registers)
 	//while(1){};
 	char *c;
 	int i;
-	char** ans;
 	switch(registers.ebx)
 	{
 		case 1:
