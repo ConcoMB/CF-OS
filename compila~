@@ -1,0 +1,22 @@
+cd ./bin
+rm -rf *
+nasm -f elf ../src/libasm.asm -o libasm.o
+nasm -f elf ../src/kstart.asm -o kstart.o
+nasm -f elf ../src/loader.asm -o kstart.o
+gcc   -Wall -m32 -c ../src/kernel.c -o kernel.o -fno-builtin -fno-stack-protector 
+gcc  -Wall -m32 -c ../src/int80.c -o int80.o -fno-builtin -fno-stack-protector 
+gcc   -Wall -m32 -c ../src/keyboard.c -o keyboard.o -fno-builtin -fno-stack-protector 
+gcc  -Wall -m32 -c ../src/timertick.c -o timertick.o -fno-builtin -fno-stack-protector 
+gcc   -Wall -m32 -c ../src/libc.c  -o libc.o -fno-builtin -fno-stack-protector 
+gcc   -Wall -m32 -c ../src/string.c  -o string.o -fno-builtin -fno-stack-protector 
+gcc   -Wall -m32 -c ../src/stdio.c  -o stdio.o -fno-builtin -fno-stack-protector 
+gcc   -Wall -m32 -c ../src/paging.c  -o paging.o -fno-builtin -fno-stack-protector
+gcc   -Wall -m32 -c ../src/shell.c  -o shell.o -fno-builtin -fno-stack-protector
+gcc   -Wall -m32 -c ../src/video.c  -o video.o -fno-builtin -fno-stack-protector
+gcc   -Wall -m32 -c ../src/heap.c  -o heap.o -fno-builtin -fno-stack-protector 
+gcc   -Wall -m32 -c ../src/commands.c  -o commands.o -fno-builtin -fno-stack-protector 
+gcc   -Wall -m32 -c ../src/status.c  -o status.o -fno-builtin -fno-stack-protector 
+gcc   -Wall -m32 -c ../src/disc.c  -o disc.o -fno-builtin -fno-stack-protector
+gcc   -Wall -m32 -c ../src/extras.c  -o extras.o -fno-builtin -fno-stack-protector 
+gcc  -Wall -m32 -c ../src/scheduler.c -o scheduler.o -fno-builtin -fno-stack-protector  
+ld -m elf_i386 -T ../src/link.ld -o kernel.bin kstart.o scheduler.o status.o video.o stdio.o string.o kernel.o libc.o libasm.o paging.o keyboard.o int80.o timertick.o shell.o heap.o commands.o extras.o disc.o

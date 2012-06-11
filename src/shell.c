@@ -193,6 +193,42 @@ int shell(int argc, char** argv){
 			argv[2]=(char*)0;
 			argv[1]=buffer+6;
 		}
+		else if(substr("cat ", buffer)){
+			func=cat;
+			argc=2;
+			argv[0]="cat";
+			argv[2]=(char*)0;
+			argv[1]=buffer+4;
+		}
+		else if(substr("touch ", buffer)){
+			func=touch;
+			argc=2;
+			argv[0]="touch";
+			argv[2]=(char*)0;
+			argv[1]=buffer+6;
+		
+		}
+		else if(substr("attach ", buffer)){
+			func=attach;
+			argc=2;
+			argv[0]="attach";
+			argv[2]=(char*)0;
+			argv[1]=buffer+7;
+		}
+		else if(substr("ln ", buffer)){
+			func=ln;
+			argc=2;
+			argv[0]="ln";
+			argv[3]=(char*)0;
+			int i,size=strlen(buffer);
+			for(i=3;buffer[i]!=' '&&buffer[i];i++);
+			buffer[i]=0;
+			argv[2]=buffer+i+1;
+			argv[1]=buffer+3;
+			if(strlen(argv[1])==0||strlen(argv[2])==0){
+				printf("Invalid arguments.\n");
+			}
+		}
 		else if(substr("ls", buffer)){
 			func=ls;
 			argc=2;

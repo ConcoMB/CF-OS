@@ -259,11 +259,13 @@ void read(inode_t* inode, int which, void** buffer){
 void readAll(inode_t* inode, void** buffer){
 	int i=0, size;
 	while(inode->sector[i]!=-1){
+		//printf("i:%d\n",i);
 		size=512;
 		if(i!=MAXSECTOR && inode->sector[i+1]==-1){
 			size=inode->size%512;
 		}
 		ata_read(ATA0, *buffer+i*512, size, inode->sector[i], 0);
+		i++;
 	}
 }
 

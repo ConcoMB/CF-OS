@@ -1,4 +1,4 @@
-#include "../include/msg.h"
+ #include "../include/msg.h"
 
 msg_t msgs[MAXMSG];
 int msgTail = 0;
@@ -16,19 +16,27 @@ int msgRead(msg_t * info){
 	} else{
 		msgTail++;
 	}
-	printf("%d\n", info->command);
 	switch(info->command){
 		case 0:
-			printf("mkdir\n");
 			_mkdir( (char*)info->argv[0] );
 		break;
 		case 1:
-			printf("ls\n");
 			_ls((char*)info->argv[0],(char(*)[MAXNAME]) info->argv[1]);
 		break;
 		case 2:
-			printf("format\n");
 			initializeFS();
+		break;
+		case 3:
+			_cat((char*)info->argv[0]);
+		break;
+		case 4:
+			_touch((char*)info->argv[0]);
+		break;
+		case 5:
+			attatch((char*)info->argv[0],(char*)info->argv[1]);
+		break;
+		case 6:
+			_ln((char*)info->argv[0],(char*)info->argv[1]);
 		break;
 	}
 	msgWAwake();
