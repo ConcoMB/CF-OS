@@ -193,12 +193,11 @@ int _cat(char* file){
 	void * buffer;
 	inode_t inode;
 	open(node, &inode);
-	printf("inodo con size %d\n", inode.size);
 	int i=0;
 	while(inode.sector[i]!=-1){
-		printf("sector %d: %d, \n", i, inode.sector[i]);
+		//printf("sector %d: %d, \n", i, inode.sector[i]);
 		read(&inode, i++, &buffer);
-		//printf("%s\n", (char*)buffer);
+		printf("%s\n", (char*)buffer);
 	}
 	return 0;
 }
@@ -221,9 +220,9 @@ int attatch(char* file, char* string){
 	inode.size+=len;
 	buffer=malloc(inode.size);
 	readAll(&inode, &buffer);
-	memcpy(buffer+inode.size, string, len);
+	memcpy(buffer+(inode.size-len), string, len);
 	writeSnap(node, buffer, inode.size);
-	free(buffer);
+	//free(buffer);
 	return 0;
 }
 

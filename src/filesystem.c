@@ -28,7 +28,7 @@ int fileSyst(int argc, char** argv){
 		//leer comandos
 	}*/
 
-		//initializeFS();
+		initializeFS();
 
 	getStackPage(current);
 	getStackPage(current);
@@ -39,18 +39,19 @@ int fileSyst(int argc, char** argv){
 
 	readTable();
 	readBitMap();
-	printf("%d\n", sectorIndex);
 	loadTree(tree);
-	/*_mkdir("hola");
+	_mkdir("hola");
 	_mkdir("chau");
-	_mkdir("chau/adios");*/
-	/*_touch("acr");
-	attatch("acr", "linea1");
-	_cat("acr");*/
+	_ln("chau/adios");
+	//_touch("acr");
+	//attatch("acr", "linea1");
+	//_cat("acr");
 	//printf("%d\n",_rm("archivito", 1));
+
 	printf("TREE\n");
 	printTree(tree);
 	printTable();
+	printBitMap();
 	return 0;
 }
 
@@ -189,6 +190,16 @@ void initBitMap(){
 	writeBitMap();
 }
 
+void printBitMap(){
+	int i;
+	printf("BITMAP\n");
+	for(i=0; i<MAXFILES * MAXSIZE / (512*8); i++){
+		if(GET(i)){
+			printf("%d, ", i);
+		}
+	}
+}
+
 void initTable(){
 	fileTable_t tab;
 	int i;
@@ -205,7 +216,7 @@ void readTable(){
 
 void open(fileTree_t* node, inode_t* inode){
 	if(ENTRY(node->index).inode!=-1){
-		ata_read(ATA0, (void*)&inode, sizeof(inode), ENTRY(node->index).inode,0);
+		ata_read(ATA0, (void*)inode, sizeof(inode_t), ENTRY(node->index).inode,0);
 	}
 	else
 	{
@@ -254,9 +265,13 @@ void create(fileEntry_t* entry, void* buffer, int size, int index){
 		int i, j;
 		for(i=0; i<sects; i++){
 			j=getSector();
-			printf("reserve el %d\n", j);
+			printf("reserve el sector %d en  %d, ", i, j);
 			inode.sector[i]=j;
-			ata_write(ATA0, buffer+i*512,512, j,0);
+			if(sects-1 == i){
+				ata_write(ATA0, buffer+i*512, size%512, j,0);
+			}
+			else
+				ata_write(ATA0, buffer+i*512, 512, j,0);
 		}
 		for(; i<MAXSECTOR; i++){
 			inode.sector[i]=-1;
@@ -268,14 +283,12 @@ void create(fileEntry_t* entry, void* buffer, int size, int index){
 		entry->inode=-1;
 	}
 	writeEntry(index, entry);
-
 }
 
 void writeSnap(fileTree_t* node, void* buffer, int size){
 	int newIndex, oldIndex=node->index;
 	fileEntry_t old= ENTRY(oldIndex);
 	fileEntry_t entry=getFreeEntry(&newIndex);
-
 	old.next=newIndex;
 
 	writeEntry(oldIndex, &old);
@@ -286,8 +299,6 @@ void writeSnap(fileTree_t* node, void* buffer, int size){
 	entry.free=0;
 	entry.del=0;
 	entry.prev=oldIndex;
-	
-
 	entry.next=-1;
 	create(&entry, buffer, size, newIndex);
 	node->index=newIndex;
@@ -367,7 +378,6 @@ void writeEntry(int index, fileEntry_t* entry){
 void writeInode(fileEntry_t* entry, inode_t* inode)
 {
 	ata_write(ATA0, (void*)inode, sizeof(inode_t), entry->inode, 0);
-
 }
 
 void writeBitMap(){

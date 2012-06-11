@@ -9,6 +9,7 @@ int getSector();
 fileEntry_t getFreeEntry(int* index);
 int snapList(char* file);
 void readTable();
+void printBitMap();
 int fileSyst(int argc, char** argv);
 void initTable();
 void open(fileTree_t* node, inode_t* inode);
