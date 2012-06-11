@@ -221,6 +221,7 @@ int attatch(char* file, char* string){
 	buffer=malloc(inode.size);
 	readAll(&inode, &buffer);
 	memcpy(buffer+(inode.size-len), string, len);
+	printf("buffer:%s",buffer);
 	writeSnap(node, buffer, inode.size);
 	//free(buffer);
 	return 0;

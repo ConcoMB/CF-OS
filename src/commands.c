@@ -266,3 +266,54 @@ int ls(int argc, char** argv)
 	}
 	return 0;
 }
+
+int cat(int argc, char** argv)
+{
+	msg_t msg;
+	msg.command=3;
+	msg.argc=1;
+	msg.argv[0]=argv[1];
+	msgWrite(&msg);
+	return 0;
+}
+
+int touch(int argc, char** argv)
+{
+	msg_t msg;
+	msg.command=4;
+	msg.argc=1;
+	msg.argv[0]=argv[1];
+	msgWrite(&msg);
+	return 0;
+}
+
+int attach(int argc, char** argv)
+{
+	msg_t msg;
+	msg.command=5;
+	msg.argc=2;
+	msg.argv[0]=argv[1];
+	char c[300];
+	int i=0;
+	while((c[i++]=getchar())!=64)
+	{
+		putchar(c[i-1]);
+	}
+	c[i-1]=0;
+	msg.argv[1]=c;
+	msgWrite(&msg);
+	return 0;
+}
+
+int ln(int argc, char** argv)
+{
+	msg_t msg;
+	msg.command=6;
+	msg.argc=2;
+	msg.argv[0]=argv[1];
+	msg.argv[1]=argv[2];
+	//printf("arg0:%s\n",argv[1]);
+	//printf("arg1:%s\n",argv[2]);
+	msgWrite(&msg);
+	return 0;
+}

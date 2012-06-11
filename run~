@@ -1,0 +1,2 @@
+#!/bin/sh
+kvm -fdb /home/fede/git/OS/img/tpe.img -hda /home/fede/git/OS/img/disk.img

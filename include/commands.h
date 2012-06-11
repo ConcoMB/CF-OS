@@ -41,3 +41,11 @@ int format(int argc, char** argv);
 int mkdir(int argc, char** argv);
 
 int ls(int argc, char** argv);
+
+int cat(int argc, char** argv);
+
+int touch(int argc, char** argv);
+
+int attach(int argc, char** argv);
+
+int ln(int argc, char** argv);
