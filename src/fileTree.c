@@ -117,6 +117,18 @@ void cpyChilds(fileTree_t* from, fileTree_t* to)
 	int i;
 	for(i=0; i<from->cantChilds; i++)
 	{
+		//to->childs[i]=clone(from->childs[i]);
+		if(from->childs[i]->type==DIR){
+			cpyChilds(from->childs[i], to->childs[i]);
+		}
+	}
+}
+
+void lnChilds(fileTree_t* from, fileTree_t* to)
+{
+	int i;
+	for(i=0; i<from->cantChilds; i++)
+	{
 		to->childs[i]=from->childs[i];
 	}
 }

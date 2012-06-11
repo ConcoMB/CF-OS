@@ -23,4 +23,5 @@ int isChildOf(fileTree_t* dad, fileTree_t* son);
 void setParentW(fileTree_t* newTree, char nodes[MAXFILES][MAXNAME], int index, fileTree_t* thisTree);
 void setParent(fileTree_t* newTree, char* parent);
 void buildPath(char path[], fileEntry_t* entry);
+void lnChilds(fileTree_t* from, fileTree_t* to);
 #endif

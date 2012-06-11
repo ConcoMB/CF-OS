@@ -32,7 +32,7 @@ typedef struct fileEntry_t{
 	char name[MAXNAME];
 	int parent;
 	int inode;
-	int prev,next;
+	int prev,next, linkTo;
 	fileType_t type;
 	char free, del;		
 }fileEntry_t;

@@ -53,9 +53,9 @@ void _ln(char* file, char* name)
 	newLink->cantChilds=linked->cantChilds;
 	if(linked->type==DIR)
 	{
-		cpyChilds(newLink, linked);
+		lnChilds(linked, newLink);
 	}
-	char c[MAXPATH];
+	char c[MAXNAME];
 	removeLast(name, c);
 	setParent(newLink,c);
 	newLink->type=LINK;
@@ -184,7 +184,6 @@ int _cat(char* file){
 	char path[MAXFILES][MAXNAME];
 	split(file, '/', path);
 	fileTree_t* node = getNode(path);
-
 	if(node==0){
 		return -2;
 	}

@@ -41,17 +41,21 @@ int fileSyst(int argc, char** argv){
 	readBitMap();
 	loadTree(tree);
 	_mkdir("hola");
+	_touch("hola/oro");
 	_mkdir("chau");
-	_ln("chau/adios");
+	_ln("hola/oro", "chau/link");
+	_ln("chau/link", "/doubleLink");
 	//_touch("acr");
-	//attatch("acr", "linea1");
-	//_cat("acr");
+	attatch("hola/oro", "linea1");
+	//_cat("hola/oro");
+	_cat("chau/link");
+	_cat("/doubleLink");
 	//printf("%d\n",_rm("archivito", 1));
 
-	printf("TREE\n");
-	printTree(tree);
+	//printf("TREE\n");
+	//printTree(tree);
 	printTable();
-	printBitMap();
+	//printBitMap();
 	return 0;
 }
 
@@ -215,8 +219,19 @@ void readTable(){
 }
 
 void open(fileTree_t* node, inode_t* inode){
-	if(ENTRY(node->index).inode!=-1){
-		ata_read(ATA0, (void*)inode, sizeof(inode_t), ENTRY(node->index).inode,0);
+	fileEntry_t e;
+	printf("abro el %s, tipo %d\n", node->name, node->type);
+	if(node->type==LINK){
+		e = ENTRY(ENTRY(node->index).linkTo);
+		while(e.next!=-1){
+			e= ENTRY(e.next);
+		}
+		printf("link a %s, inodo %d\n", e.name, e.inode);
+	}else{
+		e=ENTRY(node->index);
+	}
+	if(e.inode!=-1){
+		ata_read(ATA0, (void*)inode, sizeof(inode_t), e.inode,0);
 	}
 	else
 	{
@@ -265,7 +280,6 @@ void create(fileEntry_t* entry, void* buffer, int size, int index){
 		int i, j;
 		for(i=0; i<sects; i++){
 			j=getSector();
-			printf("reserve el sector %d en  %d, ", i, j);
 			inode.sector[i]=j;
 			if(sects-1 == i){
 				ata_write(ATA0, buffer+i*512, size%512, j,0);
@@ -308,10 +322,17 @@ void writeSnap(fileTree_t* node, void* buffer, int size){
 void writeFile(fileTree_t* node, void* buffer, int size){
 	int i;
 	fileEntry_t entry=getFreeEntry(&i);
+	if(node->type==LINK){
+		entry.linkTo=node->index;
+		while(ENTRY(entry.linkTo).type==LINK){
+			entry.linkTo=ENTRY(entry.linkTo).linkTo;
+		}
+	}
 	node->index=i;
 	entry.next=-1;
 	entry.prev=-1;
 	entry.type=node->type;
+	
 	entry.parent=node->parent->index;
 	entry.free=0;
 	entry.del=0;
