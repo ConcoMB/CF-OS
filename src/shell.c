@@ -215,6 +215,13 @@ int shell(int argc, char** argv){
 			argv[2]=(char*)0;
 			argv[1]=buffer+7;
 		}
+		else if(substr("rm ", buffer)){
+			func=rm;
+			argc=2;
+			argv[0]="rm";
+			argv[2]=(char*)0;
+			argv[1]=buffer+3;
+		}
 		else if(substr("ln ", buffer)){
 			func=ln;
 			argc=2;

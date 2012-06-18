@@ -38,6 +38,15 @@ int msgRead(msg_t * info){
 		case 6:
 			_ln((char*)info->argv[0],(char*)info->argv[1]);
 		break;
+		case 7:
+			_rm((char*)info->argv[0],0);
+		break;
+		case 8:
+			_cp((char*)info->argv[0],(char*)info->argv[1]);
+		break;
+		case 9:
+			_mv((char*)info->argv[0],(char*)info->argv[1]);
+		break;
 	}
 	msgWAwake();
 

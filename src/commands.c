@@ -317,3 +317,33 @@ int ln(int argc, char** argv)
 	msgWrite(&msg);
 	return 0;
 }
+
+int rm(int argc, char** argv)
+{
+	msg_t msg;
+	msg.command=7;
+	msg.argc=1;
+	msg.argv[0]=argv[1];
+	msgWrite(&msg);
+	return 0;
+}
+
+int cp(int argc, char** argv)
+{
+	msg_t msg;
+	msg.command=8;
+	msg.argc=1;
+	msg.argv[0]=argv[1];
+	msgWrite(&msg);
+	return 0;
+} 
+
+int mv(int argc, char** argv)
+{
+	msg_t msg;
+	msg.command=9;
+	msg.argc=1;
+	msg.argv[0]=argv[1];
+	msgWrite(&msg);
+	return 0;
+}
