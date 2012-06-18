@@ -111,13 +111,32 @@ void removeLast(char* path, char ans[MAXPATH])
 	return;
 }
 
+void clone(fileTree_t* cloned, fileTree_t* new){
+	strcpy(new->name, cloned->name);
+	new->cantChilds=cloned->cantChilds;
+	new->parent=cloned->parent;
+	new->type=cloned->type;
+	if(cloned->type!=DIR){
+		inode_t inode;
+		open(cloned, &inode);
+		void* buffer=malloc(inode.size);
+		readAll(&inode, &buffer);
+		writeFile(new, buffer, inode.size);
+		//free(buffer);
+	}else{
+		writeFile(new, 0,0);
+	}
+}
 
 void cpyChilds(fileTree_t* from, fileTree_t* to)
 {
 	int i;
+
 	for(i=0; i<from->cantChilds; i++)
 	{
-		//to->childs[i]=clone(from->childs[i]);
+		fileTree_t* new = malloc(sizeof(fileTree_t));
+		to->childs[i]=new;
+		clone(from->childs[i], new);
 		if(from->childs[i]->type==DIR){
 			cpyChilds(from->childs[i], to->childs[i]);
 		}

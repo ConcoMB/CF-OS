@@ -24,4 +24,5 @@ void setParentW(fileTree_t* newTree, char nodes[MAXFILES][MAXNAME], int index, f
 void setParent(fileTree_t* newTree, char* parent);
 void buildPath(char path[], fileEntry_t* entry);
 void lnChilds(fileTree_t* from, fileTree_t* to);
+void clone(fileTree_t* cloned, fileTree_t* new);
 #endif

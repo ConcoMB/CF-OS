@@ -28,7 +28,7 @@ int fileSyst(int argc, char** argv){
 		//leer comandos
 	}*/
 
-		initializeFS();
+	initializeFS();
 
 	getStackPage(current);
 	getStackPage(current);
@@ -42,18 +42,21 @@ int fileSyst(int argc, char** argv){
 	loadTree(tree);
 	_mkdir("hola");
 	_touch("hola/oro");
-	_mkdir("chau");
-	_ln("hola/oro", "chau/link");
-	_ln("chau/link", "/doubleLink");
+	attatch("hola/oro", "unaLinea =)");
+	_cp("./hola", "/copia");
+	attatch("hola/oro", "  dosLineas =/");
+	//_mkdir("chau");
+	//_ln("hola/oro", "chau/link");
+	//_ln("chau/link", "/doubleLink");
 	//_touch("acr");
-	attatch("hola/oro", "linea1");
-	//_cat("hola/oro");
-	_cat("chau/link");
-	_cat("/doubleLink");
+	//attatch("hola/oro", "linea1");
+	_cat("hola/oro");
+	_cat("copia/oro");
+	//_cat("/doubleLink");
 	//printf("%d\n",_rm("archivito", 1));
 
-	//printf("TREE\n");
-	//printTree(tree);
+	printf("TREE\n");
+	printTree(tree);
 	printTable();
 	//printBitMap();
 	return 0;
@@ -220,15 +223,13 @@ void readTable(){
 
 void open(fileTree_t* node, inode_t* inode){
 	fileEntry_t e;
-	printf("abro el %s, tipo %d\n", node->name, node->type);
 	if(node->type==LINK){
 		e = ENTRY(ENTRY(node->index).linkTo);
-		while(e.next!=-1){
-			e= ENTRY(e.next);
-		}
-		printf("link a %s, inodo %d\n", e.name, e.inode);
 	}else{
-		e=ENTRY(node->index);
+		e= ENTRY(node->index);
+	}
+	while(e.next!=-1){
+		e= ENTRY(e.next);
 	}
 	if(e.inode!=-1){
 		ata_read(ATA0, (void*)inode, sizeof(inode_t), e.inode,0);
