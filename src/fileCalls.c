@@ -9,7 +9,9 @@ int _mkdir(char* name)
 	char nameD[MAXNAME];
 	setLastStr(spl, nameD);
 	fileTree_t* dad = getNode(spl);
-	if(alreadyExists(nameD))
+	if(alreadyExists(nameD)){
+		return -5;
+	}
 	fileTree_t* myTree = malloc(sizeof(fileTree_t));
 	strcpy(myTree->name,nameD);
 	myTree->type=DIR;
@@ -43,25 +45,30 @@ void _ls(char* path, char ans[][MAXNAME])
 
 
 
-void _ln(char* file, char* name)
+int _ln(char* file, char* name)
 {
-	char path[MAXFILES][MAXNAME], newPath[MAXFILES][MAXNAME];
+	char path[MAXFILES][MAXNAME], newPath[MAXFILES][MAXNAME], linkName[MAXNAME];
 	split(file, '/', path);
 	split(name, '/', newPath);
+	setLastStr(newPath, linkName);
+	if(alreadyExists(linkName)){
+		return -5;
+	}
 	fileTree_t *linked = getNode(path);
 	fileTree_t *newLink=malloc(sizeof(fileTree_t));
-	setLastStr(newPath, newLink->name);
 	newLink->cantChilds=linked->cantChilds;
+	strcpy(linkName, newLink->name);
 	if(linked->type==DIR)
 	{
 		lnChilds(linked, newLink);
 	}
-	char c[MAXNAME];
-	removeLast(name, c);
-	setParent(newLink,c);
+	char parentName[MAXNAME];
+	removeLast(name, parentName);
+	setParent(newLink,parentName);
 	newLink->type=LINK;
 	newLink->index=linked->index;
 	writeFile(newLink,0,0);
+	return 0;
 }
 
 int _rm(char* path, char isStr)
@@ -73,7 +80,7 @@ int _rm(char* path, char isStr)
 	split(path, '/', realPath);
 	fileTree_t* node = getNode(realPath);
 	if(isChildOf(node, CWD)){
-		return -2;
+		return -3;
 	}
 	_myrm(node, isStr);
 	return 0;
@@ -109,6 +116,9 @@ int _mv(char* to, char* from)
 	split(from, '/', pathFrom);
 	split(to, '/', pathTo);
 	setLastStr(pathTo, newName);
+	if(alreadyExists(newName)){
+		return -5;
+	}
 	fileTree_t* nodeF= getNode(pathFrom);
 	fileTree_t* nodeT = getNode(pathTo);
 	if(nodeT==0 || nodeF==0 || nodeT->type!=DIR){
@@ -134,8 +144,10 @@ int _cp(char* from, char* to)
 	if(nodeF==0){
 		return -1;
 	}
-	printf("%s\n", nodeF->name);
 	setLastStr(pathTo, nodeName);
+	if(alreadyExists(nodeName)){
+		return -5;
+	}
 	fileTree_t* dad=getNode(pathTo);
 	if(dad==0){
 		return -2;
@@ -144,22 +156,21 @@ int _cp(char* from, char* to)
 	fileTree_t* newNode=malloc(sizeof(fileTree_t));
 	//newNode->inode=nodeF->inode;
 	newNode->parent=dad;
+	newNode->type=nodeF->type;
+	strcpy(newNode->name, nodeName);
+	newNode->cantChilds=nodeF->cantChilds;
+	dad->childs[dad->cantChilds++]=newNode;
 	if(isChildOf(newNode, nodeF)){
 		return -3;
 	}
-	newNode->type=nodeF->type;
 	cpyChilds(nodeF, newNode);
-	strcpy(newNode->name, nodeName);
-	newNode->cantChilds=nodeF->cantChilds;
-	newNode->parent=dad;
-	dad->childs[dad->cantChilds++]=newNode;
 	if(nodeF->type!=DIR){
 		inode_t inode;
 		open(nodeF, &inode);
 		void* buffer=malloc(inode.size);
 		readAll(&inode, &buffer);
 		writeFile(newNode, buffer, inode.size);
-		//free(buffer);
+		free(buffer);
 	}else{
 		writeFile(newNode, 0,0);
 	}
@@ -202,7 +213,7 @@ int _cat(char* file){
 		read(&inode, i++, &buffer);
 		printf("%s\n", (char*)buffer);
 	}
-	//free(buffer);
+	free(buffer);
 	return 0;
 }
 
@@ -217,6 +228,9 @@ int attatch(char* file, char* string){
 		...*/
 		return -1;
 	}
+	if(node->type!=FILE){
+		return -2;
+	}
 	void* buffer;
 	int len=strlen(string);
 	inode_t inode;
@@ -226,7 +240,7 @@ int attatch(char* file, char* string){
 	readAll(&inode, &buffer);
 	memcpy(buffer+(inode.size-len), string, len);
 	writeSnap(node, buffer, inode.size);
-	//free(buffer);
+	free(buffer);
 	return 0;
 }
 
@@ -246,9 +260,7 @@ int revertTo(char* file, int version){
 	if(node==0){
 		return -2;
 	}
-
-	fileEntry_t this = ENTRY(node->index);
-	fileEntry_t previous=this;
+	fileEntry_t previous = ENTRY(node->index);
 	int i = 0, j= node->index;
 	while(i!=version){
 		if(previous.prev==-1){
@@ -256,13 +268,12 @@ int revertTo(char* file, int version){
 		}
 		previous.free=1;
 		FREE(j);
-		writeEntry(j, &ENTRY(j));
+		writeEntry(j, &previous);
 		j=previous.prev;
-		previous = ENTRY(previous.prev);
+		previous = ENTRY(j);
 		i++;
 	}
-	
-	this.free=1;
+
 	previous.next=-1;
 	removeChild(node);
 	freeNode(node);
@@ -270,9 +281,9 @@ int revertTo(char* file, int version){
 	if(dad==0){
 		return -3;
 	}
-	complete(dad, this.prev);
-	writeEntry(j, &ENTRY(j));
-	writeEntry(node->index, &ENTRY(node->index));
-	FREE(j);
+	writeEntry(j, &previous);
+	//writeEntry(node->index, &ENTRY(node->index));
+	//FREE(j);
+	complete(dad, j);
 	return 0;
 }

@@ -40,20 +40,13 @@ int fileSyst(int argc, char** argv){
 	readTable();
 	readBitMap();
 	loadTree(tree);
-	_mkdir("hola");
-	_touch("hola/oro");
-	attatch("hola/oro", "unaLinea =)");
-	_cp("./hola", "/copia");
-	attatch("hola/oro", "  dosLineas =/");
-	//_mkdir("chau");
-	//_ln("hola/oro", "chau/link");
-	//_ln("chau/link", "/doubleLink");
-	//_touch("acr");
-	//attatch("hola/oro", "linea1");
-	_cat("hola/oro");
-	_cat("copia/oro");
-	//_cat("/doubleLink");
-	//printf("%d\n",_rm("archivito", 1));
+	_touch("archi");
+	attatch("archi", "HOLA!!");
+	_cat("archi");
+	attatch("archi", "MUNDOO!!");
+	_cat("archi");
+	revertLast("archi");
+	_cat("archi");
 
 	printf("TREE\n");
 	printTree(tree);

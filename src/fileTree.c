@@ -225,3 +225,14 @@ void setParent(fileTree_t* newTree, char* parent){
 	setParentW(newTree, nodes, 0, tree);
 }
 
+int alreadyExists(char* name){
+	fileTree_t* thisTree = CWD;
+	int i;
+	for(i=0; i<thisTree->cantChilds; i++){
+		if(strcmp(name, thisTree->childs[i]->name)==0){
+			return 1;
+		}
+	}
+	return 0;
+}
+

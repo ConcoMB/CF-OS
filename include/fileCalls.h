@@ -7,7 +7,7 @@
 
 int _mkdir(char* name);
 void _ls(char* path, char ans[][MAXNAME]);
-void _ln(char* file, char* name);
+int _ln(char* file, char* name);
 int _rm(char* path, char isStr);
 void _myrm(fileTree_t* node, char isStr);
 void rmRecursive(fileTree_t* node, char isStr);
