@@ -227,7 +227,7 @@ int shell(int argc, char** argv){
 			argc=2;
 			argv[0]="ln";
 			argv[3]=(char*)0;
-			int i,size=strlen(buffer);
+			int i;
 			for(i=3;buffer[i]!=' '&&buffer[i];i++);
 			buffer[i]=0;
 			argv[2]=buffer+i+1;

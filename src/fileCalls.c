@@ -9,6 +9,7 @@ int _mkdir(char* name)
 	char nameD[MAXNAME];
 	setLastStr(spl, nameD);
 	fileTree_t* dad = getNode(spl);
+	if(alreadyExists(nameD))
 	fileTree_t* myTree = malloc(sizeof(fileTree_t));
 	strcpy(myTree->name,nameD);
 	myTree->type=DIR;
@@ -133,17 +134,22 @@ int _cp(char* from, char* to)
 	if(nodeF==0){
 		return -1;
 	}
+	printf("%s\n", nodeF->name);
 	setLastStr(pathTo, nodeName);
 	fileTree_t* dad=getNode(pathTo);
-
 	if(dad==0){
 		return -2;
 	}
+	
 	fileTree_t* newNode=malloc(sizeof(fileTree_t));
-	strcpy(newNode->name, nodeName);
 	//newNode->inode=nodeF->inode;
+	newNode->parent=dad;
+	if(isChildOf(newNode, nodeF)){
+		return -3;
+	}
 	newNode->type=nodeF->type;
 	cpyChilds(nodeF, newNode);
+	strcpy(newNode->name, nodeName);
 	newNode->cantChilds=nodeF->cantChilds;
 	newNode->parent=dad;
 	dad->childs[dad->cantChilds++]=newNode;
@@ -152,13 +158,11 @@ int _cp(char* from, char* to)
 		open(nodeF, &inode);
 		void* buffer=malloc(inode.size);
 		readAll(&inode, &buffer);
-		printf("EE\n");
 		writeFile(newNode, buffer, inode.size);
-		free(buffer);
+		//free(buffer);
 	}else{
 		writeFile(newNode, 0,0);
 	}
-	printf("termine\n");
 	return 0;
 }
 
@@ -189,7 +193,7 @@ int _cat(char* file){
 	}
 	//inode_t in;
 	//ata_read(ATA0, (void*)&in, 512, table[node->index].inode, 0);
-	void * buffer;
+	void * buffer=malloc(512);
 	inode_t inode;
 	open(node, &inode);
 	int i=0;
@@ -198,6 +202,7 @@ int _cat(char* file){
 		read(&inode, i++, &buffer);
 		printf("%s\n", (char*)buffer);
 	}
+	//free(buffer);
 	return 0;
 }
 
@@ -220,7 +225,6 @@ int attatch(char* file, char* string){
 	buffer=malloc(inode.size);
 	readAll(&inode, &buffer);
 	memcpy(buffer+(inode.size-len), string, len);
-	printf("buffer:%s",buffer);
 	writeSnap(node, buffer, inode.size);
 	//free(buffer);
 	return 0;
