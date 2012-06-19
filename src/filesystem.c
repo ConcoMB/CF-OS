@@ -45,7 +45,7 @@ int fileSyst(int argc, char** argv){
 	_cat("archi");
 	attatch("archi", "MUNDOO!!");
 	_cat("archi");
-	revertLast("archi");
+	revertTo("archi", 2);
 	_cat("archi");
 
 	printf("TREE\n");
