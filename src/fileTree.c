@@ -27,6 +27,7 @@ void loadTree(){
 	tree->parent=tree;
 	tree->index=-1;
 	tree->type=DIR;
+	tree->del=0;
 	int i;
 	for(i=0; i<8; i++){
 		cwd[i]=tree;
@@ -38,7 +39,7 @@ void fill(fileTree_t* tree, int myEntry)
 {
 	int i;
 	for(i=0; i<MAXFILES; i++){
-		if(!table.files[i].free && table.files[i].parent==myEntry && table.files[i].next==-1 && !table.files[i].del){
+		if(!table.files[i].free && table.files[i].parent==myEntry && table.files[i].next==-1){
 			fileTree_t* son=malloc(sizeof(fileTree_t));
 			fileEntry_t entry= table.files[i];
 			strcpy(son->name, entry.name);
@@ -47,6 +48,7 @@ void fill(fileTree_t* tree, int myEntry)
 			//son->inode=entry.inode;
 			son->parent=tree;
 			son->cantChilds=0;
+			son->del=entry.del;
 			tree->childs[tree->cantChilds++]=son;
 			son->index=i;
 			if(entry.type==DIR){
@@ -63,6 +65,7 @@ void complete(fileTree_t* dad, int index){
 	son->type=entry.type;
 	son->parent=dad;
 	son->cantChilds=0;
+	son->del=0;
 	dad->childs[dad->cantChilds++]=son;
 	son->index=index;
 	if(entry.type==DIR){
@@ -116,6 +119,7 @@ void clone(fileTree_t* cloned, fileTree_t* new){
 	new->cantChilds=cloned->cantChilds;
 	new->parent=cloned->parent;
 	new->type=cloned->type;
+	new->del=0;
 	if(cloned->type!=DIR){
 		inode_t inode;
 		open(cloned, &inode);

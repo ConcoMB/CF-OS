@@ -40,14 +40,17 @@ int fileSyst(int argc, char** argv){
 	readTable();
 	readBitMap();
 	loadTree(tree);
-	_touch("archi");
-	attatch("archi", "HOLA!!");
+	_mkdir("myDir");
+	_touch("./myDir/archi");
+	attatch("/myDir/archi", "HOLA!!");
+	_rm("/myDir", 0);
+	printTable();
+	printf("revert %d",revertTo("/myDir", 1));
+	/*_touch("archi");
+	attatch("archi", "hola");
 	_cat("archi");
-	attatch("archi", "MUNDOO!!");
-	_cat("archi");
-	revertTo("archi", 2);
-	_cat("archi");
-
+	revertLast("archi");
+	_cat("archi");*/
 	printf("TREE\n");
 	printTree(tree);
 	printTable();
@@ -61,7 +64,7 @@ void printTable(){
 	for(i=0; i<MAXFILES; i++){
 		fileEntry_t e = ENTRY(i);
 		if(!e.free){
-			printf("%s , %s\n", e.name, e.next==-1?"ultima version":"version vieja");
+			printf("%s , %s %s\n", e.name, e.next==-1?"ultima version":"version vieja", e.del==1?" borrado logico":"");
 		}
 	}
 }
@@ -113,11 +116,12 @@ int snapList(char* file){
 
 
 fileTree_t* getParentFromTable(fileEntry_t* entry){
-	char path[MAXPATH];
+	char path[MAXPATH], this[MAXNAME];
 	path[0]='\0';
 	buildPath(path, entry);
 	char splPath[MAXFILES][MAXNAME];
 	split(path, '/', splPath);
+	setLastStr(splPath, this);
 	return getNode(splPath);
 }
 
@@ -224,8 +228,16 @@ void open(fileTree_t* node, inode_t* inode){
 	while(e.next!=-1){
 		e= ENTRY(e.next);
 	}
-	if(e.inode!=-1){
-		ata_read(ATA0, (void*)inode, sizeof(inode_t), e.inode,0);
+	openEntry(&e, inode);
+	/**buffer=malloc(inode.size*512);
+	int i;
+	for(i=0; i<inode.size; i++){
+		ata_read(ATA0, (*buffer)+i*512, 512, inode.sector[i],0);
+	}*/
+}
+void openEntry(fileEntry_t* e, inode_t* inode){
+	if(e->inode!=-1){
+		ata_read(ATA0, (void*)inode, sizeof(inode_t), e->inode,0);
 	}
 	else
 	{
@@ -235,11 +247,6 @@ void open(fileTree_t* node, inode_t* inode){
 			inode->sector[i]=-1;
 		}
 	}
-	/**buffer=malloc(inode.size*512);
-	int i;
-	for(i=0; i<inode.size; i++){
-		ata_read(ATA0, (*buffer)+i*512, 512, inode.sector[i],0);
-	}*/
 }
 
 void read(inode_t* inode, int which, void** buffer){
@@ -307,7 +314,13 @@ void writeSnap(fileTree_t* node, void* buffer, int size){
 	entry.type=node->type;
 	entry.parent=node->parent->index;
 	entry.free=0;
-	entry.del=0;
+	if(size==-5)
+	{
+		entry.del=1;
+		size=0;
+	}else{
+		entry.del=0;
+	}
 	entry.prev=oldIndex;
 	entry.next=-1;
 	create(&entry, buffer, size, newIndex);
@@ -335,7 +348,7 @@ void writeFile(fileTree_t* node, void* buffer, int size){
 	strcpy(entry.name, node->name);
 	create(&entry, buffer, size, i);
 }
-
+/*
 void snapCP(fileTree_t* node){
 	int i;
 	fileEntry_t entry=getFreeEntry(&i);
@@ -344,16 +357,17 @@ void snapCP(fileTree_t* node){
 	entry.prev=node->index;
 	entry.next=-1;
 	entry.inode=old.inode;
+	writeEntry(node->index, &old);
 	node->index=i;
 	writeEntry(i, &entry);
+	printf("nueva entrada en %d, a vieja era %d, inodo %d\n", i, entry.prev, entry.inode);
 }
-
+*/
 void delFile(fileTree_t* node, char isStr){
 	int i;
 	if(!isStr){
-		i = getFile(node);
-		ENTRY(i).del=1;
-		writeEntry(i, &ENTRY(i));
+		writeSnap(node, 0, -5);
+		node->del=1;
 	}else{
 		i=node->index;
 		fileEntry_t entry = ENTRY(i);
@@ -371,7 +385,7 @@ void delFile(fileTree_t* node, char isStr){
 	}
 	
 }
-
+/*
 int getFile(fileTree_t* node)
 {
 	int i;
@@ -384,7 +398,7 @@ int getFile(fileTree_t* node)
 		}
 	}
 	return -1;
-}
+}*/
 
 void writeEntry(int index, fileEntry_t* entry){
 	table.files[index]=(*entry);
@@ -422,4 +436,15 @@ int FSServer(int a, char** v){
 		msgRead(&msg);
 	}
 	return 0;
+}
+
+void freeInodes(fileEntry_t* entry){
+	int i=0;
+	inode_t inode;
+	openEntry(entry, &inode);
+	while(inode.sector[i]!=-1){
+		FREE(inode.sector[i]);
+		i++;
+	}
+	FREE(entry->inode);
 }

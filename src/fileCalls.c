@@ -13,6 +13,7 @@ int _mkdir(char* name)
 		return -5;
 	}
 	fileTree_t* myTree = malloc(sizeof(fileTree_t));
+	myTree->del=0;
 	strcpy(myTree->name,nameD);
 	myTree->type=DIR;
 	//myTree->inode.size=0;
@@ -56,6 +57,7 @@ int _ln(char* file, char* name)
 	}
 	fileTree_t *linked = getNode(path);
 	fileTree_t *newLink=malloc(sizeof(fileTree_t));
+	newLink->del=0;
 	newLink->cantChilds=linked->cantChilds;
 	strcpy(linkName, newLink->name);
 	if(linked->type==DIR)
@@ -91,6 +93,10 @@ int _rm(char* path, char isStr)
 void _myrm(fileTree_t* node, char isStr){
 	switch (node->type){
 		case  DIR:
+			if(!isStr){
+				delFile(node, isStr);
+				return;
+			}
 			rmRecursive(node, isStr);
 		case FILE:
 		case LINK:
@@ -127,11 +133,17 @@ int _mv(char* to, char* from)
 	if(isChildOf(nodeF, nodeT)){
 		return -2;
 	}
-	nodeT->childs[nodeT->cantChilds++]=nodeF;
 	removeChild(nodeF);
+	nodeT->childs[nodeT->cantChilds++]=nodeF;
 	nodeF->parent=nodeT;
 	strcpy(nodeF->name,newName);
-	snapCP(nodeF);
+//	snapCP(nodeF);
+
+	inode_t inode;
+	open(nodeF, &inode);
+	void* buffer = malloc(inode.size);
+	readAll(&inode, &buffer);
+	writeSnap(nodeF, buffer, inode.size);
 	return 0;
 }
 
@@ -155,6 +167,7 @@ int _cp(char* from, char* to)
 	
 	fileTree_t* newNode=malloc(sizeof(fileTree_t));
 	//newNode->inode=nodeF->inode;
+	newNode->del=0;
 	newNode->parent=dad;
 	newNode->type=nodeF->type;
 	strcpy(newNode->name, nodeName);
@@ -186,6 +199,7 @@ int _touch(char* file){
 		return -2;
 	}
 	fileTree_t* newNode=malloc(sizeof(fileTree_t));
+	newNode->del=0;
 	strcpy(newNode->name, nodeName);
 	newNode->type=FILE;
 	newNode->parent=dad;
@@ -250,6 +264,8 @@ int revertLast(char* file){
 	return revertTo(file, 1);
 }
 
+
+
 int revertTo(char* file, int version){
 	if(version ==0){
 		return 0;
@@ -266,14 +282,15 @@ int revertTo(char* file, int version){
 		if(previous.prev==-1){
 			return -1;
 		}
+
 		previous.free=1;
+		freeInodes(&previous);
 		FREE(j);
 		writeEntry(j, &previous);
 		j=previous.prev;
 		previous = ENTRY(j);
 		i++;
 	}
-
 	previous.next=-1;
 	removeChild(node);
 	freeNode(node);
