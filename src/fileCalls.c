@@ -59,14 +59,18 @@ int _ln(char* file, char* name)
 	fileTree_t *newLink=malloc(sizeof(fileTree_t));
 	newLink->del=0;
 	newLink->cantChilds=linked->cantChilds;
-	strcpy(linkName, newLink->name);
+	strcpy(newLink->name, linkName);
+
 	if(linked->type==DIR)
 	{
 		lnChilds(linked, newLink);
 	}
-	char parentName[MAXNAME];
-	removeLast(name, parentName);
-	setParent(newLink,parentName);
+	//char parentName[MAXNAME];
+	//removeLast(name, parentName);
+	//setParent(newLink,parentName);
+	fileTree_t* dad = getNode(newPath);
+	dad->childs[dad->cantChilds++]=newLink;
+	newLink->parent=dad;
 	newLink->type=LINK;
 	newLink->index=linked->index;
 	writeFile(newLink,0,0);
@@ -303,4 +307,32 @@ int revertTo(char* file, int version){
 	//FREE(j);
 	complete(dad, j);
 	return 0;
+}
+
+void _cd(char* path){
+	char realPath[MAXFILES][MAXNAME];
+	printf("old %s\n",CWD->name);
+	split(path, '/', realPath);
+	fileTree_t* node=getNode(realPath);
+	if(node==0){
+		printf("file or directory not found\n");
+		return;
+	}
+	CWD=node;
+	printf("new %s\n",CWD->name);
+}
+
+void bigFile(char* file){
+	_touch(file);
+	char buffer[512];
+	char c='a';
+	int i=4, j, z;
+	for(j=0; j<i;j++){
+		for(z=0; z<511; z++){
+			buffer[z]=c;
+		}
+		buffer[z]=0;
+		c++;
+		attatch(file,buffer);
+	}
 }

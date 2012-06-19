@@ -101,6 +101,8 @@ void freeNode(fileTree_t* node){
 void removeLast(char* path, char ans[MAXPATH])
 {
 	int len = strlen(path);
+	ans[0]='/';
+	ans[1]=0;
 	for(len--;len>=0; len--){
 		if(path[len]=='/'){
 			int i=0;
@@ -182,10 +184,20 @@ fileTree_t* getNode(char path[][MAXNAME])
 	while(path[i][0]!='\0'){
 		int j, flag=0;
 		for(j=0; j<myTree->cantChilds && flag!=1; j++){
-			if(strcmp(myTree->childs[j]->name, path[i])==0){
-				myTree=myTree->childs[j];
+			if(strcmp(path[i], "..")==0){
+				myTree=myTree->parent;
 				flag=1;
+			}else if(strcmp(path[i], ".")==0){
+				flag=1;
+			}else{
+				for(j=0; !flag && j<myTree->cantChilds; j++){
+					if(strcmp(myTree->childs[j]->name, path[i])==0){
+						myTree=myTree->childs[j];
+						flag=1;
+					}
+				}	
 			}
+			
 		}
 		if(flag==0){
 			return 0;

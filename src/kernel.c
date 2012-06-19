@@ -34,7 +34,7 @@ void kmain()
 	initScheduler();
 	
 	//createProcess(testDriveC,0,0,"TEST3", 0,0,10);
-	//driverPid = createProcess(FSServer,0,0,"FSServer", 0,0,10);
+	//driverPid = createProcess(FSServer,0,0,"FSServer", 0,3,10);
 	//fileSyst(0,0);
 	//createProcess(shell, 0,0, "SHELL",  2,0,10);
 

@@ -40,12 +40,16 @@ int fileSyst(int argc, char** argv){
 	readTable();
 	readBitMap();
 	loadTree(tree);
-	_mkdir("myDir");
-	_touch("./myDir/archi");
-	attatch("/myDir/archi", "HOLA!!");
-	_rm("/myDir", 0);
-	printTable();
-	printf("revert %d",revertTo("/myDir", 1));
+	_touch("touch");
+	_ln("touch", "link");
+	attatch("touch", "tea");
+	_cat("link");
+	//_mkdir("myDir");
+	//_touch("./myDir/archi");
+	//attatch("/myDir/archi", "HOLA!!");
+	//_rm("/myDir", 0);
+	//printTable();
+	//printf("revert %d",revertTo("/myDir", 1));
 	/*_touch("archi");
 	attatch("archi", "hola");
 	_cat("archi");
@@ -55,6 +59,10 @@ int fileSyst(int argc, char** argv){
 	printTree(tree);
 	printTable();
 	//printBitMap();
+	/*bigFile("big");
+	_cp("big", "bigger");
+	attatch("bigger", "XXX");
+	_cat("bigger");*/
 	return 0;
 }
 
@@ -430,7 +438,10 @@ int FSServer(int a, char** v){
 	readTable();
 	readBitMap();
 	loadTree(tree);
-
+	int i;
+	for(i=0; i<8; i++){
+		cwd[i]=tree;
+	}
 	msg_t msg;
 	while(1){
 		msgRead(&msg);

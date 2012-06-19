@@ -206,6 +206,13 @@ int shell(int argc, char** argv){
 			argv[0]="touch";
 			argv[2]=(char*)0;
 			argv[1]=buffer+6;
+		}
+		else if(substr("cd ", buffer)){
+			func=cd;
+			argc=2;
+			argv[0]="cd";
+			argv[2]=(char*)0;
+			argv[1]=buffer+3;
 		
 		}
 		else if(substr("attach ", buffer)){

@@ -49,3 +49,7 @@ int touch(int argc, char** argv);
 int attach(int argc, char** argv);
 
 int ln(int argc, char** argv);
+
+int cd(int argc, char** argv);
+
+

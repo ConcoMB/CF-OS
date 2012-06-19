@@ -19,25 +19,28 @@ int msgRead(msg_t * info){
 	switch(info->command){
 		case 0:
 			_mkdir( (char*)info->argv[0] );
-		break;
+			break;
 		case 1:
 			_ls((char*)info->argv[0],(char(*)[MAXNAME]) info->argv[1]);
-		break;
+			break;
 		case 2:
 			initializeFS();
-		break;
+			break;
 		case 3:
 			_cat((char*)info->argv[0]);
-		break;
+			break;
 		case 4:
 			_touch((char*)info->argv[0]);
-		break;
+			break;
 		case 5:
 			attatch((char*)info->argv[0],(char*)info->argv[1]);
-		break;
+			break;
 		case 6:
 			_ln((char*)info->argv[0],(char*)info->argv[1]);
-		break;
+			break;
+		case 12:
+			_cd((char*)info->argv[0]);
+			break;
 	}
 	msgWAwake();
 
