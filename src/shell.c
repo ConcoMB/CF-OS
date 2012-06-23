@@ -257,6 +257,20 @@ int shell(int argc, char** argv){
 				printf("Invalid arguments.\n");
 			}
 		}
+		else if(substr("mv ", buffer)){
+			func=mv;
+			argc=2;
+			argv[0]="mv";
+			argv[3]=(char*)0;
+			int i;
+			for(i=3;buffer[i]!=' '&&buffer[i];i++);
+			buffer[i]=0;
+			argv[2]=buffer+i+1;
+			argv[1]=buffer+3;
+			if(strlen(argv[1])==0||strlen(argv[2])==0){
+				printf("Invalid arguments.\n");
+			}
+		}
 		else if(substr("ls", buffer)){
 			func=ls;
 			argc=2;
