@@ -38,7 +38,9 @@ int fileSyst(int argc, char** argv){
 	_ln("touch", "link");
 	attatch("touch", "tea");
 	_cat("link");
-	
+	_ln("link", "link2");
+	attatch("link2", "hola");
+	_cat("link");
 	printf("TREE\n");
 	printTree(tree);
 	printTable();

@@ -317,9 +317,14 @@ void _cd(char* path){
 		printf("file or directory not found\n");
 		return;
 	}
+	if(node->type==FILE || (node->type==LINK && ENTRY(ENTRY(node->index).linkTo).type==DIR)){
+		printf("Invalid directory\n");
+		return;
+	}
 	CWD=node;
 	printf("new %s\n",CWD->name);
 }
+
 
 void bigFile(char* file){
 	_touch(file);
@@ -335,14 +340,14 @@ void bigFile(char* file){
 		attatch(file,buffer);
 	}
 }
-void printVersions(char* file){
+int printVersions(char* file){
 	char path[MAXFILES][MAXNAME];
 	split(file, '/', path);
 	fileTree_t* node = getNode(path);
 	if(node==0){
 		return -2;
 	}
-	fileTree_t entry = ENTRY(node->index);
+	fileEntry_t entry = ENTRY(node->index);
 	while(entry.next!=-1){
 		entry=ENTRY(entry.next);
 	}
@@ -351,6 +356,7 @@ void printVersions(char* file){
 		printVersion(&entry, i++);	
 		entry=ENTRY(entry.prev);
 	}
+	return 0;
 }
 
 void printVersion(fileEntry_t * entry, int index){
