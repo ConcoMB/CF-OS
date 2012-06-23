@@ -203,6 +203,13 @@ int shell(int argc, char** argv){
 			argv[2]=(char*)0;
 			argv[1]=buffer+6;
 		}
+		else if(substr("bigfile ", buffer)){
+			func=bigfile;
+			argc=2;
+			argv[0]="bigfile";
+			argv[2]=(char*)0;
+			argv[1]=buffer+8;
+		}
 		else if(substr("cd ", buffer)){
 			func=cd;
 			argc=2;

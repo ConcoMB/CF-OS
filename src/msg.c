@@ -109,6 +109,11 @@ int msgRead(msg_t * info){
 			printBitMap();
 			unsetContext();
 			break;
+		case 17:
+			setContext(info->pid);
+			bigFile((char*)info->argv[0]);
+			unsetContext();
+			break;
 	}
 	if(ans!=0){
 		setContext(info->pid);
