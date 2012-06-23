@@ -243,6 +243,13 @@ int shell(int argc, char** argv){
 			argv[2]=(char*)0;
 			argv[1]=buffer+4;
 		}
+		else if(substr("rms ", buffer)){
+			func=rms;
+			argc=2;
+			argv[0]="rms";
+			argv[2]=(char*)0;
+			argv[1]=buffer+4;
+		}
 		else if(substr("version ", buffer)){
 			func=version;
 			argc=2;
