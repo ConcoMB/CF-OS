@@ -393,14 +393,16 @@ void bigFile(char* file){
 	_touch(file);
 	char buffer[512];
 	char c='a';
-	int i=4, j, z;
-	for(j=0; j<i;j++){
+	int j, z;
+	for(j=0; j<4;j++){
+		printf("%d\n", j);
 		for(z=0; z<511; z++){
 			buffer[z]=c;
 		}
 		buffer[z]=0;
+		printf("%s\n", buffer);
 		c++;
-		_attach(file,buffer);
+		_attach(file, buffer);
 	}
 }
 int printVersions(char* file){
