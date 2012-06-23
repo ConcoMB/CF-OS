@@ -34,7 +34,8 @@ typedef struct fileEntry_t{
 	int inode;
 	int prev,next, linkTo;
 	fileType_t type;
-	char free, del;		
+	char free, del;
+	char hour, min;
 }fileEntry_t;
 
 
