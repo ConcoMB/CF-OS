@@ -4,6 +4,15 @@ msg_t msgs[MAXMSG];
 int msgTail = 0;
 int msgHead = 0;
 
+static void setContext(int pid){
+	_Cli();
+	current=pid;
+}
+
+static void unsetContext(){
+	current=driverPid;
+	_Sti();
+}
 
 int msgRead(msg_t * info){
 
@@ -21,17 +30,17 @@ int msgRead(msg_t * info){
 			_mkdir( (char*)info->argv[0] );
 			break;
 		case 1:
-			_ls((char*)info->argv[0],(char(*)[MAXNAME]) info->argv[1]);
+			setContext(info->pid);
+			_ls((char*)info->argv[0]);
+			unsetContext();
 			break;
 		case 2:
 			initializeFS();
 			break;
 		case 3:
-			_Cli();
-			current=info->pid;
-			_cat((char*)info->argv[0]);
-			current=driverPid;
-			_Sti();
+			setContext(info->pid);
+			_cat((char*)info->argv[0]);	
+			unsetContext();		
 			break;
 		case 4:
 			_touch((char*)info->argv[0]);
@@ -47,16 +56,21 @@ int msgRead(msg_t * info){
 		break;
 		case 8:
 			_cp((char*)info->argv[0],(char*)info->argv[1]);
-		break;
+			break;
 		case 9:
 			_mv((char*)info->argv[0],(char*)info->argv[1]);
-		break;
+			break;
 		case 10:
 			revertLast((char*)info->argv[0]);
-		break;
+			break;
+		case 11:
+			setContext(info->pid);
+			printVersions((char*)info->argv[0]);
+			unsetContext();
+			break;
 		case 12:
 			_cd((char*)info->argv[0]);
-		break;
+			break;
 	}
 	msgWAwake();
 

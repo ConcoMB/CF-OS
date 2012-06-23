@@ -272,6 +272,8 @@ void create(fileEntry_t* entry, void* buffer, int size, int index){
 	}else{
 		entry->inode=-1;
 	}
+	sys_hour(&entry->hour);
+	sys_min(&entry->min);
 	writeEntry(index, entry);
 }
 
