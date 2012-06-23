@@ -114,6 +114,11 @@ int msgRead(msg_t * info){
 			bigFile((char*)info->argv[0]);
 			unsetContext();
 			break;
+		case 18:
+			setContext(info->pid);
+			ans = _rm((char*)info->argv[0],1);
+			unsetContext();
+			break;
 	}
 	if(ans!=0){
 		setContext(info->pid);
