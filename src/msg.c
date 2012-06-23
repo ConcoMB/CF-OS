@@ -91,6 +91,22 @@ int msgRead(msg_t * info){
 			break;
 		case 13:
 			revertTo((char*)info->argv[0], (int)info->argv[1]);
+			break;
+		case 14:
+			setContext(info->pid);
+			printTree(tree);
+			unsetContext();
+			break;
+		case 15:
+			setContext(info->pid);
+			printTable();
+			unsetContext();
+			break;
+		case 16:
+			setContext(info->pid);
+			printBitMap();
+			unsetContext();
+			break;
 	}
 	if(ans!=0){
 		setContext(info->pid);
