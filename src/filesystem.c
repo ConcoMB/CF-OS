@@ -17,16 +17,10 @@ int getSector()
 			return i;
 		}
 	}
-	//DISCO LLENO
 	return -1;
 }
 
 int fileSyst(int argc, char** argv){
-	/*readTable();
-	readBitMap();
-	while(1){
-		//leer comandos
-	}*/
 
 	initializeFS();
 
@@ -44,25 +38,11 @@ int fileSyst(int argc, char** argv){
 	_ln("touch", "link");
 	attatch("touch", "tea");
 	_cat("link");
-	//_mkdir("myDir");
-	//_touch("./myDir/archi");
-	//attatch("/myDir/archi", "HOLA!!");
-	//_rm("/myDir", 0);
-	//printTable();
-	//printf("revert %d",revertTo("/myDir", 1));
-	/*_touch("archi");
-	attatch("archi", "hola");
-	_cat("archi");
-	revertLast("archi");
-	_cat("archi");*/
+	
 	printf("TREE\n");
 	printTree(tree);
 	printTable();
-	//printBitMap();
-	/*bigFile("big");
-	_cp("big", "bigger");
-	attatch("bigger", "XXX");
-	_cat("bigger");*/
+	
 	return 0;
 }
 
