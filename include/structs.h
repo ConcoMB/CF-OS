@@ -1,6 +1,6 @@
 #ifndef __STRUCTS__
 #define __STRUCTS__
-#define MAXPROC 50
+#define MAXPROC 10
 
 #define MAXFILES 50
 #define MAXSIZE 4096

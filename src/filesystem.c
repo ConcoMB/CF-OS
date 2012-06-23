@@ -409,6 +409,9 @@ void readBitMap(){
 int FSServer(int a, char** v){
 	getStackPage(current);
 	getStackPage(current);
+	getStackPage(current);
+	getStackPage(current);
+
 
 	readTable();
 	readBitMap();

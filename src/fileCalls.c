@@ -47,13 +47,13 @@ void _ls(char* path)
 			old=process[current].tty->color;
 			switch(entry.type){
 				case DIR:
-					color=0x06;
+					color=0x0A;
 					break;
 				case LINK:
 					color=0x05;
 					break;
 				case FILE:
-					color=0x02;
+					color=0x0F;
 					break;
 			}
 			sys_setcolor(color);
@@ -85,7 +85,6 @@ int _ln(char* file, char* name)
 	newLink->del=0;
 	newLink->cantChilds=linked->cantChilds;
 	strcpy(newLink->name, linkName);
-
 	if(linked->type==DIR)
 	{
 		lnChilds(linked, newLink);
@@ -97,11 +96,16 @@ int _ln(char* file, char* name)
 	if(dad==0){
 		return -2;
 	}
+
 	dad->childs[dad->cantChilds++]=newLink;
 	newLink->parent=dad;
 	newLink->type=LINK;
-	newLink->index=linked->index;
+	printf("pre write\n");
 	writeFile(newLink,0,0);
+	printf("post write\n");
+	freeNode(tree);
+	loadTree();
+	printf("aca\n");
 	return 0;
 }
 
