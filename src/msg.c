@@ -27,7 +27,11 @@ int msgRead(msg_t * info){
 			initializeFS();
 		break;
 		case 3:
+			_Cli();
+			current=info->pid;
 			_cat((char*)info->argv[0]);
+			current=driverPid;
+			_Sti();
 		break;
 		case 4:
 			_touch((char*)info->argv[0]);
@@ -46,6 +50,9 @@ int msgRead(msg_t * info){
 		break;
 		case 9:
 			_mv((char*)info->argv[0],(char*)info->argv[1]);
+		break;
+		case 10:
+			revertLast((char*)info->argv[0]);
 		break;
 	}
 	msgWAwake();

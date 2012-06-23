@@ -55,3 +55,5 @@ int rm(int argc, char** argv);
 int cp(int argc, char** argv);
 
 int mv(int argc, char** argv);
+
+int rvl(int argc, char** argv);

@@ -9,7 +9,7 @@ int _mkdir(char* name)
 	char nameD[MAXNAME];
 	setLastStr(spl, nameD);
 	fileTree_t* dad = getNode(spl);
-	if(alreadyExists(nameD))
+	//if(alreadyExists(nameD))
 	fileTree_t* myTree = malloc(sizeof(fileTree_t));
 	strcpy(myTree->name,nameD);
 	myTree->type=DIR;
