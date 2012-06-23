@@ -29,7 +29,7 @@ int _mkdir(char* name)
 	writeFile(myTree,0,0);	
 	return 0;
 }
-void _ls(char* path, char ans[][MAXNAME])
+void _ls(char* path)
 {
 	int i=0;
 	char spl[MAXFILES][MAXNAME];
@@ -37,10 +37,9 @@ void _ls(char* path, char ans[][MAXNAME])
 	fileTree_t* node = getNode(spl);
 	for(i=0; i<node->cantChilds; i++)
 	{
-		strcpy(ans[i], node->childs[i]->name);
-	}
-	if(i!=MAXFILES){
-		ans[i][0]='\0';
+		fileEntry_t entry=ENTRY(node->childs[i]->index);
+		//strcpy(ans[i], node->childs[i]->name);
+		printf("- %s \n", entry.name);
 	}
 }
 
@@ -360,5 +359,5 @@ int printVersions(char* file){
 }
 
 void printVersion(fileEntry_t * entry, int index){
-	printf("Version: %d, name: %s, parent: %s, time: %d:%d\n", index, entry->name, ENTRY(entry->parent).name, entry->hour, entry->min);
+	printf("Version: %d, name: %s, parent: %s, time: %d:%d\n", index, entry->name, entry->parent==-1?"root":(ENTRY(entry->parent).name), entry->hour, entry->min);
 }	

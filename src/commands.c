@@ -252,18 +252,11 @@ int mkdir(int argc, char** argv)
 
 int ls(int argc, char** argv)
 {
-	char LS[MAXFILES][MAXNAME];
 	msg_t msg;
 	msg.command = 1;
 	msg.argc = 2;
 	msg.argv[0] = argv[1];
-	msg.argv[1] = LS;
 	msgWrite(&msg);
-	int i=0;
-	while(LS[i][0]){
-		printf("%s\n", LS[i]);
-		i++;
-	}
 	return 0;
 }
 
