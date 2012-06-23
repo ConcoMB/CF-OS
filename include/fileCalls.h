@@ -12,7 +12,7 @@ int _rm(char* path, char isStr);
 void _myrm(fileTree_t* node, char isStr);
 void rmRecursive(fileTree_t* node, char isStr);
 int _mv(char* to, char* from);
-int attatch(char* file, char* string);
+int attach(char* file, char* string);
 int _cp(char* from, char* to);
 int _touch(char* file);
 int _cat(char* file);

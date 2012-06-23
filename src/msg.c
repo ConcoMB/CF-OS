@@ -37,7 +37,7 @@ int msgRead(msg_t * info){
 			_touch((char*)info->argv[0]);
 			break;
 		case 5:
-			attatch((char*)info->argv[0],(char*)info->argv[1]);
+			attach((char*)info->argv[0],(char*)info->argv[1]);
 			break;
 		case 6:
 			_ln((char*)info->argv[0],(char*)info->argv[1]);

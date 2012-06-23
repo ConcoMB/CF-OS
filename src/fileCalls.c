@@ -56,6 +56,9 @@ int _ln(char* file, char* name)
 		return -5;
 	}
 	fileTree_t *linked = getNode(path);
+	if(linked==0){
+		return -2;
+	}
 	fileTree_t *newLink=malloc(sizeof(fileTree_t));
 	newLink->del=0;
 	newLink->cantChilds=linked->cantChilds;
@@ -69,6 +72,9 @@ int _ln(char* file, char* name)
 	//removeLast(name, parentName);
 	//setParent(newLink,parentName);
 	fileTree_t* dad = getNode(newPath);
+	if(dad==0){
+		return -2;
+	}
 	dad->childs[dad->cantChilds++]=newLink;
 	newLink->parent=dad;
 	newLink->type=LINK;
@@ -198,6 +204,9 @@ int _touch(char* file){
 	char path[MAXFILES][MAXNAME],nodeName[MAXNAME];
 	split(file, '/', path);
 	setLastStr(path, nodeName);
+	if(alreadyExists(nodeName)){
+		return -5;
+	}
 	fileTree_t* dad=getNode(path);
 	if(dad==0){
 		return -2;
@@ -235,7 +244,7 @@ int _cat(char* file){
 	return 0;
 }
 
-int attatch(char* file, char* string){
+int attach(char* file, char* string){
 	char path[MAXFILES][MAXNAME];
 	split(file, '/', path);
 	fileTree_t* node = getNode(path);
@@ -246,7 +255,7 @@ int attatch(char* file, char* string){
 		...*/
 		return -1;
 	}
-	if(node->type!=FILE){
+	if(node->type==DIR || (node->type==LINK && ENTRY(ENTRY(node->index).linkTo).type!=FILE)){
 		return -2;
 	}
 	void* buffer;
@@ -337,7 +346,7 @@ void bigFile(char* file){
 		}
 		buffer[z]=0;
 		c++;
-		attatch(file,buffer);
+		attach(file,buffer);
 	}
 }
 int printVersions(char* file){

@@ -7,7 +7,6 @@
 
 int getSector();
 fileEntry_t getFreeEntry(int* index);
-int snapList(char* file);
 void readTable();
 void printBitMap();
 int fileSyst(int argc, char** argv);

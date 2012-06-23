@@ -36,10 +36,10 @@ int fileSyst(int argc, char** argv){
 	loadTree(tree);
 	_touch("touch");
 	_ln("touch", "link");
-	attatch("touch", "tea");
+	attach("touch", "tea");
 	_cat("link");
 	_ln("link", "link2");
-	attatch("link2", "hola");
+	attach("link2", "hola");
 	_cat("link");
 	printf("TREE\n");
 	printTree(tree);
@@ -86,23 +86,7 @@ fileEntry_t getFreeEntry(int* index)
 
 
 
-int snapList(char* file){
-	char path[MAXFILES][MAXNAME];
-	split(file, '/', path);
-	fileTree_t* node = getNode(path);
-	if(node==0){
-		return -2;
-	}
-	int i=0;
-	printf("Revision of file %s\n", file);
-	fileEntry_t entry = ENTRY(node->index);
-	while(entry.prev!=-1){
-		printf("Version %d: name %s, parent name %s, inode sector %d\n", i++, entry.name, ENTRY(entry.parent).name, entry.inode);
-		entry=ENTRY(entry.prev);
-	}
-	printf("Name %s, parent name %s, inode sector %d\n", entry.name, ENTRY(entry.parent).name, entry.inode);
-	return 0;	
-}
+
 
 
 fileTree_t* getParentFromTable(fileEntry_t* entry){
@@ -186,7 +170,6 @@ void initBitMap(){
 
 void printBitMap(){
 	int i;
-	printf("BITMAP\n");
 	for(i=0; i<MAXFILES * MAXSIZE / (512*8); i++){
 		if(GET(i)){
 			printf("%d, ", i);
@@ -294,12 +277,20 @@ void create(fileEntry_t* entry, void* buffer, int size, int index){
 
 void writeSnap(fileTree_t* node, void* buffer, int size){
 	int newIndex, oldIndex=node->index;
-	fileEntry_t old= ENTRY(oldIndex);
-	fileEntry_t entry=getFreeEntry(&newIndex);
+	fileEntry_t old, entry;
+	if(node->type==LINK){
+		old=ENTRY(ENTRY(oldIndex).linkTo);
+		while(old.next!=-1){
+			oldIndex=old.next;
+			old=ENTRY(oldIndex);
+		}
+	}else{
+		old= ENTRY(oldIndex);
+	}
+	entry=getFreeEntry(&newIndex);
 	old.next=newIndex;
 
 	writeEntry(oldIndex, &old);
-
 	strcpy(entry.name, node->name);
 	entry.type=node->type;
 	entry.parent=node->parent->index;
@@ -326,6 +317,7 @@ void writeFile(fileTree_t* node, void* buffer, int size){
 		while(ENTRY(entry.linkTo).type==LINK){
 			entry.linkTo=ENTRY(entry.linkTo).linkTo;
 		}
+		printf("LINK A %s\n", ENTRY(entry.linkTo).name);
 	}
 	node->index=i;
 	entry.next=-1;
