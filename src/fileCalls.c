@@ -2,6 +2,10 @@
 extern fileTree_t* tree;
 extern fileTable_t table;
 
+static void timeString(char buffer[], int hour, int min){
+	strcpy(buffer,"01:23");
+}
+
 int _mkdir(char* name)
 {
 	char spl[MAXFILES][MAXNAME];
@@ -40,22 +44,26 @@ void _ls(char* path)
 	{
 		char color, old;
 		fileEntry_t entry=ENTRY(node->childs[i]->index);
-		old=process[current].tty->color;
-		switch(entry.type){
-			case DIR:
-				color=0x06;
-				break;
-			case LINK:
-				color=0x05;
-				break;
-			case FILE:
-				color=0x02;
-				break;
+		if(!entry.del){
+			old=process[current].tty->color;
+			switch(entry.type){
+				case DIR:
+					color=0x06;
+					break;
+				case LINK:
+					color=0x05;
+					break;
+				case FILE:
+					color=0x02;
+					break;
+			}
+			sys_setcolor(color);
+			printf(" %s", entry.name);
+			sys_setcolor(old);
+			char time[6];
+			timeString(time, entry.hour, entry.min);
+			printf(", time: %s\n",time);
 		}
-		sys_setcolor(color);
-		printf(" %s", entry.name);
-		sys_setcolor(old);
-		printf(", time: %d:%d\n",entry.hour, entry.min);
 	}
 }
 

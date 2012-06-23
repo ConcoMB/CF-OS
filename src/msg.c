@@ -71,6 +71,8 @@ int msgRead(msg_t * info){
 		case 12:
 			_cd((char*)info->argv[0]);
 			break;
+		case 13:
+			revertTo((char*)info->argv[0], (int)info->argv[1]);
 	}
 	msgWAwake();
 
