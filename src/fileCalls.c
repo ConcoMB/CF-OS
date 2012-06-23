@@ -13,7 +13,6 @@ int _mkdir(char* name)
 	char nameD[MAXNAME];
 	setLastStr(spl, nameD);
 	fileTree_t* dad = getNode(spl);
-	printf("%s\n", nameD);
 	if(alreadyExists(nameD)){
 		return -5;
 	}
@@ -25,11 +24,11 @@ int _mkdir(char* name)
 	myTree->cantChilds=0;
 	myTree->parent=dad;
 	dad->childs[dad->cantChilds++]=myTree;
-	int sector = getSector();
+	/*int sector = getSector();
 	if(sector==-1){
 		//error
-		return -1;
-	}
+		return -8;
+	}*/
 	//entry.inode.sector[0]=sector;
 	writeFile(myTree,0,0);	
 	return 0;
@@ -40,6 +39,7 @@ void _ls(char* path)
 	char spl[MAXFILES][MAXNAME];
 	split(path, '/', spl);
 	fileTree_t* node = getNode(spl);
+	printf("%s\n", node->name);
 	for(i=0; i<node->cantChilds; i++)
 	{
 		char color, old;
@@ -109,7 +109,7 @@ int _ln(char* file, char* name)
 int _rm(char* path, char isStr)
 {
 	if(strcmp(path, "/")==0){
-		return -1;
+		return -9;
 	}
 	char realPath[MAXFILES][MAXNAME];
 	split(path, '/', realPath);
@@ -160,11 +160,14 @@ int _mv(char* to, char* from)
 	}
 	fileTree_t* nodeF= getNode(pathFrom);
 	fileTree_t* nodeT = getNode(pathTo);
-	if(nodeT==0 || nodeF==0 || nodeT->type!=DIR){
-		return -1;
+	if(nodeT==0 || nodeF==0){
+		return -2;
+	}
+	if(nodeT->type!=DIR){
+		return -6;
 	}
 	if(isChildOf(nodeF, nodeT)){
-		return -2;
+		return -6;
 	}
 	removeChild(nodeF);
 	nodeT->childs[nodeT->cantChilds++]=nodeF;
@@ -187,7 +190,7 @@ int _cp(char* from, char* to)
 	split(to, '/', pathTo);
 	fileTree_t* nodeF= getNode(pathFrom);
 	if(nodeF==0){
-		return -1;
+		return -2;
 	}
 	setLastStr(pathTo, nodeName);
 	if(alreadyExists(nodeName)){
@@ -207,7 +210,7 @@ int _cp(char* from, char* to)
 	newNode->cantChilds=nodeF->cantChilds;
 	dad->childs[dad->cantChilds++]=newNode;
 	if(isChildOf(newNode, nodeF)){
-		return -3;
+		return -7;
 	}
 	cpyChilds(nodeF, newNode);
 	if(nodeF->type!=DIR){
@@ -276,10 +279,10 @@ int _attach(char* file, char* string){
 		setLastStr(path, nodeName);
 		strcpy(node->name, nodeName);
 		...*/
-		return -1;
+		return -2;
 	}
 	if(node->type==DIR || (node->type==LINK && ENTRY(ENTRY(node->index).linkTo).type!=FILE)){
-		return -2;
+		return -11;
 	}
 	void* buffer;
 	int len=strlen(string);
@@ -316,7 +319,7 @@ int revertTo(char* file, int version){
 	int i = 0, j= node->index;
 	while(i!=version){
 		if(previous.prev==-1){
-			return -1;
+			return -13;
 		}
 
 		previous.free=1;
@@ -332,7 +335,7 @@ int revertTo(char* file, int version){
 	freeNode(node);
 	fileTree_t * dad = getParentFromTable(&previous);
 	if(dad==0){
-		return -3;
+		return -2;
 	}
 	writeEntry(j, &previous);
 	//writeEntry(node->index, &ENTRY(node->index));
@@ -341,20 +344,18 @@ int revertTo(char* file, int version){
 	return 0;
 }
 
-void _cd(char* path){
+int _cd(char* path){
 	char realPath[MAXFILES][MAXNAME];
 	split(path, '/', realPath);
 	fileTree_t* node=getNode(realPath);
-	if(node==0){
-		printf("file or directory not found\n");
-		return;
+	if(node==0 || node->del){
+		return -2;
 	}
 	if(node->type==FILE || (node->type==LINK && ENTRY(ENTRY(node->index).linkTo).type==DIR)){
-		printf("Invalid directory\n");
-		return;
+		return -14;
 	}
 	CWD=node;
-	printf("new %s\n",CWD->name);
+	return 0;
 }
 
 
