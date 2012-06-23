@@ -9,6 +9,7 @@ int _mkdir(char* name)
 	char nameD[MAXNAME];
 	setLastStr(spl, nameD);
 	fileTree_t* dad = getNode(spl);
+	printf("%s\n", nameD);
 	if(alreadyExists(nameD)){
 		return -5;
 	}
@@ -243,7 +244,7 @@ int _cat(char* file){
 	return 0;
 }
 
-int attach(char* file, char* string){
+int _attach(char* file, char* string){
 	char path[MAXFILES][MAXNAME];
 	split(file, '/', path);
 	fileTree_t* node = getNode(path);
@@ -345,7 +346,7 @@ void bigFile(char* file){
 		}
 		buffer[z]=0;
 		c++;
-		attach(file,buffer);
+		_attach(file,buffer);
 	}
 }
 int printVersions(char* file){
