@@ -13,7 +13,7 @@ void printTree(fileTree_t* aTree){
 			type="LINK";
 			break;
 	}
-	printf("name %s, type %s, parent %s\n", aTree->name, type, aTree->parent->name);
+	printf("name %s, type %s, parent %s %s\n", aTree->name, type, aTree->parent->name, aTree->del?"logic erase":"");
 	int i;
 	for(i=0;i<aTree->cantChilds; i++){
 		printTree(aTree->childs[i]);
@@ -251,3 +251,21 @@ int alreadyExists(char* name, fileTree_t* thisTree){
 	return 0;
 }
 
+fileTree_t* findLink(fileTree_t* aTree){
+	return findReference(ENTRY(aTree->index).linkTo, tree);
+}
+
+fileTree_t* findReference(int ref, fileTree_t* aTree){
+	if(aTree->index==ref){
+		return aTree;
+	}
+	int i;
+	fileTree_t* ans;
+	for(i=0; i<aTree->cantChilds; i++){
+		ans=findReference(ref, aTree->childs[i]);
+		if(ans!=0){
+			return ans;
+		}
+	}
+	return 0;
+}

@@ -298,13 +298,16 @@ int attach(int argc, char** argv)
 	msg.argv[0]=argv[1];
 	char c[300];
 	int i=0;
-	while((c[i++]=getchar())!=64)
+	sys_read(c+i);
+	while((c[i++])!=64)
 	{
 		putchar(c[i-1]);
+		sys_read(c+i);
 	}
 	c[i-1]=0;
 	msg.argv[1]=c;
 	msgWrite(&msg);
+	printf("\n");
 	return 0;
 }
 

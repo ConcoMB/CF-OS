@@ -81,15 +81,11 @@ int shell(int argc, char** argv){
 		int (*func)(int, char**);
 		int argc;
 		char* argv[4];
+		
 		if(len==0)
 		{
 			/*VACIO*/
-		}
-		if(buffer[len-1]=='&')
-		{
-			background=1;
-		}
-		if(substr("who",buffer)){
+		}else if(substr("who",buffer)){
 			func=who;
 			argc=1;
 			argv[0]="who";
@@ -316,6 +312,10 @@ int shell(int argc, char** argv){
 		}else{
 			nothing=1;
 			printf("Command not found\n");
+		}
+		if(buffer[len-1]=='&')
+		{
+			background=1;
 		}
 		if(!nothing)
 		{

@@ -14,8 +14,7 @@ void int_80(REG registers)
 		case 1:
 			i=registers.edx;
 			c=(char*)registers.ecx;
-			if(i==1)
-			{
+			if(i==1){
 				sys_print(*c);
 			}
 			break;

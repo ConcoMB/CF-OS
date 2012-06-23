@@ -40,20 +40,20 @@ int _mkdir(char* name)
 	if(alreadyExists(nameD, dad)){
 		return -5;
 	}
+	if(dad->type==LINK){
+		dad=findLink(dad);
+	}
+	if(dad->type==FILE){
+		return -2;
+	}
 	fileTree_t* myTree = mallocFS(sizeof(fileTree_t));
 	myTree->del=0;
 	strcpy(myTree->name,nameD);
 	myTree->type=DIR;
-	//myTree->inode.size=0;
 	myTree->cantChilds=0;
 	myTree->parent=dad;
 	dad->childs[dad->cantChilds++]=myTree;
-	/*int sector = getSector();
-	if(sector==-1){
-		//error
-		return -8;
-	}*/
-	//entry.inode.sector[0]=sector;
+	
 	writeFile(myTree,0,0);	
 	return 0;
 }
@@ -201,8 +201,6 @@ int _mv(char* to, char* from)
 	nodeT->childs[nodeT->cantChilds++]=nodeF;
 	nodeF->parent=nodeT;
 	strcpy(nodeF->name,newName);
-//	snapCP(nodeF);
-
 	inode_t inode;
 	open(nodeF, &inode);
 	void* buffer = mallocFS(inode.size);
@@ -248,7 +246,7 @@ int _cp(char* from, char* to)
 		void* buffer=mallocFS(inode.size);
 		readAll(&inode, &buffer);
 		writeFile(newNode, buffer, inode.size);
-		free(buffer);
+		freeFS(buffer);
 	}else{
 		writeFile(newNode, 0,0);
 	}
@@ -298,7 +296,7 @@ int _cat(char* file){
 		read(&inode, i++, &buffer);
 		printf("%s\n", (char*)buffer);
 	}
-	free(buffer);
+	freeFS(buffer);
 	return 0;
 }
 
@@ -325,7 +323,7 @@ int _attach(char* file, char* string){
 	readAll(&inode, &buffer);
 	memcpy(buffer+(inode.size-len), string, len);
 	writeSnap(node, buffer, inode.size);
-	free(buffer);
+	freeFS(buffer);
 	return 0;
 }
 
