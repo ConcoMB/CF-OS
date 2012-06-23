@@ -3,7 +3,17 @@ extern fileTree_t* tree;
 extern fileTable_t table;
 
 static void timeString(char buffer[], int hour, int min){
-	strcpy(buffer,"01:23");
+	//strcpy(buffer,"01:23");
+	char h0, h1, m0, m1;
+	h1=hour%10+'0';
+	m1=min%10+'0';
+	h0=hour/10+'0';
+	m0=min/10+'0';
+	buffer[0]=h0;
+	buffer[1]=h1;
+	buffer[2]=':';
+	buffer[3]=m0;
+	buffer[4]=m1;
 }
 static void* mallocFS(int bytes){
 	int pid=current;
