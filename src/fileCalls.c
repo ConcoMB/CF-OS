@@ -23,6 +23,13 @@ static void* mallocFS(int bytes){
 	return ans;
 }
 
+static void freeFS(void* object){
+	int pid=current;
+	current=driverPid;
+	free(object);
+	current=pid;
+}
+
 int _mkdir(char* name)
 {
 	char spl[MAXFILES][MAXNAME];
@@ -30,7 +37,7 @@ int _mkdir(char* name)
 	char nameD[MAXNAME];
 	setLastStr(spl, nameD);
 	fileTree_t* dad = getNode(spl);
-	if(alreadyExists(nameD)){
+	if(alreadyExists(nameD, dad)){
 		return -5;
 	}
 	fileTree_t* myTree = mallocFS(sizeof(fileTree_t));
@@ -70,7 +77,7 @@ void _ls(char* path)
 					color=0x05;
 					break;
 				case FILE:
-					color=0x0F;
+					color=0x03;
 					break;
 			}
 			sys_setcolor(color);
@@ -91,9 +98,7 @@ int _ln(char* file, char* name)
 	split(file, '/', path);
 	split(name, '/', newPath);
 	setLastStr(newPath, linkName);
-	if(alreadyExists(linkName)){
-		return -5;
-	}
+	
 	fileTree_t *linked = getNode(path);
 	if(linked==0){
 		return -2;
@@ -112,9 +117,13 @@ int _ln(char* file, char* name)
 	//setParent(newLink,parentName);
 	fileTree_t* dad = getNode(newPath);
 	if(dad==0){
+		freeFS(newLink);
 		return -2;
 	}
-
+	if(alreadyExists(linkName, dad)){
+		freeFS(newLink);
+		return -5;
+	}
 	dad->childs[dad->cantChilds++]=newLink;
 	newLink->parent=dad;
 	newLink->type=LINK;
@@ -173,14 +182,14 @@ int _mv(char* to, char* from)
 	split(from, '/', pathFrom);
 	split(to, '/', pathTo);
 	setLastStr(pathTo, newName);
-	if(alreadyExists(newName)){
-		return -5;
-	}
+	
 	fileTree_t* nodeF= getNode(pathFrom);
 	fileTree_t* nodeT = getNode(pathTo);
-	printf("to %s from %s\n", nodeT->name, from);
 	if(nodeT==0 || nodeF==0){
 		return -2;
+	}
+	if(alreadyExists(newName, nodeT)){
+		return -5;
 	}
 	if(nodeT->type!=DIR){
 		return -6;
@@ -212,14 +221,14 @@ int _cp(char* from, char* to)
 		return -2;
 	}
 	setLastStr(pathTo, nodeName);
-	if(alreadyExists(nodeName)){
-		return -5;
-	}
+	
 	fileTree_t* dad=getNode(pathTo);
 	if(dad==0){
 		return -2;
 	}
-	
+	if(alreadyExists(nodeName, dad)){
+		return -5;
+	}
 	fileTree_t* newNode=mallocFS(sizeof(fileTree_t));
 	//newNode->inode=nodeF->inode;
 	newNode->del=0;
@@ -229,6 +238,7 @@ int _cp(char* from, char* to)
 	newNode->cantChilds=nodeF->cantChilds;
 	dad->childs[dad->cantChilds++]=newNode;
 	if(isChildOf(newNode, nodeF)){
+		freeFS(newNode);
 		return -7;
 	}
 	cpyChilds(nodeF, newNode);
@@ -249,12 +259,13 @@ int _touch(char* file){
 	char path[MAXFILES][MAXNAME],nodeName[MAXNAME];
 	split(file, '/', path);
 	setLastStr(path, nodeName);
-	if(alreadyExists(nodeName)){
-		return -5;
-	}
+	
 	fileTree_t* dad=getNode(path);
 	if(dad==0){
 		return -2;
+	}
+	if(alreadyExists(nodeName, dad)){
+		return -5;
 	}
 	fileTree_t* newNode=mallocFS(sizeof(fileTree_t));
 	newNode->del=0;

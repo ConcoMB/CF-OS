@@ -284,7 +284,6 @@ int shell(int argc, char** argv){
 			if(strlen(argv[1])==0||strlen(argv[2])==0){
 				printf("Invalid arguments.\n");
 			}
-			printf("%s %s\n", argv[1], argv[2]);
 		}
 		else if(substr("printTable", buffer)){
 			func=printTableCMD;
