@@ -95,7 +95,6 @@ void freeNode(fileTree_t* node){
 	for(i=0; i<node->cantChilds; i++){
 		freeNode(node->childs[i]);
 	}
-	printf("libero %s\n", node->name);
 	free(node);
 }
 

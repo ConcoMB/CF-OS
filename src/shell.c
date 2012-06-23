@@ -272,18 +272,19 @@ int shell(int argc, char** argv){
 			}
 		}
 		else if(substr("revert ", buffer)){
-			func=mv;
+			func=revert;
 			argc=2;
 			argv[0]="revert";
 			argv[3]=(char*)0;
 			int i;
-			for(i=3;buffer[i]!=' '&&buffer[i];i++);
+			for(i=7;buffer[i]!=' '&&buffer[i];i++);
 			buffer[i]=0;
 			argv[2]=buffer+i+1;
 			argv[1]=buffer+7;
 			if(strlen(argv[1])==0||strlen(argv[2])==0){
 				printf("Invalid arguments.\n");
 			}
+			printf("%s %s\n", argv[1], argv[2]);
 		}
 		else if(substr("printTable", buffer)){
 			func=printTableCMD;

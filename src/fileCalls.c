@@ -168,6 +168,7 @@ int _mv(char* to, char* from)
 	}
 	fileTree_t* nodeF= getNode(pathFrom);
 	fileTree_t* nodeT = getNode(pathTo);
+	printf("to %s from %s\n", nodeT->name, from);
 	if(nodeT==0 || nodeF==0){
 		return -2;
 	}
@@ -256,7 +257,6 @@ int _touch(char* file){
 }
 
 int _cat(char* file){
-	printf("CAT\n");
 	char path[MAXFILES][MAXNAME];
 	split(file, '/', path);
 	fileTree_t* node = getNode(path);
@@ -317,7 +317,7 @@ int revertLast(char* file){
 
 
 int revertTo(char* file, int version){
-	if(version ==0){
+	if(version == 0){
 		return 0;
 	}
 	char path[MAXFILES][MAXNAME];
@@ -400,6 +400,7 @@ int printVersions(char* file){
 		printVersion(&entry, i++);	
 		entry=ENTRY(entry.prev);
 	}
+	printVersion(&entry, i++);
 	return 0;
 }
 
