@@ -382,3 +382,30 @@ int mv(int argc, char** argv)
 	msgWrite(&msg);
 	return 0;
 }
+
+int printTreeCMD(int argc, char** argv)
+{
+	msg_t msg;
+	msg.command=14;
+	msg.argc=0;
+	msgWrite(&msg);
+	return 0;
+}
+
+int printTableCMD(int argc, char** argv)
+{
+	msg_t msg;
+	msg.command=15;
+	msg.argc=0;
+	msgWrite(&msg);
+	return 0;
+}
+
+int printBitmapCMD(int argc, char** argv)
+{
+	msg_t msg;
+	msg.command=16;
+	msg.argc=0;
+	msgWrite(&msg);
+	return 0;
+}

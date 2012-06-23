@@ -285,6 +285,24 @@ int shell(int argc, char** argv){
 				printf("Invalid arguments.\n");
 			}
 		}
+		else if(substr("printTable", buffer)){
+			func=printTableCMD;
+			argc=1;
+			argv[0]="printTable";
+			argv[1]=(char*)0;
+		}
+		else if(substr("printTree", buffer)){
+			func=printTreeCMD;
+			argc=1;
+			argv[0]="printTree";
+			argv[1]=(char*)0;
+		}
+		else if(substr("printBitmap", buffer)){
+			func=printBitmapCMD;
+			argc=1;
+			argv[0]="printBitmap";
+			argv[1]=(char*)0;
+		}
 		else if(substr("ls", buffer)){
 			func=ls;
 			argc=2;

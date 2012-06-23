@@ -63,3 +63,9 @@ int cd(int argc, char** argv);
 int version(int argc, char** argv);
 
 int revert(int argc, char** argv);
+
+int printTableCMD(int argc, char** argv);
+
+int printTreeCMD(int argc, char** argv);
+
+int printBitmapCMD(int argc, char** argv);
