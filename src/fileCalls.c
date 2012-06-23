@@ -38,7 +38,7 @@ void _ls(char* path)
 	fileTree_t* node = getNode(spl);
 	for(i=0; i<node->cantChilds; i++)
 	{
-		char color=, old;
+		char color, old;
 		fileEntry_t entry=ENTRY(node->childs[i]->index);
 		old=process[current].tty->color;
 		switch(entry.type){
@@ -49,13 +49,13 @@ void _ls(char* path)
 				color=0x05;
 				break;
 			case FILE:
-				color=0x04;
+				color=0x02;
 				break;
 		}
 		sys_setcolor(color);
 		printf(" %s", entry.name);
 		sys_setcolor(old);
-		printf(", time: %d:%d, size: %d\n",entry.hour, entry.min, entry.size);
+		printf(", time: %d:%d\n",entry.hour, entry.min);
 	}
 }
 
