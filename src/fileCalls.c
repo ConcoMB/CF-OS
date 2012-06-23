@@ -311,7 +311,6 @@ int revertTo(char* file, int version){
 
 void _cd(char* path){
 	char realPath[MAXFILES][MAXNAME];
-	printf("old %s\n",CWD->name);
 	split(path, '/', realPath);
 	fileTree_t* node=getNode(realPath);
 	if(node==0){
@@ -336,3 +335,25 @@ void bigFile(char* file){
 		attatch(file,buffer);
 	}
 }
+
+void printVersions(char* file){
+	char path[MAXFILES][MAXNAME];
+	split(file, '/', path);
+	fileTree_t* node = getNode(path);
+	if(node==0){
+		return -2;
+	}
+	fileTree_t entry = ENTRY(node->index);
+	while(entry.next!=-1){
+		entry=ENTRY(entry.next);
+	}
+	int i=0;
+	while(entry.prev!=-1){
+		printVersion(&entry, i++);	
+		entry=ENTRY(entry.prev);
+	}
+}
+
+void printVersion(fileEntry_t * entry, int index){
+	printf("Version: %d, name: %s, parent: %s\n", index, entry->name, ENTRY(entry->parent).name);
+}	
