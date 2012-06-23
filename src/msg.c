@@ -15,7 +15,7 @@ static void unsetContext(){
 }
 
 int msgRead(msg_t * info){
-
+	int ans=0;
 	while(msgHead==msgTail){
 		msgRBlock();	
 	} 
@@ -27,7 +27,7 @@ int msgRead(msg_t * info){
 	}
 	switch(info->command){
 		case 0:
-			_mkdir( (char*)info->argv[0] );
+			ans = _mkdir( (char*)info->argv[0] );
 			break;
 		case 1:
 			setContext(info->pid);
@@ -39,39 +39,47 @@ int msgRead(msg_t * info){
 			break;
 		case 3:
 			setContext(info->pid);
-			_cat((char*)info->argv[0]);	
+			ans=_cat((char*)info->argv[0]);	
 			unsetContext();		
 			break;
 		case 4:
-			_touch((char*)info->argv[0]);
+			ans=_touch((char*)info->argv[0]);
 			break;
 		case 5:
-			_attach((char*)info->argv[0],(char*)info->argv[1]);
+			ans=_attach((char*)info->argv[0],(char*)info->argv[1]);
 			break;
 		case 6:
-			_ln((char*)info->argv[0],(char*)info->argv[1]);
+			ans = _ln((char*)info->argv[0],(char*)info->argv[1]);
 			break;
 		case 7:
-			_rm((char*)info->argv[0],0);
+			ans = _rm((char*)info->argv[0],0);
 		break;
 		case 8:
-			_cp((char*)info->argv[0],(char*)info->argv[1]);
+			ans=_cp((char*)info->argv[0],(char*)info->argv[1]);
 			break;
 		case 9:
-			_mv((char*)info->argv[0],(char*)info->argv[1]);
+			ans = _mv((char*)info->argv[0],(char*)info->argv[1]);
 			break;
 		case 10:
-			revertLast((char*)info->argv[0]);
+			ans=revertLast((char*)info->argv[0]);
 			break;
 		case 11:
 			setContext(info->pid);
-			printVersions((char*)info->argv[0]);
+			ans=printVersions((char*)info->argv[0]);
 			unsetContext();
 			break;
 		case 12:
-			_cd((char*)info->argv[0]);
+			setContext(info->pid);
+			ans= _cd((char*)info->argv[0]);
+			unsetContext();
 			break;
 	}
+	if(ans!=0){
+		setContext(info->pid);
+		printError(ans);
+		unsetContext();
+	}
+	ans=0;
 	msgWAwake();
 
 	return 0;
@@ -97,4 +105,26 @@ int msgWrite(msg_t * toWrite){
 	_Sti();
 	msgWBlock();
 	return 0;
+}
+
+void printError(int ans){
+	if(ans==-5){
+		printf("Name already used in this directory\n");
+	}else if(ans==-2){
+		printf("File or directory not found\n");
+	}else if(ans==-9){
+		printf("Unable to remove the root\n");
+	}else if(ans==-3){
+		printf("Cannot remove directory\n");
+	}else if(ans==-6){
+		printf("Cannot move there\n");
+	}else if(ans==-7){
+		printf("Cannot copy there\n");
+	}else if(ans==-11){
+		printf("Cannot attach something to a directory\n");
+	}else if(ans==-13){
+		printf("Not so many versions\n");
+	}else if(ans==-14){
+		printf("Cannot move to a file\n");
+	}
 }

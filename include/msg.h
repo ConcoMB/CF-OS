@@ -23,6 +23,6 @@ extern int msgHead;
 int msgRead(msg_t * ans);
 
 int msgWrite(msg_t * toWrite);
-
+void printError(int ans);
 
 #endif
