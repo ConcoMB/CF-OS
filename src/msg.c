@@ -89,6 +89,8 @@ int msgRead(msg_t * info){
 			ans= _cd((char*)info->argv[0]);
 			unsetContext();
 			break;
+		case 13:
+			revertTo((char*)info->argv[0], (int)info->argv[1]);
 	}
 	if(ans!=0){
 		setContext(info->pid);

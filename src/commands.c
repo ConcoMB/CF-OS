@@ -351,6 +351,18 @@ int rvl(int argc, char** argv)
 	return 0;
 }
 
+int revert(int argc, char** argv)
+{
+	msg_t msg;
+	msg.command=13;
+	msg.argc=2;
+	msg.argv[0]=argv[1];
+	int ver=atoi((char*)argv[2]);
+	msg.argv[1]=(void*)ver;
+	msgWrite(&msg);
+	return 0;
+}
+
 int cp(int argc, char** argv)
 {
 	msg_t msg;
