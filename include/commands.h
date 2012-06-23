@@ -50,6 +50,12 @@ int attach(int argc, char** argv);
 
 int ln(int argc, char** argv);
 
+int rm(int argc, char** argv);
+
+int cp(int argc, char** argv);
+
+int mv(int argc, char** argv);
+
+int rvl(int argc, char** argv);
+
 int cd(int argc, char** argv);
-
-
