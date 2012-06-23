@@ -35,7 +35,6 @@ void _ls(char* path)
 	char spl[MAXFILES][MAXNAME];
 	split(path, '/', spl);
 	fileTree_t* node = getNode(spl);
-	printf("%s\n", node->name);
 	for(i=0; i<node->cantChilds; i++)
 	{
 		char color, old;

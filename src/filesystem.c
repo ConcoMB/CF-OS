@@ -319,7 +319,6 @@ void writeFile(fileTree_t* node, void* buffer, int size){
 		while(ENTRY(entry.linkTo).type==LINK){
 			entry.linkTo=ENTRY(entry.linkTo).linkTo;
 		}
-		printf("LINK A %s\n", ENTRY(entry.linkTo).name);
 	}
 	node->index=i;
 	entry.next=-1;
