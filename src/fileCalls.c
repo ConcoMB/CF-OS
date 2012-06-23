@@ -30,7 +30,7 @@ int _mkdir(char* name)
 	return 0;
 }
 void _ls(char* path)
-{
+{	
 	int i=0;
 	char spl[MAXFILES][MAXNAME];
 	split(path, '/', spl);
@@ -38,9 +38,24 @@ void _ls(char* path)
 	printf("%s\n", node->name);
 	for(i=0; i<node->cantChilds; i++)
 	{
+		char color, old;
 		fileEntry_t entry=ENTRY(node->childs[i]->index);
-		//strcpy(ans[i], node->childs[i]->name);
-		printf("- %s \n", entry.name);
+		old=process[current].tty->color;
+		switch(entry.type){
+			case DIR:
+				color=0x06;
+				break;
+			case LINK:
+				color=0x05;
+				break;
+			case FILE:
+				color=0x02;
+				break;
+		}
+		sys_setcolor(color);
+		printf(" %s", entry.name);
+		sys_setcolor(old);
+		printf(", time: %d:%d\n",entry.hour, entry.min);
 	}
 }
 

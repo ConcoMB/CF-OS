@@ -1,0 +1,165 @@
+In file included from ../src/../include/shell.h:5:0,
+                 from ../src/../include/kernel.h:15,
+                 from ../src/kernel.c:1:
+../src/../include/commands.h:49:5: error: tipos en conflicto para ‘attach’
+../src/../include/fileCalls.h:15:5: nota: la declaración previa de ‘attach’ estaba aquí
+In file included from ../src/kernel.c:2:0:
+../src/test.c: En la función ‘heapTest’:
+../src/test.c:16:14: aviso: se define la variable ‘aux’ pero no se usa [-Wunused-but-set-variable]
+In file included from ../src/../include/shell.h:5:0,
+                 from ../src/../include/kernel.h:15,
+                 from ../src/../include/video.h:3,
+                 from ../src/../include/int80.h:6,
+                 from ../src/int80.c:1:
+../src/../include/commands.h:49:5: error: tipos en conflicto para ‘attach’
+../src/../include/fileCalls.h:15:5: nota: la declaración previa de ‘attach’ estaba aquí
+In file included from ../src/../include/shell.h:5:0,
+                 from ../src/../include/kernel.h:15,
+                 from ../src/../include/kb.h:5,
+                 from ../src/keyboard.c:2:
+../src/../include/commands.h:49:5: error: tipos en conflicto para ‘attach’
+../src/../include/fileCalls.h:15:5: nota: la declaración previa de ‘attach’ estaba aquí
+In file included from ../src/../include/shell.h:5:0,
+                 from ../src/../include/kernel.h:15,
+                 from ../src/../include/video.h:3,
+                 from ../src/../include/stdio.h:8,
+                 from ../src/../include/libc.h:4,
+                 from ../src/libc.c:1:
+../src/../include/commands.h:49:5: error: tipos en conflicto para ‘attach’
+../src/../include/fileCalls.h:15:5: nota: la declaración previa de ‘attach’ estaba aquí
+In file included from ../src/../include/shell.h:5:0,
+                 from ../src/../include/kernel.h:15,
+                 from ../src/../include/video.h:3,
+                 from ../src/../include/stdio.h:8,
+                 from ../src/../include/libc.h:4,
+                 from ../src/../include/string.h:4,
+                 from ../src/string.c:1:
+../src/../include/commands.h:49:5: error: tipos en conflicto para ‘attach’
+../src/../include/fileCalls.h:15:5: nota: la declaración previa de ‘attach’ estaba aquí
+In file included from ../src/../include/shell.h:5:0,
+                 from ../src/../include/kernel.h:15,
+                 from ../src/../include/video.h:3,
+                 from ../src/../include/stdio.h:8,
+                 from ../src/stdio.c:1:
+../src/../include/commands.h:49:5: error: tipos en conflicto para ‘attach’
+../src/../include/fileCalls.h:15:5: nota: la declaración previa de ‘attach’ estaba aquí
+In file included from ../src/../include/shell.h:5:0,
+                 from ../src/../include/kernel.h:15,
+                 from ../src/../include/video.h:3,
+                 from ../src/../include/int80.h:6,
+                 from ../src/../include/paging.h:12,
+                 from ../src/paging.c:1:
+../src/../include/commands.h:49:5: error: tipos en conflicto para ‘attach’
+../src/../include/fileCalls.h:15:5: nota: la declaración previa de ‘attach’ estaba aquí
+In file included from ../src/../include/shell.h:5:0,
+                 from ../src/shell.c:3:
+../src/../include/commands.h:49:5: error: tipos en conflicto para ‘attach’
+../src/../include/fileCalls.h:15:5: nota: la declaración previa de ‘attach’ estaba aquí
+In file included from ../src/../include/shell.h:5:0,
+                 from ../src/../include/kernel.h:15,
+                 from ../src/../include/video.h:3,
+                 from ../src/video.c:1:
+../src/../include/commands.h:49:5: error: tipos en conflicto para ‘attach’
+../src/../include/fileCalls.h:15:5: nota: la declaración previa de ‘attach’ estaba aquí
+In file included from ../src/../include/shell.h:5:0,
+                 from ../src/../include/kernel.h:15,
+                 from ../src/../include/video.h:3,
+                 from ../src/../include/stdio.h:8,
+                 from ../src/../include/scheduler.h:4,
+                 from ../src/../include/heap.h:3,
+                 from ../src/heap.c:1:
+../src/../include/commands.h:49:5: error: tipos en conflicto para ‘attach’
+../src/../include/fileCalls.h:15:5: nota: la declaración previa de ‘attach’ estaba aquí
+In file included from ../src/../include/shell.h:5:0,
+                 from ../src/../include/kernel.h:15,
+                 from ../src/../include/video.h:3,
+                 from ../src/../include/stdio.h:8,
+                 from ../src/../include/commands.h:1,
+                 from ../src/commands.c:1:
+../src/../include/commands.h:49:5: error: tipos en conflicto para ‘attach’
+../src/../include/fileCalls.h:15:5: nota: la declaración previa de ‘attach’ estaba aquí
+In file included from ../src/commands.c:1:0:
+../src/../include/commands.h:49:5: error: tipos en conflicto para ‘attach’
+../src/../include/fileCalls.h:15:5: nota: la declaración previa de ‘attach’ estaba aquí
+../src/commands.c:293:5: error: tipos en conflicto para ‘attach’
+../src/../include/fileCalls.h:15:5: nota: la declaración previa de ‘attach’ estaba aquí
+In file included from ../src/../include/shell.h:5:0,
+                 from ../src/../include/kernel.h:15,
+                 from ../src/../include/video.h:3,
+                 from ../src/../include/stdio.h:8,
+                 from ../src/../include/scheduler.h:4,
+                 from ../src/../include/status.h:5,
+                 from ../src/status.c:1:
+../src/../include/commands.h:49:5: error: tipos en conflicto para ‘attach’
+../src/../include/fileCalls.h:15:5: nota: la declaración previa de ‘attach’ estaba aquí
+In file included from ../src/../include/../include/shell.h:5:0,
+                 from ../src/../include/../include/kernel.h:15,
+                 from ../src/../include/disc.h:4,
+                 from ../src/disc.c:1:
+../src/../include/../include/commands.h:49:5: error: tipos en conflicto para ‘attach’
+../src/../include/../include/fileCalls.h:15:5: nota: la declaración previa de ‘attach’ estaba aquí
+In file included from ../src/../include/shell.h:5:0,
+                 from ../src/../include/kernel.h:15,
+                 from ../src/../include/video.h:3,
+                 from ../src/../include/stdio.h:8,
+                 from ../src/../include/libc.h:4,
+                 from ../src/../include/string.h:4,
+                 from ../src/../include/filesystem.h:6,
+                 from ../src/../include/fileTree.h:6,
+                 from ../src/fileTree.c:1:
+../src/../include/commands.h:49:5: error: tipos en conflicto para ‘attach’
+../src/../include/fileCalls.h:15:5: nota: la declaración previa de ‘attach’ estaba aquí
+In file included from ../src/../include/fileTree.h:7:0,
+                 from ../src/../include/filesystem.h:5,
+                 from ../src/filesystem.c:1:
+../src/../include/fileCalls.h:15:5: error: tipos en conflicto para ‘attach’
+../src/../include/commands.h:49:5: nota: la declaración previa de ‘attach’ estaba aquí
+In file included from ../src/fileCalls.c:1:0:
+../src/../include/fileCalls.h:15:5: error: tipos en conflicto para ‘attach’
+../src/../include/commands.h:49:5: nota: la declaración previa de ‘attach’ estaba aquí
+../src/fileCalls.c: En la función ‘_ls’:
+../src/fileCalls.c:40:14: error: expected expression before ‘,’ token
+../src/fileCalls.c:57:66: error: ‘fileEntry_t’ no tiene un miembro llamado ‘size’
+../src/fileCalls.c: En el nivel principal:
+../src/fileCalls.c:261:5: error: tipos en conflicto para ‘attach’
+../src/../include/commands.h:49:5: nota: la declaración previa de ‘attach’ estaba aquí
+In file included from ../src/../include/shell.h:5:0,
+                 from ../src/../include/kernel.h:15,
+                 from ../src/../include/video.h:3,
+                 from ../src/../include/stdio.h:8,
+                 from ../src/../include/libc.h:4,
+                 from ../src/extras.c:2:
+../src/../include/commands.h:49:5: error: tipos en conflicto para ‘attach’
+../src/../include/fileCalls.h:15:5: nota: la declaración previa de ‘attach’ estaba aquí
+In file included from ../src/../include/msg.h:5:0,
+                 from ../src/msg.c:1:
+../src/../include/../include/fileCalls.h:15:5: error: tipos en conflicto para ‘attach’
+../src/../include/../include/commands.h:49:5: nota: la declaración previa de ‘attach’ estaba aquí
+In file included from ../src/../include/shell.h:5:0,
+                 from ../src/../include/kernel.h:15,
+                 from ../src/../include/video.h:3,
+                 from ../src/../include/stdio.h:8,
+                 from ../src/../include/scheduler.h:4,
+                 from ../src/scheduler.c:1:
+../src/../include/commands.h:49:5: error: tipos en conflicto para ‘attach’
+../src/../include/fileCalls.h:15:5: nota: la declaración previa de ‘attach’ estaba aquí
+ld: cannot find kernel.o: No such file or directory
+ld: cannot find scheduler.o: No such file or directory
+ld: cannot find disc.o: No such file or directory
+ld: cannot find filesystem.o: No such file or directory
+ld: cannot find status.o: No such file or directory
+ld: cannot find video.o: No such file or directory
+ld: cannot find fileTree.o: No such file or directory
+ld: cannot find fileCalls.o: No such file or directory
+ld: cannot find stdio.o: No such file or directory
+ld: cannot find string.o: No such file or directory
+ld: cannot find libc.o: No such file or directory
+ld: cannot find paging.o: No such file or directory
+ld: cannot find keyboard.o: No such file or directory
+ld: cannot find int80.o: No such file or directory
+ld: cannot find shell.o: No such file or directory
+ld: cannot find heap.o: No such file or directory
+ld: cannot find commands.o: No such file or directory
+ld: cannot find extras.o: No such file or directory
+ld: cannot find msg.o: No such file or directory
+kernel.bin: No existe el archivo o el directorio
