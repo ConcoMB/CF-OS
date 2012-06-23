@@ -310,6 +310,13 @@ int shell(int argc, char** argv){
 			argv[0]="printBitmap";
 			argv[1]=(char*)0;
 		}
+		else if(substr("bigfile ", buffer)){
+			func=bigfile;
+			argc=2;
+			argv[0]="bigfile";
+			argv[2]=(char*)0;
+			argv[1]=buffer+8;
+		}
 		else if(substr("ls", buffer)){
 			func=ls;
 			argc=2;

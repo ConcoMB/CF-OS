@@ -50,7 +50,7 @@ int fileSyst(int argc, char** argv){
 
 void printTable(){
 	int i;
-	printf("TABLE\n");
+
 	for(i=0; i<MAXFILES; i++){
 		fileEntry_t e = ENTRY(i);
 		if(!e.free){
@@ -165,6 +165,11 @@ void initBitMap(){
 	for(i=0; i<=pos; i++){
 		SET(i);
 	}
+	int size= MAXFILES * MAXSIZE / (512*8);
+	for(; i<size; i++){
+		FREE(i);
+	}
+
 	writeBitMap();
 }
 
@@ -175,6 +180,7 @@ void printBitMap(){
 			printf("%d, ", i);
 		}
 	}
+	printf("\n");
 }
 
 void initTable(){
@@ -410,6 +416,17 @@ int FSServer(int a, char** v){
 	getStackPage(current);
 	getStackPage(current);
 	getStackPage(current);
+
+	getStackPage(current);
+	getStackPage(current);
+	getStackPage(current);
+	getHeapPage(current);
+	getHeapPage(current);
+	getHeapPage(current);
+	getHeapPage(current);
+	getHeapPage(current);
+	getHeapPage(current);
+	getHeapPage(current);
 	getHeapPage(current);
 
 	readTable();

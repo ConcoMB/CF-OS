@@ -391,19 +391,20 @@ int _cd(char* path){
 
 void bigFile(char* file){
 	_touch(file);
-	char buffer[512];
+	int i = 6;
+	char buffer[512*i];
 	char c='a';
-	int j, z;
-	for(j=0; j<4;j++){
+	int j, z=0;
+	for(j=0; j<i;j++){
 		printf("%d\n", j);
-		for(z=0; z<511; z++){
+		for(; z%512<511; z++){
 			buffer[z]=c;
 		}
-		buffer[z]=0;
-		printf("%s\n", buffer);
+		buffer[z++]=0;
 		c++;
-		_attach(file, buffer);
 	}
+	_attach(file, buffer);
+	printf("termine\n");
 }
 int printVersions(char* file){
 	char path[MAXFILES][MAXNAME];
