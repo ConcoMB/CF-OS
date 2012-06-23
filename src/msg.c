@@ -27,7 +27,9 @@ int msgRead(msg_t * info){
 	}
 	switch(info->command){
 		case 0:
+			//setContext(info->pid);
 			ans = _mkdir( (char*)info->argv[0] );
+			//unsetContext();
 			break;
 		case 1:
 			setContext(info->pid);
@@ -43,25 +45,39 @@ int msgRead(msg_t * info){
 			unsetContext();		
 			break;
 		case 4:
+			setContext(info->pid);			
 			ans=_touch((char*)info->argv[0]);
+			unsetContext();
 			break;
 		case 5:
+			setContext(info->pid);
 			ans=_attach((char*)info->argv[0],(char*)info->argv[1]);
+			unsetContext();
 			break;
 		case 6:
+			setContext(info->pid);
 			ans = _ln((char*)info->argv[0],(char*)info->argv[1]);
+			unsetContext();		
 			break;
 		case 7:
+			setContext(info->pid);
 			ans = _rm((char*)info->argv[0],0);
-		break;
+			unsetContext();
+			break;
 		case 8:
+			setContext(info->pid);
 			ans=_cp((char*)info->argv[0],(char*)info->argv[1]);
+			unsetContext();
 			break;
 		case 9:
+			setContext(info->pid);
 			ans = _mv((char*)info->argv[0],(char*)info->argv[1]);
+			unsetContext();
 			break;
 		case 10:
+			setContext(info->pid);
 			ans=revertLast((char*)info->argv[0]);
+			unsetContext();
 			break;
 		case 11:
 			setContext(info->pid);

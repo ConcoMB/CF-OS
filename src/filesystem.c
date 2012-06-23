@@ -272,8 +272,8 @@ void create(fileEntry_t* entry, void* buffer, int size, int index){
 	}else{
 		entry->inode=-1;
 	}
-	sys_hour(&entry->hour);
-	sys_min(&entry->min);
+	//sys_hour(&entry->hour);
+	//sys_min(&entry->min);
 	writeEntry(index, entry);
 }
 
@@ -319,13 +319,11 @@ void writeFile(fileTree_t* node, void* buffer, int size){
 		while(ENTRY(entry.linkTo).type==LINK){
 			entry.linkTo=ENTRY(entry.linkTo).linkTo;
 		}
-		printf("LINK A %s\n", ENTRY(entry.linkTo).name);
 	}
 	node->index=i;
 	entry.next=-1;
 	entry.prev=-1;
 	entry.type=node->type;
-	
 	entry.parent=node->parent->index;
 	entry.free=0;
 	entry.del=0;
@@ -387,7 +385,7 @@ int getFile(fileTree_t* node)
 void writeEntry(int index, fileEntry_t* entry){
 	table.files[index]=(*entry);
 	int pos = index*sizeof(fileEntry_t);
-	ata_write(ATA0, (void*)&ENTRY(index), sizeof(fileEntry_t), pos/512, pos%512);
+	ata_write(ATA0, (void*)entry, sizeof(fileEntry_t), pos/512, pos%512);
 }
 
 void writeInode(fileEntry_t* entry, inode_t* inode)
@@ -410,6 +408,9 @@ void readBitMap(){
 int FSServer(int a, char** v){
 	getStackPage(current);
 	getStackPage(current);
+	getStackPage(current);
+	getStackPage(current);
+	getHeapPage(current);
 
 	readTable();
 	readBitMap();

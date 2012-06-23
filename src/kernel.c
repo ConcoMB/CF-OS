@@ -34,11 +34,11 @@ void kmain()
 	initScheduler();
 	
 	//createProcess(testDriveC,0,0,"TEST3", 0,0,10);
-	driverPid = createProcess(FSServer,0,0,"FSServer", 0,0,10);
+	driverPid = createProcess(FSServer,0,0,"FSServer", 1,1,10);
 	//fileSyst(0,0);
-	//createProcess(shell, 0,0, "SHELL",  2,0,10);
+	createProcess(shell, 0,0, "SHELL",  2,0,10);
 
-	createProcess(shell, 0,0,"YPF", 1,1,10);
+	//createProcess(shell, 0,0,"YPF", 1,1,10);
 	//createProcess(test, 0,0, "disktest", 0,0,10);
 
 	//createProcess(heapTest, 0,0, "heap", 3,3,10);	

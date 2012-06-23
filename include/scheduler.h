@@ -8,7 +8,7 @@
 #include "status.h"
 #include "heap.h"
 
-#define BLOCKSIZE 50
+#define BLOCKSIZE 100
 #define STACK_SIZE 4096
 
 #define TICK_FREQUENCY 55
