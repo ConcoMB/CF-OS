@@ -5,6 +5,13 @@ extern fileTable_t table;
 static void timeString(char buffer[], int hour, int min){
 	strcpy(buffer,"01:23");
 }
+static void* mallocFS(int bytes){
+	int pid=current;
+	current=driverPid;
+	void* ans = malloc(bytes);
+	current=pid;
+	return ans;
+}
 
 int _mkdir(char* name)
 {
@@ -16,7 +23,7 @@ int _mkdir(char* name)
 	if(alreadyExists(nameD)){
 		return -5;
 	}
-	fileTree_t* myTree = malloc(sizeof(fileTree_t));
+	fileTree_t* myTree = mallocFS(sizeof(fileTree_t));
 	myTree->del=0;
 	strcpy(myTree->name,nameD);
 	myTree->type=DIR;
@@ -81,7 +88,8 @@ int _ln(char* file, char* name)
 	if(linked==0){
 		return -2;
 	}
-	fileTree_t *newLink=malloc(sizeof(fileTree_t));
+	fileTree_t *newLink=mallocFS(sizeof(fileTree_t));
+	
 	newLink->del=0;
 	newLink->cantChilds=linked->cantChilds;
 	strcpy(newLink->name, linkName);
@@ -100,12 +108,9 @@ int _ln(char* file, char* name)
 	dad->childs[dad->cantChilds++]=newLink;
 	newLink->parent=dad;
 	newLink->type=LINK;
-	printf("pre write\n");
 	writeFile(newLink,0,0);
-	printf("post write\n");
-	freeNode(tree);
-	loadTree();
-	printf("aca\n");
+	//freeNode(tree);
+	//loadTree();
 	return 0;
 }
 
@@ -180,7 +185,7 @@ int _mv(char* to, char* from)
 
 	inode_t inode;
 	open(nodeF, &inode);
-	void* buffer = malloc(inode.size);
+	void* buffer = mallocFS(inode.size);
 	readAll(&inode, &buffer);
 	writeSnap(nodeF, buffer, inode.size);
 	return 0;
@@ -204,7 +209,7 @@ int _cp(char* from, char* to)
 		return -2;
 	}
 	
-	fileTree_t* newNode=malloc(sizeof(fileTree_t));
+	fileTree_t* newNode=mallocFS(sizeof(fileTree_t));
 	//newNode->inode=nodeF->inode;
 	newNode->del=0;
 	newNode->parent=dad;
@@ -219,7 +224,7 @@ int _cp(char* from, char* to)
 	if(nodeF->type!=DIR){
 		inode_t inode;
 		open(nodeF, &inode);
-		void* buffer=malloc(inode.size);
+		void* buffer=mallocFS(inode.size);
 		readAll(&inode, &buffer);
 		writeFile(newNode, buffer, inode.size);
 		free(buffer);
@@ -240,7 +245,7 @@ int _touch(char* file){
 	if(dad==0){
 		return -2;
 	}
-	fileTree_t* newNode=malloc(sizeof(fileTree_t));
+	fileTree_t* newNode=mallocFS(sizeof(fileTree_t));
 	newNode->del=0;
 	strcpy(newNode->name, nodeName);
 	newNode->type=FILE;
@@ -258,9 +263,12 @@ int _cat(char* file){
 	if(node==0){
 		return -2;
 	}
+	if(node->type==DIR || (node->type==LINK && ENTRY(ENTRY(node->index).linkTo).type!=FILE)){
+		return -11;
+	}
 	//inode_t in;
 	//ata_read(ATA0, (void*)&in, 512, table[node->index].inode, 0);
-	void * buffer=malloc(512);
+	void * buffer=mallocFS(512);
 	inode_t inode;
 	open(node, &inode);
 	int i=0;
@@ -292,7 +300,7 @@ int _attach(char* file, char* string){
 	inode_t inode;
 	open(node, &inode);
 	inode.size+=len;
-	buffer=malloc(inode.size);
+	buffer=mallocFS(inode.size);
 	readAll(&inode, &buffer);
 	memcpy(buffer+(inode.size-len), string, len);
 	writeSnap(node, buffer, inode.size);
@@ -354,7 +362,7 @@ int _cd(char* path){
 	if(node==0 || node->del){
 		return -2;
 	}
-	if(node->type==FILE || (node->type==LINK && ENTRY(ENTRY(node->index).linkTo).type==DIR)){
+	if(node->type==FILE || (node->type==LINK && ENTRY(ENTRY(node->index).linkTo).type!=DIR)){
 		return -14;
 	}
 	CWD=node;
@@ -398,3 +406,5 @@ int printVersions(char* file){
 void printVersion(fileEntry_t * entry, int index){
 	printf("Version: %d, name: %s, parent: %s, time: %d:%d\n", index, entry->name, entry->parent==-1?"root":(ENTRY(entry->parent).name), entry->hour, entry->min);
 }	
+
+

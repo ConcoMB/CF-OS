@@ -27,9 +27,9 @@ int msgRead(msg_t * info){
 	}
 	switch(info->command){
 		case 0:
-			setContext(info->pid);
+			//setContext(info->pid);
 			ans = _mkdir( (char*)info->argv[0] );
-			unsetContext();
+			//unsetContext();
 			break;
 		case 1:
 			setContext(info->pid);
