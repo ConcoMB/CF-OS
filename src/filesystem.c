@@ -36,10 +36,10 @@ int fileSyst(int argc, char** argv){
 	loadTree(tree);
 	_touch("touch");
 	_ln("touch", "link");
-	attach("touch", "tea");
+	_attach("touch", "tea");
 	_cat("link");
 	_ln("link", "link2");
-	attach("link2", "hola");
+	_attach("link2", "hola");
 	_cat("link");
 	printf("TREE\n");
 	printTree(tree);
