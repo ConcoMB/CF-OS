@@ -20,6 +20,6 @@ int revertLast(char* file);
 int revertTo(char* file, int version);
 void bigFile(char* file);
 void _cd(char* file);
-void printVersions(char* file);
+int printVersions(char* file);
 void printVersion(fileEntry_t * entry, int index);
 #endif

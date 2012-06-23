@@ -335,7 +335,7 @@ void bigFile(char* file){
 		attatch(file,buffer);
 	}
 }
-void printVersions(char* file){
+int printVersions(char* file){
 	char path[MAXFILES][MAXNAME];
 	split(file, '/', path);
 	fileTree_t* node = getNode(path);
