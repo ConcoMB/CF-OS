@@ -27,6 +27,7 @@ void loadTree(){
 	tree->parent=tree;
 	tree->index=-1;
 	tree->type=DIR;
+	tree->del=0;
 	int i;
 	for(i=0; i<8; i++){
 		cwd[i]=tree;
@@ -38,7 +39,7 @@ void fill(fileTree_t* tree, int myEntry)
 {
 	int i;
 	for(i=0; i<MAXFILES; i++){
-		if(!table.files[i].free && table.files[i].parent==myEntry && table.files[i].next==-1 && !table.files[i].del){
+		if(!table.files[i].free && table.files[i].parent==myEntry && table.files[i].next==-1){
 			fileTree_t* son=malloc(sizeof(fileTree_t));
 			fileEntry_t entry= table.files[i];
 			strcpy(son->name, entry.name);
@@ -47,6 +48,7 @@ void fill(fileTree_t* tree, int myEntry)
 			//son->inode=entry.inode;
 			son->parent=tree;
 			son->cantChilds=0;
+			son->del=entry.del;
 			tree->childs[tree->cantChilds++]=son;
 			son->index=i;
 			if(entry.type==DIR){
@@ -63,6 +65,7 @@ void complete(fileTree_t* dad, int index){
 	son->type=entry.type;
 	son->parent=dad;
 	son->cantChilds=0;
+	son->del=0;
 	dad->childs[dad->cantChilds++]=son;
 	son->index=index;
 	if(entry.type==DIR){
@@ -98,6 +101,8 @@ void freeNode(fileTree_t* node){
 void removeLast(char* path, char ans[MAXPATH])
 {
 	int len = strlen(path);
+	ans[0]='/';
+	ans[1]=0;
 	for(len--;len>=0; len--){
 		if(path[len]=='/'){
 			int i=0;
@@ -116,6 +121,7 @@ void clone(fileTree_t* cloned, fileTree_t* new){
 	new->cantChilds=cloned->cantChilds;
 	new->parent=cloned->parent;
 	new->type=cloned->type;
+	new->del=0;
 	if(cloned->type!=DIR){
 		inode_t inode;
 		open(cloned, &inode);
@@ -178,10 +184,20 @@ fileTree_t* getNode(char path[][MAXNAME])
 	while(path[i][0]!='\0'){
 		int j, flag=0;
 		for(j=0; j<myTree->cantChilds && flag!=1; j++){
-			if(strcmp(myTree->childs[j]->name, path[i])==0){
-				myTree=myTree->childs[j];
+			if(strcmp(path[i], "..")==0){
+				myTree=myTree->parent;
 				flag=1;
+			}else if(strcmp(path[i], ".")==0){
+				flag=1;
+			}else{
+				for(j=0; !flag && j<myTree->cantChilds; j++){
+					if(strcmp(myTree->childs[j]->name, path[i])==0){
+						myTree=myTree->childs[j];
+						flag=1;
+					}
+				}	
 			}
+			
 		}
 		if(flag==0){
 			return 0;
@@ -223,5 +239,16 @@ void setParent(fileTree_t* newTree, char* parent){
 	char nodes[MAXFILES][MAXNAME];
 	split(parent, '/', nodes);
 	setParentW(newTree, nodes, 0, tree);
+}
+
+int alreadyExists(char* name){
+	fileTree_t* thisTree = CWD;
+	int i;
+	for(i=0; i<thisTree->cantChilds; i++){
+		if(strcmp(name, thisTree->childs[i]->name)==0){
+			return 1;
+		}
+	}
+	return 0;
 }
 

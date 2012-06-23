@@ -9,8 +9,11 @@ int _mkdir(char* name)
 	char nameD[MAXNAME];
 	setLastStr(spl, nameD);
 	fileTree_t* dad = getNode(spl);
-	//if(alreadyExists(nameD))
+	if(alreadyExists(nameD)){
+		return -5;
+	}
 	fileTree_t* myTree = malloc(sizeof(fileTree_t));
+	myTree->del=0;
 	strcpy(myTree->name,nameD);
 	myTree->type=DIR;
 	//myTree->inode.size=0;
@@ -43,25 +46,35 @@ void _ls(char* path, char ans[][MAXNAME])
 
 
 
-void _ln(char* file, char* name)
+int _ln(char* file, char* name)
 {
-	char path[MAXFILES][MAXNAME], newPath[MAXFILES][MAXNAME];
+	char path[MAXFILES][MAXNAME], newPath[MAXFILES][MAXNAME], linkName[MAXNAME];
 	split(file, '/', path);
 	split(name, '/', newPath);
+	setLastStr(newPath, linkName);
+	if(alreadyExists(linkName)){
+		return -5;
+	}
 	fileTree_t *linked = getNode(path);
 	fileTree_t *newLink=malloc(sizeof(fileTree_t));
-	setLastStr(newPath, newLink->name);
+	newLink->del=0;
 	newLink->cantChilds=linked->cantChilds;
+	strcpy(newLink->name, linkName);
+
 	if(linked->type==DIR)
 	{
 		lnChilds(linked, newLink);
 	}
-	char c[MAXNAME];
-	removeLast(name, c);
-	setParent(newLink,c);
+	//char parentName[MAXNAME];
+	//removeLast(name, parentName);
+	//setParent(newLink,parentName);
+	fileTree_t* dad = getNode(newPath);
+	dad->childs[dad->cantChilds++]=newLink;
+	newLink->parent=dad;
 	newLink->type=LINK;
 	newLink->index=linked->index;
 	writeFile(newLink,0,0);
+	return 0;
 }
 
 int _rm(char* path, char isStr)
@@ -73,7 +86,7 @@ int _rm(char* path, char isStr)
 	split(path, '/', realPath);
 	fileTree_t* node = getNode(realPath);
 	if(isChildOf(node, CWD)){
-		return -2;
+		return -3;
 	}
 	_myrm(node, isStr);
 	return 0;
@@ -84,6 +97,10 @@ int _rm(char* path, char isStr)
 void _myrm(fileTree_t* node, char isStr){
 	switch (node->type){
 		case  DIR:
+			if(!isStr){
+				delFile(node, isStr);
+				return;
+			}
 			rmRecursive(node, isStr);
 		case FILE:
 		case LINK:
@@ -109,6 +126,9 @@ int _mv(char* to, char* from)
 	split(from, '/', pathFrom);
 	split(to, '/', pathTo);
 	setLastStr(pathTo, newName);
+	if(alreadyExists(newName)){
+		return -5;
+	}
 	fileTree_t* nodeF= getNode(pathFrom);
 	fileTree_t* nodeT = getNode(pathTo);
 	if(nodeT==0 || nodeF==0 || nodeT->type!=DIR){
@@ -117,11 +137,17 @@ int _mv(char* to, char* from)
 	if(isChildOf(nodeF, nodeT)){
 		return -2;
 	}
-	nodeT->childs[nodeT->cantChilds++]=nodeF;
 	removeChild(nodeF);
+	nodeT->childs[nodeT->cantChilds++]=nodeF;
 	nodeF->parent=nodeT;
 	strcpy(nodeF->name,newName);
-	snapCP(nodeF);
+//	snapCP(nodeF);
+
+	inode_t inode;
+	open(nodeF, &inode);
+	void* buffer = malloc(inode.size);
+	readAll(&inode, &buffer);
+	writeSnap(nodeF, buffer, inode.size);
 	return 0;
 }
 
@@ -134,8 +160,10 @@ int _cp(char* from, char* to)
 	if(nodeF==0){
 		return -1;
 	}
-	printf("%s\n", nodeF->name);
 	setLastStr(pathTo, nodeName);
+	if(alreadyExists(nodeName)){
+		return -5;
+	}
 	fileTree_t* dad=getNode(pathTo);
 	if(dad==0){
 		return -2;
@@ -143,23 +171,23 @@ int _cp(char* from, char* to)
 	
 	fileTree_t* newNode=malloc(sizeof(fileTree_t));
 	//newNode->inode=nodeF->inode;
+	newNode->del=0;
 	newNode->parent=dad;
+	newNode->type=nodeF->type;
+	strcpy(newNode->name, nodeName);
+	newNode->cantChilds=nodeF->cantChilds;
+	dad->childs[dad->cantChilds++]=newNode;
 	if(isChildOf(newNode, nodeF)){
 		return -3;
 	}
-	newNode->type=nodeF->type;
 	cpyChilds(nodeF, newNode);
-	strcpy(newNode->name, nodeName);
-	newNode->cantChilds=nodeF->cantChilds;
-	newNode->parent=dad;
-	dad->childs[dad->cantChilds++]=newNode;
 	if(nodeF->type!=DIR){
 		inode_t inode;
 		open(nodeF, &inode);
 		void* buffer=malloc(inode.size);
 		readAll(&inode, &buffer);
 		writeFile(newNode, buffer, inode.size);
-		//free(buffer);
+		free(buffer);
 	}else{
 		writeFile(newNode, 0,0);
 	}
@@ -175,6 +203,7 @@ int _touch(char* file){
 		return -2;
 	}
 	fileTree_t* newNode=malloc(sizeof(fileTree_t));
+	newNode->del=0;
 	strcpy(newNode->name, nodeName);
 	newNode->type=FILE;
 	newNode->parent=dad;
@@ -202,7 +231,7 @@ int _cat(char* file){
 		read(&inode, i++, &buffer);
 		printf("%s\n", (char*)buffer);
 	}
-	//free(buffer);
+	free(buffer);
 	return 0;
 }
 
@@ -217,6 +246,9 @@ int attatch(char* file, char* string){
 		...*/
 		return -1;
 	}
+	if(node->type!=FILE){
+		return -2;
+	}
 	void* buffer;
 	int len=strlen(string);
 	inode_t inode;
@@ -226,7 +258,7 @@ int attatch(char* file, char* string){
 	readAll(&inode, &buffer);
 	memcpy(buffer+(inode.size-len), string, len);
 	writeSnap(node, buffer, inode.size);
-	//free(buffer);
+	free(buffer);
 	return 0;
 }
 
@@ -235,6 +267,8 @@ int attatch(char* file, char* string){
 int revertLast(char* file){
 	return revertTo(file, 1);
 }
+
+
 
 int revertTo(char* file, int version){
 	if(version ==0){
@@ -246,23 +280,21 @@ int revertTo(char* file, int version){
 	if(node==0){
 		return -2;
 	}
-
-	fileEntry_t this = ENTRY(node->index);
-	fileEntry_t previous=this;
+	fileEntry_t previous = ENTRY(node->index);
 	int i = 0, j= node->index;
 	while(i!=version){
 		if(previous.prev==-1){
 			return -1;
 		}
+
 		previous.free=1;
+		freeInodes(&previous);
 		FREE(j);
-		writeEntry(j, &ENTRY(j));
+		writeEntry(j, &previous);
 		j=previous.prev;
-		previous = ENTRY(previous.prev);
+		previous = ENTRY(j);
 		i++;
 	}
-	
-	this.free=1;
 	previous.next=-1;
 	removeChild(node);
 	freeNode(node);
@@ -270,9 +302,37 @@ int revertTo(char* file, int version){
 	if(dad==0){
 		return -3;
 	}
-	complete(dad, this.prev);
-	writeEntry(j, &ENTRY(j));
-	writeEntry(node->index, &ENTRY(node->index));
-	FREE(j);
+	writeEntry(j, &previous);
+	//writeEntry(node->index, &ENTRY(node->index));
+	//FREE(j);
+	complete(dad, j);
 	return 0;
+}
+
+void _cd(char* path){
+	char realPath[MAXFILES][MAXNAME];
+	printf("old %s\n",CWD->name);
+	split(path, '/', realPath);
+	fileTree_t* node=getNode(realPath);
+	if(node==0){
+		printf("file or directory not found\n");
+		return;
+	}
+	CWD=node;
+	printf("new %s\n",CWD->name);
+}
+
+void bigFile(char* file){
+	_touch(file);
+	char buffer[512];
+	char c='a';
+	int i=4, j, z;
+	for(j=0; j<i;j++){
+		for(z=0; z<511; z++){
+			buffer[z]=c;
+		}
+		buffer[z]=0;
+		c++;
+		attatch(file,buffer);
+	}
 }

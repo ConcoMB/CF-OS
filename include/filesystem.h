@@ -28,6 +28,8 @@ void initBitMap();
 void writeEntry(int index, fileEntry_t* entry);
 void writeInode(fileEntry_t* entry, inode_t* inode);
 void writeBitMap();
+void openEntry(fileEntry_t* e, inode_t* inode);
+void freeInodes(fileEntry_t* entry);
 void readBitMap();
 void printTable();
 void initFS();

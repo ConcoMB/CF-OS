@@ -47,7 +47,7 @@ typedef struct fileTree_t{
 	int cantChilds;
 	struct fileTree_t* parent;
 	char name[MAXNAME];
-	int index;
+	int index, del;
 	fileType_t type;
 }fileTree_t;
 
