@@ -354,5 +354,5 @@ void printVersions(char* file){
 }
 
 void printVersion(fileEntry_t * entry, int index){
-	printf("Version: %d, name: %s, parent: %s\n", index, entry->name, ENTRY(entry->parent).name);
+	printf("Version: %d, name: %s, parent: %s, time: %d:%d\n", index, entry->name, ENTRY(entry->parent).name, entry->hour, entry->min);
 }	

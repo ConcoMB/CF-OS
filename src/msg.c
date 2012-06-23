@@ -16,6 +16,8 @@ int msgRead(msg_t * info){
 	} else{
 		msgTail++;
 	}
+	_Cli();
+	current=info->pid;
 	switch(info->command){
 		case 0:
 			_mkdir( (char*)info->argv[0] );
@@ -27,11 +29,7 @@ int msgRead(msg_t * info){
 			initializeFS();
 			break;
 		case 3:
-			_Cli();
-			current=info->pid;
-			_cat((char*)info->argv[0]);
-			current=driverPid;
-			_Sti();
+			_cat((char*)info->argv[0]);			
 			break;
 		case 4:
 			_touch((char*)info->argv[0]);
@@ -47,17 +45,22 @@ int msgRead(msg_t * info){
 		break;
 		case 8:
 			_cp((char*)info->argv[0],(char*)info->argv[1]);
-		break;
+			break;
 		case 9:
 			_mv((char*)info->argv[0],(char*)info->argv[1]);
-		break;
+			break;
 		case 10:
 			revertLast((char*)info->argv[0]);
-		break;
+			break;
+		case 11:
+			printVersions((char*)info->argv[0]);
+			break;
 		case 12:
 			_cd((char*)info->argv[0]);
-		break;
+			break;
 	}
+	current=driverPid;
+	_Sti();
 	msgWAwake();
 
 	return 0;

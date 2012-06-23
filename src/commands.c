@@ -338,6 +338,16 @@ int rm(int argc, char** argv)
 	return 0;
 }
 
+int version(int argc, char** argv)
+{
+	msg_t msg;
+	msg.command=11;
+	msg.argc=1;
+	msg.argv[0]=argv[1];
+	msgWrite(&msg);
+	return 0;
+}
+
 int rvl(int argc, char** argv)
 {
 	msg_t msg;

@@ -59,3 +59,5 @@ int mv(int argc, char** argv);
 int rvl(int argc, char** argv);
 
 int cd(int argc, char** argv);
+
+int version(int argc, char** argv);
