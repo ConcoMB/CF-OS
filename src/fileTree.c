@@ -58,7 +58,7 @@ void fill(fileTree_t* tree, int myEntry)
 	}
 }
 
-void complete(fileTree_t* dad, int index){
+fileTree_t* complete(fileTree_t* dad, int index){
 	fileTree_t* son=malloc(sizeof(fileTree_t));
 	fileEntry_t entry= table.files[index];
 	strcpy(son->name, entry.name);
@@ -71,6 +71,7 @@ void complete(fileTree_t* dad, int index){
 	if(entry.type==DIR){
 		fill(son, index);
 	}
+	return son;
 }
 
 void removeChild(fileTree_t* node)

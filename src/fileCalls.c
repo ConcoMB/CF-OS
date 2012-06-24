@@ -345,32 +345,41 @@ int revertTo(char* file, int version){
 	if(node==0){
 		return -2;
 	}
+
 	fileEntry_t previous = ENTRY(node->index);
+	int oldIndex=node->index;
 	int i = 0, j= node->index;
 	while(i!=version){
 		if(previous.prev==-1){
 			return -13;
 		}
 
-		previous.free=1;
+		/*previous.free=1;
 		freeInodes(&previous);
 		FREE(j);
-		writeEntry(j, &previous);
+		writeEntry(j, &previous);*/
 		j=previous.prev;
 		previous = ENTRY(j);
 		i++;
 	}
-	previous.next=-1;
+	//previous.next=-1;
 	removeChild(node);
 	freeNode(node);
 	fileTree_t * dad = getParentFromTable(&previous);
 	if(dad==0){
 		return -2;
 	}
-	writeEntry(j, &previous);
+	//write(j, &previous);
 	//writeEntry(node->index, &ENTRY(node->index));
 	//FREE(j);
-	complete(dad, j);
+	node = complete(dad, j);
+	inode_t inode;
+	open(node, &inode);
+	void* buffer=mallocFS(inode.size);
+	readAll(&inode, &buffer);
+	node->index=oldIndex;
+	writeSnap(node, buffer, inode.size);
+	freeFS(buffer);
 	return 0;
 }
 
@@ -396,15 +405,13 @@ void bigFile(char* file){
 	char c='a';
 	int j, z=0;
 	for(j=0; j<i;j++){
-		printf("%d\n", j);
-		for(; z%512<511; z++){
-			buffer[z]=c;
+		for(z=0; z<512; z++){
+			buffer[z+j*512]=c;
 		}
-		buffer[z++]=0;
 		c++;
 	}
+	buffer[z+j*512]=0;
 	_attach(file, buffer);
-	printf("termine\n");
 }
 int printVersions(char* file){
 	char path[MAXFILES][MAXNAME];

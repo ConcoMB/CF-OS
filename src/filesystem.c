@@ -262,6 +262,10 @@ void create(fileEntry_t* entry, void* buffer, int size, int index){
 		int i, j;
 		for(i=0; i<sects; i++){
 			j=getSector();
+			if(j==-1){
+				printf("DISC FULL\n");
+				return;
+			}
 			inode.sector[i]=j;
 			if(sects-1 == i){
 				ata_write(ATA0, buffer+i*512, size%512, j,0);
