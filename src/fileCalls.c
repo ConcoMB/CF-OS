@@ -2,6 +2,24 @@
 extern fileTree_t* tree;
 extern fileTable_t table;
 
+static int getCWDR(char* buffer, fileTree_t* node);
+
+void getCWD(char* buffer){
+	fileTree_t* node=CWD;
+	getCWDR(buffer, node);
+}
+
+static int getCWDR(char* buffer, fileTree_t* node){
+	int len=0;
+	if(node->parent!=node){
+		len=getCWDR(buffer, node->parent);
+		strcpy(buffer+len, node->name);
+		len+=strlen(node->name);
+	}
+	buffer[len++]='/';
+	return len;
+}
+
 static void timeString(char buffer[], int hour, int min){
 	//strcpy(buffer,"01:23");
 	char h0, h1, m0, m1;
@@ -14,6 +32,7 @@ static void timeString(char buffer[], int hour, int min){
 	buffer[2]=':';
 	buffer[3]=m0;
 	buffer[4]=m1;
+	buffer[5]=0;
 }
 static void* mallocFS(int bytes){
 	int pid=current;

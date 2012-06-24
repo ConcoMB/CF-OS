@@ -22,4 +22,5 @@ void bigFile(char* file);
 int _cd(char* file);
 int printVersions(char* file);
 void printVersion(fileEntry_t * entry, int index);
+void getCWD(char* buffer);
 #endif
