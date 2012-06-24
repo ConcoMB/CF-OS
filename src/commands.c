@@ -455,3 +455,9 @@ int cwdCMD(int argc, char** argv)
 	printf("%s\n",buffer);
 	return 0;
 }
+
+int hangman(int argc, char** argv)
+{
+	hangMain();
+	return 0;
+}

@@ -354,6 +354,28 @@ int _cat(char* file){
 	return 0;
 }
 
+int _readSector(char* file, int sect, char* buffer){
+	buffer[0]=0;
+	char path[MAXFILES][MAXNAME];
+	split(file, '/', path);
+	fileTree_t* node = getNode(path);
+	if(node==0){
+		return -2;
+	}
+	if(node->type==DIR || (node->type==LINK && ENTRY(ENTRY(node->index).linkTo).type!=FILE)){
+		return -11;
+	}
+	//inode_t in;
+	//ata_read(ATA0, (void*)&in, 512, table[node->index].inode, 0);
+	inode_t inode;
+	open(node, &inode);
+	if(inode.sector[sect]!=-1){
+		//printf("sector %d: %d, \n", i, inode.sector[i]);
+		read(&inode, sect, (void**)&buffer);
+	}
+	return 0;
+}
+
 int _attach(char* file, char* string){
 	char path[MAXFILES][MAXNAME];
 	split(file, '/', path);

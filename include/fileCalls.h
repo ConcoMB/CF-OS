@@ -24,4 +24,6 @@ int _cd(char* file);
 int printVersions(char* file);
 void printVersion(fileEntry_t * entry, int index);
 void getCWD(char* buffer);
+int _readSector(char* file, int sect, char* buffer);
+
 #endif
