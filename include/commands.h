@@ -7,6 +7,7 @@
 #include "string.h"
 #include "libc.h"
 #include "msg.h"
+#include "hangman.h"
 
 int who(int argc, char** argv);
 
@@ -77,3 +78,5 @@ int printBitmapCMD(int argc, char** argv);
 int bigfile(int argc, char** argv);
 
 int cwdCMD(int argc, char** argv);
+
+int hangman(int argc, char** argv);

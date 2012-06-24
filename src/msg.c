@@ -129,6 +129,11 @@ int msgRead(msg_t * info){
 			_lsr((char*)info->argv[0]);
 			unsetContext();
 			break;
+		case 21:
+			setContext(info->pid);
+			_readSector((char*)info->argv[0], (int)info->argv[1], (char*)info->argv[2]);
+			unsetContext();
+			break;
 	}
 	if(ans!=0){
 		setContext(info->pid);
