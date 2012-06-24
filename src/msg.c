@@ -124,6 +124,11 @@ int msgRead(msg_t * info){
 			getCWD((char*)info->argv[0]);
 			unsetContext();
 			break;
+		case 20:
+			setContext(info->pid);
+			_lsr((char*)info->argv[0]);
+			unsetContext();
+			break;
 	}
 	if(ans!=0){
 		setContext(info->pid);

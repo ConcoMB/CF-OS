@@ -260,6 +260,16 @@ int ls(int argc, char** argv)
 	return 0;
 }
 
+int lsr(int argc, char** argv)
+{
+	msg_t msg;
+	msg.command = 20;
+	msg.argc = 2;
+	msg.argv[0] = argv[1];
+	msgWrite(&msg);
+	return 0;
+}
+
 int cat(int argc, char** argv)
 {
 	msg_t msg;
@@ -431,5 +441,17 @@ int printBitmapCMD(int argc, char** argv)
 	msg.command=16;
 	msg.argc=0;
 	msgWrite(&msg);
+	return 0;
+}
+
+int cwdCMD(int argc, char** argv)
+{
+	char buffer[100];
+	msg_t msg;
+	msg.command=19;
+	msg.argc=1;
+	msg.argv[0]=buffer;
+	msgWrite(&msg);
+	printf("%s\n",buffer);
 	return 0;
 }
