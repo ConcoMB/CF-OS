@@ -27,9 +27,9 @@ int msgRead(msg_t * info){
 	}
 	switch(info->command){
 		case 0:
-			//setContext(info->pid);
+			setContext(info->pid);
 			ans = _mkdir( (char*)info->argv[0] );
-			//unsetContext();
+			unsetContext();
 			break;
 		case 1:
 			setContext(info->pid);
@@ -187,6 +187,10 @@ void printError(int ans){
 	}else if(ans==-18){
 		printf("Impossible to revert to that version. There's an other file with the same name in that directory now.\n"
 			"Remove it before reverting to this version again\n");
+	}else if(ans==-19){
+		printf("Cannot create a file into a file\n");
+	}else if(ans==-20){
+		printf("Cannot remove CWD\n");
 	}
 
 }

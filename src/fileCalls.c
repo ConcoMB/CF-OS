@@ -195,6 +195,9 @@ int _rm(char* path, char isStr)
 	char realPath[MAXFILES][MAXNAME];
 	split(path, '/', realPath);
 	fileTree_t* node = getNode(realPath);
+	if(node==CWD){
+		return -20;
+	}
 	if(isChildOf(node, CWD)){
 		return -3;
 	}
@@ -240,22 +243,28 @@ int _mv(char* to, char* from)
 	setLastStr(pathTo, newName);
 	
 	fileTree_t* nodeF= getNode(pathFrom);
-	fileTree_t* nodeT = getNode(pathTo);
-	if(nodeT==0 || nodeF==0){
+	fileTree_t* dad = getNode(pathTo);
+	if(dad==0 || nodeF==0){
 		return -2;
 	}
-	if(alreadyExists(newName, nodeT)){
+	if(alreadyExists(newName, dad)){
 		return -5;
 	}
-	if(nodeT->type!=DIR){
+	if(dad->type==LINK){
+		dad=findLink(dad);		
+	}
+	if(dad->type!=DIR){
+		return -19;
+	}
+	if(dad->type!=DIR){
 		return -6;
 	}
-	if(isChildOf(nodeF, nodeT)){
+	if(isChildOf(nodeF, dad)){
 		return -6;
 	}
 	removeChild(nodeF);
-	nodeT->childs[nodeT->cantChilds++]=nodeF;
-	nodeF->parent=nodeT;
+	dad->childs[dad->cantChilds++]=nodeF;
+	nodeF->parent=dad;
 	strcpy(nodeF->name,newName);
 	inode_t inode;
 	open(nodeF, &inode);
@@ -267,11 +276,13 @@ int _mv(char* to, char* from)
 
 int _cp(char* from, char* to)
 {
+
 	char pathFrom[MAXFILES][MAXNAME], pathTo[MAXFILES][MAXNAME], nodeName[MAXNAME];
 	split(from, '/', pathFrom);
 	split(to, '/', pathTo);
 	fileTree_t* nodeF= getNode(pathFrom);
 	if(nodeF==0){
+		printf("%s\n", from);
 		return -2;
 	}
 	setLastStr(pathTo, nodeName);
@@ -279,6 +290,12 @@ int _cp(char* from, char* to)
 	fileTree_t* dad=getNode(pathTo);
 	if(dad==0){
 		return -2;
+	}
+	if(dad->type==LINK){
+		dad=findLink(dad);		
+	}
+	if(dad->type!=DIR){
+		return -19;
 	}
 	if(alreadyExists(nodeName, dad)){
 		return -5;
@@ -291,8 +308,9 @@ int _cp(char* from, char* to)
 	strcpy(newNode->name, nodeName);
 	newNode->cantChilds=nodeF->cantChilds;
 	dad->childs[dad->cantChilds++]=newNode;
-	if(isChildOf(newNode, nodeF)){
+	if(isChildOf(nodeF, dad)){
 		freeFS(newNode);
+		dad->cantChilds--;
 		return -7;
 	}
 	cpyChilds(nodeF, newNode);
@@ -317,6 +335,12 @@ int _touch(char* file){
 	fileTree_t* dad=getNode(path);
 	if(dad==0){
 		return -2;
+	}
+	if(dad->type==LINK){
+		dad=findLink(dad);		
+	}
+	if(dad->type!=DIR){
+		return -19;
 	}
 	if(alreadyExists(nodeName, dad)){
 		return -5;
@@ -418,7 +442,7 @@ int revertTo(char* file, int version){
 	if(dad==0){
 		return -2;
 	}
-	if(alreadyExists(previous.name, dad)){
+	if(alreadyExists(previous.name, dad) && !sameFile(&previous, dad)){
 		return -18;
 	}
 	removeChild(node);
@@ -442,7 +466,10 @@ int _cd(char* path){
 	if(node==0 || node->del){
 		return -2;
 	}
-	if(node->type==FILE || (node->type==LINK && ENTRY(ENTRY(node->index).linkTo).type!=DIR)){
+	if(node->type==LINK){
+		node=findLink(node);		
+	}
+	if(node->type!=DIR){
 		return -14;
 	}
 	CWD=node;

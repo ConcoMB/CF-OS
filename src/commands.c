@@ -402,6 +402,7 @@ int cp(int argc, char** argv)
 	msg.command=8;
 	msg.argc=1;
 	msg.argv[0]=argv[1];
+	msg.argv[1]=argv[2];	
 	msgWrite(&msg);
 	return 0;
 } 

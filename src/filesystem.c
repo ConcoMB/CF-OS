@@ -366,13 +366,17 @@ void delFile(fileTree_t* node, char isStr){
 		while(entry.prev!=-1){
 			entry.free=1;
 			writeEntry(i, &entry);
-			FREE(i);
+			if(entry.inode!=-1){
+				freeInodes(&entry);
+			}
 			i=entry.prev;
 			entry=ENTRY(entry.prev);
 		}
 		entry.free=1;
-		FREE(i);
 		writeEntry(i, &entry);
+		if(entry.inode!=-1){
+			freeInodes(&entry);
+		}
 		writeBitMap();
 	}
 	

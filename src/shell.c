@@ -280,6 +280,20 @@ int shell(int argc, char** argv){
 			int i;
 			for(i=3;buffer[i]!=' '&&buffer[i];i++);
 			buffer[i]=0;
+			argv[1]=buffer+i+1;
+			argv[2]=buffer+3;
+			if(strlen(argv[1])==0||strlen(argv[2])==0){
+				printf("Invalid arguments.\n");
+			}
+		}
+		else if(substr("cp ", buffer)){
+			func=cp;
+			argc=2;
+			argv[0]="cp";
+			argv[3]=(char*)0;
+			int i;
+			for(i=3;buffer[i]!=' '&&buffer[i];i++);
+			buffer[i]=0;
 			argv[2]=buffer+i+1;
 			argv[1]=buffer+3;
 			if(strlen(argv[1])==0||strlen(argv[2])==0){

@@ -252,6 +252,20 @@ int alreadyExists(char* name, fileTree_t* thisTree){
 	return 0;
 }
 
+int sameFile(fileEntry_t* e, fileTree_t* t){
+	int i;
+	for(i=0; i<t->cantChilds; i++){
+		if(strcmp(e->name, t->childs[i]->name)==0){
+			fileEntry_t mye = ENTRY(t->childs[i]->index);
+			while(mye.next!=-1){
+				mye=ENTRY(mye.next);
+			}
+			return mye.inode==e->inode;
+		}
+	}
+	return 0;
+}
+
 fileTree_t* findLink(fileTree_t* aTree){
 	return findReference(ENTRY(aTree->index).linkTo, tree);
 }
