@@ -306,6 +306,12 @@ int shell(int argc, char** argv){
 			argv[0]="printTable";
 			argv[1]=(char*)0;
 		}
+		else if(substr("cwd", buffer)){
+			func=cwdCMD;
+			argc=1;
+			argv[0]="cwd";
+			argv[1]=(char*)0;
+		}
 		else if(substr("printTree", buffer)){
 			func=printTreeCMD;
 			argc=1;

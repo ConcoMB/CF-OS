@@ -75,3 +75,5 @@ int printTreeCMD(int argc, char** argv);
 int printBitmapCMD(int argc, char** argv);
 
 int bigfile(int argc, char** argv);
+
+int cwdCMD(int argc, char** argv);

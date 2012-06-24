@@ -6,7 +6,8 @@ static int getCWDR(char* buffer, fileTree_t* node);
 
 void getCWD(char* buffer){
 	fileTree_t* node=CWD;
-	getCWDR(buffer, node);
+	int len=getCWDR(buffer, node);
+	buffer[len]=0;
 }
 
 static int getCWDR(char* buffer, fileTree_t* node){

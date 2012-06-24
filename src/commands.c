@@ -443,3 +443,15 @@ int printBitmapCMD(int argc, char** argv)
 	msgWrite(&msg);
 	return 0;
 }
+
+int cwdCMD(int argc, char** argv)
+{
+	char buffer[100];
+	msg_t msg;
+	msg.command=19;
+	msg.argc=1;
+	msg.argv[0]=buffer;
+	msgWrite(&msg);
+	printf("%s\n",buffer);
+	return 0;
+}
