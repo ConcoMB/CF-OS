@@ -19,7 +19,7 @@ int _touch(char* file);
 int _cat(char* file);
 int revertLast(char* file);
 int revertTo(char* file, int version);
-void bigFile(char* file);
+int bigFile(char* file);
 int _cd(char* file);
 int printVersions(char* file);
 void printVersion(fileEntry_t * entry, int index);

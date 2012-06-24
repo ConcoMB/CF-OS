@@ -263,7 +263,7 @@ void create(fileEntry_t* entry, void* buffer, int size, int index){
 		for(i=0; i<sects; i++){
 			j=getSector();
 			if(j==-1){
-				printf("DISC FULL\n");
+				printf("Full disc, remove some files before trying again\n");
 				return;
 			}
 			inode.sector[i]=j;
