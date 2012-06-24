@@ -49,6 +49,8 @@ static void freeFS(void* object){
 	current=pid;
 }
 
+
+
 int _mkdir(char* name)
 {
 	char spl[MAXFILES][MAXNAME];
@@ -310,7 +312,7 @@ int _cat(char* file){
 	inode_t inode;
 	open(node, &inode);
 	int i=0;
-	while(inode.sector[i]!=-1){
+	while(i!=MAXSECTOR && inode.sector[i]!=-1){
 		//printf("sector %d: %d, \n", i, inode.sector[i]);
 		read(&inode, i++, &buffer);
 		printf("%s\n", (char*)buffer);
@@ -417,21 +419,65 @@ int _cd(char* path){
 }
 
 
-void bigFile(char* file){
-	_touch(file);
-	int i = 6;
-	char buffer[512*i];
-	char c='a';
-	int j, z=0;
-	for(j=0; j<i;j++){
-		for(z=0; z<512; z++){
-			buffer[z+j*512]=c;
-		}
-		c++;
+int bigFile(char* file){
+	char buffer[512], c='a';
+	int i=MAXSECTOR, j, z=0, index, s;
+	fileEntry_t entry = getFreeEntry(&index);
+	char path[MAXFILES][MAXNAME],nodeName[MAXNAME];
+	split(file, '/', path);
+	setLastStr(path, nodeName);
+	fileTree_t* dad=getNode(path);
+	if(dad==0){
+		return -2;
 	}
-	buffer[z+j*512]=0;
-	_attach(file, buffer);
+	if(alreadyExists(nodeName, dad)){
+		return -5;
+	}
+	fileTree_t* newNode=mallocFS(sizeof(fileTree_t));
+	newNode->del=0;
+	strcpy(newNode->name, nodeName);
+	newNode->type=FILE;
+	newNode->parent=dad;
+	dad->childs[dad->cantChilds++]=newNode;
+	newNode->index=index;
+	strcpy(entry.name, nodeName);
+	entry.type=FILE;
+	entry.del=0;
+	entry.free=0;
+	entry.prev=-1;
+	entry.next=-1;
+	entry.parent=newNode->parent->index;
+	sys_hour(&entry.hour);
+	sys_min(&entry.min);
+	inode_t inode;
+	inode.size=512*i;
+
+	for(j=0; j<i;j++){
+		for(z=0; z<511; z++){
+			buffer[z]=c;
+		}
+		buffer[z]=0;
+		c++;
+		s = getSector();
+		if(s==-1){
+			return -66;
+		}
+		inode.sector[j]=s;
+		ata_write(ATA0, buffer, 512, j,0);
+	}
+	for(; j<MAXSECTOR; j++){
+			inode.sector[j]=-1;
+	}
+	s=getSector();
+	if(s==-1){
+		return -66;
+	}
+	entry.inode=s;
+	writeInode(&entry, &inode);
+	writeEntry(index, &entry);
+	return 0;
 }
+
 int printVersions(char* file){
 	char path[MAXFILES][MAXNAME];
 	split(file, '/', path);

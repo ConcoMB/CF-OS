@@ -111,7 +111,7 @@ int msgRead(msg_t * info){
 			break;
 		case 17:
 			setContext(info->pid);
-			bigFile((char*)info->argv[0]);
+			ans=bigFile((char*)info->argv[0]);
 			unsetContext();
 			break;
 		case 18:
@@ -177,5 +177,7 @@ void printError(int ans){
 		printf("Not so many versions\n");
 	}else if(ans==-14){
 		printf("Cannot move to a file\n");
+	}else if(ans==-66){
+		printf("Full disc, remove some files before trying again\n");
 	}
 }
