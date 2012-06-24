@@ -13,7 +13,7 @@
 void printTree(fileTree_t* aTree);
 void loadTree();
 void fill(fileTree_t* tree, int myEntry);
-void complete(fileTree_t* dad, int index);
+fileTree_t* complete(fileTree_t* dad, int index);
 void removeChild(fileTree_t* node);
 void freeNode(fileTree_t* node);
 void removeLast(char* path, char ans[MAXPATH]);
