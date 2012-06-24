@@ -4,6 +4,7 @@
 
 
 int shell(int argc, char** argv){
+	char cwdString[100];
 	char c;
 	int background=0;
 	char buffer[MAX_CMD_SIZE+1];
@@ -19,7 +20,14 @@ int shell(int argc, char** argv){
 		background=0;
 		nothing=0;
 		__setcolor(&shell_color);
-		printf("Shell->: ");
+		msg_t msg;
+		msg.argv[0]=cwdString;
+		msg.command=19;
+		msg.argc=0;
+		msgWrite(&msg);
+		printf("Shell @ ");
+		printf("%s", cwdString);
+		printf("$ ");
 		__setcolor(&user_color);
 		i=0;
 		mem=-1;

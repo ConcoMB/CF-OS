@@ -28,4 +28,5 @@ void clone(fileTree_t* cloned, fileTree_t* new);
 int alreadyExists(char* name, fileTree_t* aTree);
 fileTree_t* findLink(fileTree_t* aTree);
 fileTree_t* findReference(int ref, fileTree_t* aTree);
+
 #endif
