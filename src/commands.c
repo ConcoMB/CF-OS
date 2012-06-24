@@ -260,6 +260,16 @@ int ls(int argc, char** argv)
 	return 0;
 }
 
+int lsr(int argc, char** argv)
+{
+	msg_t msg;
+	msg.command = 20;
+	msg.argc = 2;
+	msg.argv[0] = argv[1];
+	msgWrite(&msg);
+	return 0;
+}
+
 int cat(int argc, char** argv)
 {
 	msg_t msg;

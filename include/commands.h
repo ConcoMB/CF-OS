@@ -42,6 +42,8 @@ int mkdir(int argc, char** argv);
 
 int ls(int argc, char** argv);
 
+int lsr(int argc, char** argv);
+
 int cat(int argc, char** argv);
 
 int touch(int argc, char** argv);

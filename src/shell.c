@@ -325,6 +325,17 @@ int shell(int argc, char** argv){
 			argv[2]=(char*)0;
 			argv[1]=buffer+8;
 		}
+		else if(substr("lsr", buffer)){
+			func=lsr;
+			argc=2;
+			argv[0]="lsr";
+			if(buffer[3] == ' '){
+				argv[1]=buffer+4;
+			}else{
+				argv[1]=".";
+			}
+			argv[2]=(char*)0;			
+		}
 		else if(substr("ls", buffer)){
 			func=ls;
 			argc=2;
@@ -335,7 +346,8 @@ int shell(int argc, char** argv){
 				argv[1]=".";
 			}
 			argv[2]=(char*)0;			
-		}else{
+		}
+		else{
 			nothing=1;
 			printf("Command not found\n");
 		}

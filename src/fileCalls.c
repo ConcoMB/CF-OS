@@ -109,6 +109,38 @@ void _ls(char* path)
 	}
 }
 
+void _lsr(char* path)
+{	
+	int i=0;
+	char spl[MAXFILES][MAXNAME];
+	split(path, '/', spl);
+	fileTree_t* node = getNode(spl);
+	for(i=0; i<node->cantChilds; i++)
+	{
+		char color, old;
+		fileEntry_t entry=ENTRY(node->childs[i]->index);
+		if(entry.del){
+			old=process[current].tty->color;
+			switch(entry.type){
+				case DIR:
+					color=0x0A;
+					break;
+				case LINK:
+					color=0x05;
+					break;
+				case FILE:
+					color=0x03;
+					break;
+			}
+			sys_setcolor(color);
+			printf(" %s", entry.name);
+			sys_setcolor(old);
+			char time[6];
+			timeString(time, entry.hour, entry.min);
+			printf(", time: %s\n",time);
+		}
+	}
+}
 
 
 int _ln(char* file, char* name)
@@ -180,8 +212,10 @@ void _myrm(fileTree_t* node, char isStr){
 		case FILE:
 		case LINK:
 			delFile(node, isStr);
-			removeChild(node);
-			freeNode(node);
+			if(isStr){
+				removeChild(node);
+				freeNode(node);
+			}
 			break;
 	}
 }
