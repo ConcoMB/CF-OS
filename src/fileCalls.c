@@ -409,25 +409,21 @@ int revertTo(char* file, int version){
 		if(previous.prev==-1){
 			return -13;
 		}
-
-		/*previous.free=1;
-		freeInodes(&previous);
-		FREE(j);
-		writeEntry(j, &previous);*/
 		j=previous.prev;
 		previous = ENTRY(j);
 		i++;
 	}
-	//previous.next=-1;
-	removeChild(node);
-	freeNode(node);
+	
 	fileTree_t * dad = getParentFromTable(&previous);
 	if(dad==0){
 		return -2;
 	}
-	//write(j, &previous);
-	//writeEntry(node->index, &ENTRY(node->index));
-	//FREE(j);
+	if(alreadyExists(previous.name, dad)){
+		return -18;
+	}
+	removeChild(node);
+	freeNode(node);
+
 	node = complete(dad, j);
 	inode_t inode;
 	open(node, &inode);

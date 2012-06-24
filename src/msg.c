@@ -91,7 +91,7 @@ int msgRead(msg_t * info){
 			break;
 		case 13:
 			setContext(info->pid);		
-			revertTo((char*)info->argv[0], (int)info->argv[1]);
+			ans=revertTo((char*)info->argv[0], (int)info->argv[1]);
 			unsetContext();
 			break;
 		case 14:
@@ -184,5 +184,9 @@ void printError(int ans){
 		printf("Cannot move to a file\n");
 	}else if(ans==-66){
 		printf("Full disc, remove some files before trying again\n");
+	}else if(ans==-18){
+		printf("Impossible to revert to that version. There's an other file with the same name in that directory now.\n"
+			"Remove it before reverting to this version again\n");
 	}
+
 }
