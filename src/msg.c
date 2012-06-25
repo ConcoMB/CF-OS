@@ -169,33 +169,46 @@ int msgWrite(msg_t * toWrite){
 }
 
 void printError(int ans){
-	if(ans==-5){
-		printf("Name already used in this directory\n");
-	}else if(ans==-2){
-		printf("File or directory not found\n");
-	}else if(ans==-9){
-		printf("Unable to remove the root\n");
-	}else if(ans==-3){
-		printf("Cannot remove directory\n");
-	}else if(ans==-6){
-		printf("Cannot move there\n");
-	}else if(ans==-7){
-		printf("Cannot copy there\n");
-	}else if(ans==-11){
-		printf("Cannot attach something to a directory\n");
-	}else if(ans==-13){
-		printf("Not so many versions\n");
-	}else if(ans==-14){
-		printf("Cannot move to a file\n");
-	}else if(ans==-66){
-		printf("Full disc, remove some files before trying again\n");
-	}else if(ans==-18){
-		printf("Impossible to revert to that version. There's an other file with the same name in that directory now.\n"
+	switch(ans){
+		case -5:
+			printf("Name already used in this directory\n");
+			break;
+		case -2:
+			printf("File or directory not found\n");
+			break;
+		case -9:
+			printf("Unable to remove the root\n");
+			break;
+		case -3:
+			printf("Cannot remove directory\n");
+			break;
+		case -6:
+			printf("Cannot move there\n");
+			break;
+		case -7:
+			printf("Cannot copy there\n");
+			break;	
+		case -11:
+			printf("Cannot attach something to a directory\n");
+			break;
+		case -13:
+			printf("Not so many versions\n");
+			break;
+		case -14:
+			printf("Cannot move to a file\n");
+			break;
+		case -66:
+			printf("Full disc, remove some files before trying again\n");
+			break;
+		case -18:
+			printf("Impossible to revert to that version. There's an other file with the same name in that directory now.\n"
 			"Remove it before reverting to this version again\n");
-	}else if(ans==-19){
-		printf("Cannot create a file into a file\n");
-	}else if(ans==-20){
-		printf("Cannot remove CWD\n");
+			break;
+		case -19:
+			printf("Cannot create a file into a file\n");
+			break;
+		case -20:
+			printf("Cannot remove CWD\n");
+			break;									
 	}
-
 }
